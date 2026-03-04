@@ -179,6 +179,7 @@ func jump(label: String) -> void:
 	if label not in _labels:
 		push_error("StoryManager: Label not found: " + label)
 		return
+	DebugOverlay.log_message("Jump: %s" % label)
 	current_label = label
 	line_index = 0
 	_waiting = false

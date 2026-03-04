@@ -123,6 +123,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _handle_advance_input() -> void:
 	AudioManager.play_ui_click()
+	DebugOverlay.log_message("Advance input")
 
 	if _distraction_free:
 		_distraction_free = false
@@ -148,6 +149,7 @@ func _handle_advance_input() -> void:
 # === Dialogue ===
 
 func _on_dialogue(char_id: String, name_text: String, text: String) -> void:
+	DebugOverlay.log_message("Dialogue: %s" % name_text)
 	dialogue_box.visible = true
 	centered_text.visible = false
 
@@ -283,6 +285,7 @@ func _on_choice(dialog: String, choices: Array) -> void:
 
 
 func _on_choice_button_pressed(choice_key: String, target: String, _btn: Button) -> void:
+	DebugOverlay.log_message("Choice: %s -> %s" % [choice_key, target])
 	AudioManager.play_ui_click()
 
 	if StoryManager.is_tracked_scene():
@@ -373,6 +376,7 @@ func _show_stats_result(stats: Array, selected_key: String) -> void:
 # === Scene & Characters ===
 
 func _on_scene_change(id: String, transition: String) -> void:
+	DebugOverlay.log_message("Scene: %s (%s)" % [id, transition])
 	_current_bg_id = id
 
 	if id.begins_with("#"):
@@ -415,6 +419,7 @@ func _on_scene_change(id: String, transition: String) -> void:
 
 
 func _on_character_show(id: String, sprite: String, position: String, transition: String) -> void:
+	DebugOverlay.log_message("Show: %s [%s] @%s" % [id, sprite, position])
 	var slot := _get_slot_for_position(position)
 	var path := StoryManager.get_character_sprite_path(id, sprite)
 	if path.is_empty():
@@ -456,6 +461,7 @@ func _on_character_show(id: String, sprite: String, position: String, transition
 
 
 func _on_character_hide(id: String, transition: String) -> void:
+	DebugOverlay.log_message("Hide: %s (%s)" % [id, transition])
 	if id not in _character_slots:
 		return
 	var position: String = _character_slots[id]
@@ -527,6 +533,7 @@ func _on_wait(_duration: float) -> void:
 # === Input Dialog ===
 
 func _on_input_request(prompt: String, warning: String) -> void:
+	DebugOverlay.log_message("Input requested")
 	input_prompt.text = prompt
 	input_field.text = ""
 	input_warning.text = warning

@@ -49,6 +49,7 @@ func reset_state() -> void:
 
 
 func set_var(path: String, value: Variant, op: String = "set") -> void:
+	DebugOverlay.log_message("SetVar: %s %s %s" % [path, op, str(value)])
 	if "." in path:
 		var parts := path.split(".")
 		var dict: Dictionary = state
