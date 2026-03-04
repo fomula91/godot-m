@@ -188,6 +188,7 @@ func jump(label: String) -> void:
 
 
 func advance() -> void:
+	DebugOverlay.log_message("advance() label=%s idx=%d wait=%s choice=%s" % [current_label, line_index, _waiting, _choice_pending])
 	if _waiting or _choice_pending:
 		return
 	if current_label.is_empty():
@@ -212,6 +213,7 @@ func advance() -> void:
 
 func _dispatch_command(cmd: Dictionary) -> void:
 	var cmd_type: String = cmd.get("cmd", "")
+	DebugOverlay.log_message("dispatch: %s %s" % [cmd_type, str(cmd).substr(0, 80)])
 
 	match cmd_type:
 		"dialogue":
@@ -344,6 +346,7 @@ func _dispatch_command(cmd: Dictionary) -> void:
 		"input":
 			var prompt: String = cmd.get("prompt", "")
 			var warning: String = cmd.get("warning", "")
+			_waiting = true
 			input_requested.emit(prompt, warning)
 
 		"gallery_unlock":
@@ -379,6 +382,8 @@ func on_choice_selected(choice_key: String, target_label: String) -> void:
 
 
 func on_input_completed(value: String) -> void:
+	DebugOverlay.log_message("input_completed: %s" % value)
+	_waiting = false
 	GameManager.set_var("player.name", value)
 	advance()
 

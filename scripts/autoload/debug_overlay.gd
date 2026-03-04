@@ -37,6 +37,7 @@ var _lbl_log: Label
 
 var _log_entries: Array[String] = []
 var _last_touch_time_ms := 0
+var _log_file: FileAccess
 
 
 func _ready() -> void:
@@ -49,6 +50,10 @@ func _ready() -> void:
 	_build_ui()
 	_panel.visible = false
 	_lbl_platform.text = "Platform: %s" % _get_platform_name()
+
+	_log_file = FileAccess.open("user://debug_log.txt", FileAccess.WRITE)
+	if _log_file:
+		_log_file.store_line("=== Debug Log Started: %s ===" % Time.get_datetime_string_from_system())
 
 
 #region Public API
@@ -200,10 +205,19 @@ func _mouse_button_name(index: MouseButton) -> String:
 			return "Btn%d" % index
 
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE and _log_file:
+		_log_file.close()
+
+
 func _add_log(msg: String) -> void:
 	var timestamp := Time.get_time_string_from_system().substr(0, 8)
-	_log_entries.push_front("[%s] %s" % [timestamp, msg])
+	var line := "[%s] %s" % [timestamp, msg]
+	_log_entries.push_front(line)
 	if _log_entries.size() > MAX_LOG_ENTRIES:
 		_log_entries.resize(MAX_LOG_ENTRIES)
 	if _lbl_log:
 		_lbl_log.text = "\n".join(_log_entries)
+	if _log_file:
+		_log_file.store_line(line)
+		_log_file.flush()

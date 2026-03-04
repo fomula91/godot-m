@@ -56,6 +56,7 @@ func _ready() -> void:
 	_connect_story_signals()
 	_connect_ui_signals()
 	_setup_http_nodes()
+	_setup_mouse_passthrough()
 	dialogue_box.visible = false
 	choice_panel.visible = false
 	centered_text.visible = false
@@ -99,6 +100,24 @@ func _setup_http_nodes() -> void:
 	_vote_http = HTTPRequest.new()
 	_vote_http.timeout = 3.0
 	add_child(_vote_http)
+
+
+func _setup_mouse_passthrough() -> void:
+	# 루트 및 배경/캐릭터 레이어: 마우스 이벤트 통과시켜 _unhandled_input 도달하도록
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_set_mouse_ignore_recursive($BackgroundLayer)
+	_set_mouse_ignore_recursive($CharacterLayer)
+	_set_mouse_ignore_recursive(dialogue_box)
+	centered_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	choice_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	quick_menu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _set_mouse_ignore_recursive(node: Node) -> void:
+	if node is Control:
+		node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for child in node.get_children():
+		_set_mouse_ignore_recursive(child)
 
 
 func _apply_dialogue_box_style() -> void:
