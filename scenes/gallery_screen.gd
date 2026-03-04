@@ -41,9 +41,13 @@ const GALLERY_FILES: Dictionary = {
 @onready var fullscreen_bg: ColorRect = $FullscreenBG
 @onready var fullscreen_viewer: TextureRect = $FullscreenViewer
 
+var close_btn: Button
+
 
 func _ready() -> void:
 	back_btn.pressed.connect(_on_back)
+	_style_back_btn()
+	_create_close_btn()
 	_build_gallery()
 
 
@@ -91,6 +95,59 @@ func _build_gallery() -> void:
 		grid.add_child(panel)
 
 
+func _style_back_btn() -> void:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.078, 0.039, 0.118, 0.7)
+	style.border_color = Color(0.957, 0.561, 0.694, 0.3)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(12)
+	style.set_content_margin_all(12)
+	back_btn.add_theme_stylebox_override("normal", style)
+
+	var hover := style.duplicate()
+	hover.bg_color = Color(0.157, 0.078, 0.235, 0.9)
+	hover.border_color = Color(0.957, 0.561, 0.694, 0.6)
+	back_btn.add_theme_stylebox_override("hover", hover)
+
+
+func _create_close_btn() -> void:
+	close_btn = Button.new()
+	close_btn.text = "✕ 닫기"
+	close_btn.visible = false
+	close_btn.z_index = 10
+	close_btn.anchor_left = 1.0
+	close_btn.anchor_top = 0.0
+	close_btn.anchor_right = 1.0
+	close_btn.anchor_bottom = 0.0
+	close_btn.offset_left = -120
+	close_btn.offset_top = 20
+	close_btn.offset_right = -20
+	close_btn.offset_bottom = 60
+	close_btn.add_theme_font_size_override("font_size", 20)
+
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.078, 0.039, 0.118, 0.7)
+	style.border_color = Color(0.957, 0.561, 0.694, 0.3)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(12)
+	style.set_content_margin_all(8)
+	close_btn.add_theme_stylebox_override("normal", style)
+
+	var hover := style.duplicate()
+	hover.bg_color = Color(0.157, 0.078, 0.235, 0.9)
+	hover.border_color = Color(0.957, 0.561, 0.694, 0.6)
+	close_btn.add_theme_stylebox_override("hover", hover)
+
+	close_btn.pressed.connect(_close_fullscreen)
+	add_child(close_btn)
+
+
+func _close_fullscreen() -> void:
+	fullscreen_bg.visible = false
+	fullscreen_viewer.visible = false
+	close_btn.visible = false
+
+
 func _view_image(id: String) -> void:
 	var file_name: String = GALLERY_FILES.get(id, "")
 	if file_name.is_empty():
@@ -100,12 +157,12 @@ func _view_image(id: String) -> void:
 		fullscreen_viewer.texture = tex
 		fullscreen_bg.visible = true
 		fullscreen_viewer.visible = true
+		close_btn.visible = true
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if fullscreen_viewer.visible and event is InputEventMouseButton and event.pressed:
-		fullscreen_bg.visible = false
-		fullscreen_viewer.visible = false
+		_close_fullscreen()
 		get_viewport().set_input_as_handled()
 
 
