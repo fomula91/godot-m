@@ -1,0 +1,619 @@
+{
+  "Day5HanaRoute": [
+    {
+      "cmd": "play_sound",
+      "id": "school-bell"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "school_front_early",
+      "transition": "fadeFromBlack duration 1500"
+    },
+    {
+      "cmd": "centered",
+      "text": "── 5일차: 다시 전하는 마음 ──"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "school_grounds_day",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "유우 선배의 말이 머릿속에서 맴돈다."
+    },
+    {
+      "cmd": "narration",
+      "text": "\"서두르지 마. 하지만 도망치지도 마.\""
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...하나에게, 이번엔 진심을 전하고 싶어."
+    },
+    {
+      "cmd": "narration",
+      "text": "전시회 때 하나가 쓰고 있던 종이 왕관이 떠오른다."
+    },
+    {
+      "cmd": "narration",
+      "text": "밝은 얼굴 뒤에 숨겨진 진심을── 이젠 안다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...수영장에서 기다리고 있을 거야. 이번엔 내가."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "narration",
+      "text": "방과후──"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day5HanaPool"
+    }
+  ],
+  "Day5HanaPool": [
+    {
+      "cmd": "show_scene",
+      "id": "swimming_pool",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "stop_music",
+      "fade": 2.0
+    },
+    {
+      "cmd": "wait",
+      "duration": 2000
+    },
+    {
+      "cmd": "play_music",
+      "id": "hana-ending",
+      "loop": true
+    },
+    {
+      "cmd": "narration",
+      "text": "수영장 뒤편. 유우가 알려준 비밀 장소."
+    },
+    {
+      "cmd": "narration",
+      "text": "수면이 석양빛을 머금고 금빛으로 일렁인다."
+    },
+    {
+      "cmd": "narration",
+      "text": "벚꽃잎 한 장이 수면 위에 내려앉아 잔잔한 파문을 만든다."
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 울타리에 앉아 하늘을 바라보고 있다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "normal2",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "...아, {{player.name}}. 여기 어떻게 알았어?"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "유우 선배가 알려줬어. 여기가 하나의 비밀 장소라고."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "에~ 선배 입이 가벼워! ...뭐, 상관없지만."
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 씩 웃지만, 금방 진지한 표정으로 돌아온다."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "worried"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "{{player.name}}... 나, 사실 그때 얘기가 있어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "전시회 때... 사실 더 솔직하고 싶었어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "근데 용기가 안 나서 그냥 웃고 넘긴 거야."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "하나..."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "아, 근데 괜찮아! 나 원래 금방 일어나는 타입이거든!"
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "happy"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "그리고... 유우 선배가 그랬어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "\"진짜 좋아하면 한 번으로 안 끝나\" 라고."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "normal2"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "그래서── 나, 아직 포기 안 했어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "{{player.name}}, 나는 아직도 너를 좋아해."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "hana-confession_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "hana-confession"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "swimming_pool",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "수영장 수면에 비친 석양이 하나의 얼굴을 비춘다."
+    },
+    {
+      "cmd": "jump",
+      "target": "Day5HanaConfess2"
+    }
+  ],
+  "Day5HanaConfess2": [
+    {
+      "cmd": "show_scene",
+      "id": "swimming_pool",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나의 말이 가슴 깊이 파고든다."
+    },
+    {
+      "cmd": "narration",
+      "text": "한 번 거절당하고도 다시 마음을 꺼내 보이는 용기── 그 무게가 느껴진다."
+    },
+    {
+      "cmd": "narration",
+      "text": "수면에 비친 석양이 일렁이듯, 내 마음도 흔들린다."
+    },
+    {
+      "cmd": "narration",
+      "text": "\"서두르지 마. 하지만 도망치지도 마.\"── 유우 선배의 목소리."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...도망치지 않을 거야. 하나의 용기 앞에서."
+    },
+    {
+      "cmd": "wait",
+      "duration": 800
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "normal2",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "choice",
+      "dialog": "p 하나...",
+      "choices": [
+        {
+          "key": "TrueLove",
+          "text": "하나의 웃음도, 눈물도, 전부 좋아해.",
+          "target": "HanaTrueLoveEnd"
+        },
+        {
+          "key": "Warm",
+          "text": "천천히 가자, 우리.",
+          "target": "HanaWarmEnd"
+        }
+      ]
+    }
+  ],
+  "HanaTrueLoveEnd": [
+    {
+      "cmd": "set_var",
+      "path": "hana_affection",
+      "value": 3,
+      "op": "add"
+    },
+    {
+      "cmd": "affinity_hint",
+      "character": "hana"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "하나의 웃음도, 눈물도, 밝은 모습도 어두운 모습도──"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "전부 좋아해."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "surprised"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "...{{player.name}}?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "가면 벗은 하나도, 가면 쓴 하나도, 전부 하나니까."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "나는 전부 받아들일게."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "laugh"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나의 눈에 눈물이 고인다. 하지만 이번엔 활짝 웃고 있다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "바보... 그런 말 하면 나 또 울잖아."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "나, 나도──! {{player.name}}의 전부가 좋아!"
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "yandere"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "그러니까... 다른 여자한테 한눈팔면 안 돼...?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...!"
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "laugh"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "농담이야! ...반은."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "에헤헤~"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 눈물을 닦으며 장난스럽게 웃는다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "하하, 알겠어. 약속."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "약속! 어기면 안 돼!"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "hana-truelove_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "hana-truelove"
+    },
+    {
+      "cmd": "narration",
+      "text": "석양빛 수영장에서, 두 사람의 웃음이 퍼져나간다."
+    },
+    {
+      "cmd": "narration",
+      "text": "이것은 가면이 아닌, 진짜 하나의 웃음."
+    },
+    {
+      "cmd": "show_scene",
+      "id": "swimming_pool",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "centered",
+      "text": "── 하나 트루 러브 엔딩: 수영장의 석양 ──"
+    },
+    {
+      "cmd": "end"
+    }
+  ],
+  "HanaWarmEnd": [
+    {
+      "cmd": "set_var",
+      "path": "hana_affection",
+      "value": 2,
+      "op": "add"
+    },
+    {
+      "cmd": "affinity_hint",
+      "character": "hana"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "천천히 가자, 하나."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "지금 당장 대답하지 않아도 돼."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "대신... 앞으로도 곁에 있을게."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "surprised"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "...에? 거절이 아니야?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "거절이 아니야. 서두르지 않겠다는 거야."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "유우 선배가 알려줬어. 중요한 건 함께 있는 거라고."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "shy"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "{{player.name}}..."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "hana-warm_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "hana-warm"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "swimming_pool",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "shy",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 수줍게 고개를 숙인다. 처음 보는 표정이다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "그렇다면... 조금만 더 기다려줘."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "다음에는 내가 더 용기 내서... 제대로 전할게."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "기다릴게, 하나."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "happy"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "에헤~ 약속이다!"
+    },
+    {
+      "cmd": "narration",
+      "text": "수영장의 수면이 석양빛에 반짝인다."
+    },
+    {
+      "cmd": "narration",
+      "text": "아직 봄은 시작일 뿐. 두 사람의 계절은 이제부터."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "swimming_pool",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "centered",
+      "text": "── 하나 엔딩: 새로운 계절의 시작 ──"
+    },
+    {
+      "cmd": "end"
+    }
+  ]
+}

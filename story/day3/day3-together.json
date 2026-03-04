@@ -1,0 +1,309 @@
+{
+  "Day3TogetherRoute": [
+    {
+      "cmd": "show_scene",
+      "id": "auditorium_noon",
+      "transition": "slideRight"
+    },
+    {
+      "cmd": "set_var",
+      "path": "chose_both",
+      "value": true
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "normal",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "laugh",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "셋이서 전시회를 돌아본다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "솜사탕 사자! 셋이서 나눠 먹자!"
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "s",
+      "sprite": "surprised"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "에... 저는 달콤한 건 좀..."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "에이~ 맛있으니까 먹어봐!"
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "s",
+      "sprite": "fadeOut"
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "fadeOut"
+    },
+    {
+      "cmd": "narration",
+      "text": "소라와 하나가 티격태격하는 모습에 나도 모르게 웃음이 난다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "smile",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "하하, 너희 둘 정말 사이좋다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "normal",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "에...? 그, 그런가요?"
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "happy",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "어? 우리 사이 좋았어? 에헤~"
+    },
+    {
+      "cmd": "narration",
+      "text": "셋이서 체험 부스, 전시실, 매점을 돌아다닌다."
+    },
+    {
+      "cmd": "narration",
+      "text": "정신없이 즐거운 시간이 흘러간다."
+    },
+    {
+      "cmd": "jump",
+      "target": "Day3TogetherClimax"
+    }
+  ],
+  "Day3TogetherClimax": [
+    {
+      "cmd": "set_var",
+      "path": "day3_ending_type",
+      "value": "together_deepen"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "auditorium_evening",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "stop_music",
+      "fade": 1.0
+    },
+    {
+      "cmd": "play_music",
+      "id": "harem-ending",
+      "loop": true
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "happy",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "happy",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "smile",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "전시회가 끝나갈 무렵, 옥상에서 셋이 석양을 바라본다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "...오늘 정말 즐거웠어요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "응! 최고의 하루였어!"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "나도... 너희 덕분에 정말 행복했어."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "normal2"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "...있잖아, {{player.name}}."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "나, 오늘 셋이서 다녀서 좋았어. 근데..."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "worried"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "...가끔 이 시간이 언제까지 갈 수 있을까 생각하면 좀 무서워."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "s",
+      "sprite": "worried"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "...저도요. 이렇게 좋은 날이 계속될 수 있을까..."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "p",
+      "sprite": "normal"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...나도 같은 생각이야."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "하지만 적어도 오늘── 이 순간은 진짜잖아."
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "happy",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "...맞아요. 지금 이 순간은 진짜예요."
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "happy",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "응! 그거면 충분해! ...아마!"
+    },
+    {
+      "cmd": "narration",
+      "text": "세 사람 모두 웃는다. 하지만 어딘가 아련한 웃음."
+    },
+    {
+      "cmd": "narration",
+      "text": "벚꽃잎이 세 사람의 어깨 위로 내려앉는다."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "s",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "school_grounds_evening",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "centered",
+      "text": "── 셋: 벚꽃 아래의 약속 ──"
+    },
+    {
+      "cmd": "narration",
+      "text": "이불 속에서 오늘 하루를 되짚는다."
+    },
+    {
+      "cmd": "narration",
+      "text": "소라의 조용한 불안, 하나의 솔직한 두려움."
+    },
+    {
+      "cmd": "narration",
+      "text": "셋이서 함께라는 건 편안하면서도, 어딘가 위태롭다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...이 관계가 어디로 향하는 걸까."
+    },
+    {
+      "cmd": "stop_music",
+      "fade": 1.0
+    },
+    {
+      "cmd": "fade_jump",
+      "target": "Day4Start",
+      "duration": 1.5,
+      "wait": 0.2,
+      "color": "#000000"
+    }
+  ]
+}

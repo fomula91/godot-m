@@ -1,0 +1,272 @@
+[gd_scene load_steps=2 format=3 uid="uid://main_scene"]
+
+[ext_resource type="Script" path="res://scenes/main_scene.gd" id="1"]
+
+[node name="MainScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="BackgroundLayer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background1" type="TextureRect" parent="BackgroundLayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 6
+
+[node name="Background2" type="TextureRect" parent="BackgroundLayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 6
+modulate = Color(1, 1, 1, 0)
+
+[node name="CharacterLayer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftSlot" type="TextureRect" parent="CharacterLayer"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.1
+anchor_top = 1.0
+anchor_right = 0.4
+anchor_bottom = 1.0
+offset_top = -900.0
+grow_horizontal = 2
+grow_vertical = 0
+stretch_mode = 5
+modulate = Color(1, 1, 1, 0)
+
+[node name="CenterSlot" type="TextureRect" parent="CharacterLayer"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.3
+anchor_top = 1.0
+anchor_right = 0.7
+anchor_bottom = 1.0
+offset_top = -900.0
+grow_horizontal = 2
+grow_vertical = 0
+stretch_mode = 5
+modulate = Color(1, 1, 1, 0)
+
+[node name="RightSlot" type="TextureRect" parent="CharacterLayer"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.6
+anchor_top = 1.0
+anchor_right = 0.9
+anchor_bottom = 1.0
+offset_top = -900.0
+grow_horizontal = 2
+grow_vertical = 0
+stretch_mode = 5
+modulate = Color(1, 1, 1, 0)
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="DialogueBox" type="PanelContainer" parent="UILayer"]
+anchors_preset = 12
+anchor_top = 0.7
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_right = -40.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/DialogueBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UILayer/DialogueBox/MarginContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="UILayer/DialogueBox/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="TextLabel" type="RichTextLabel" parent="UILayer/DialogueBox/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = true
+theme_override_font_sizes/normal_font_size = 22
+
+[node name="ChoicePanel" type="VBoxContainer" parent="UILayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -150.0
+offset_right = 300.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+theme_override_constants/separation = 16
+
+[node name="CenteredText" type="Label" parent="UILayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -50.0
+offset_right = 400.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 32
+
+[node name="QuickMenu" type="HBoxContainer" parent="UILayer"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+offset_left = -400.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 50.0
+grow_horizontal = 0
+theme_override_constants/separation = 8
+
+[node name="SaveBtn" type="Button" parent="UILayer/QuickMenu"]
+layout_mode = 2
+text = "Save"
+
+[node name="LoadBtn" type="Button" parent="UILayer/QuickMenu"]
+layout_mode = 2
+text = "Load"
+
+[node name="AutoBtn" type="Button" parent="UILayer/QuickMenu"]
+layout_mode = 2
+text = "Auto"
+toggle_mode = true
+
+[node name="SkipBtn" type="Button" parent="UILayer/QuickMenu"]
+layout_mode = 2
+text = "Skip"
+toggle_mode = true
+
+[node name="LogBtn" type="Button" parent="UILayer/QuickMenu"]
+layout_mode = 2
+text = "Log"
+
+[node name="SettingsBtn" type="Button" parent="UILayer/QuickMenu"]
+layout_mode = 2
+text = "Settings"
+
+[node name="OverlayLayer" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="TransitionRect" type="ColorRect" parent="OverlayLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="AffinityHint" type="PanelContainer" parent="OverlayLayer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 100.0
+offset_right = 200.0
+offset_bottom = 160.0
+grow_horizontal = 2
+visible = false
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="OverlayLayer/AffinityHint"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Icon" type="Label" parent="OverlayLayer/AffinityHint/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="Text" type="Label" parent="OverlayLayer/AffinityHint/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+
+[node name="InputDialog" type="PanelContainer" parent="OverlayLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -100.0
+offset_right = 250.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="OverlayLayer/InputDialog"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="PromptLabel" type="Label" parent="OverlayLayer/InputDialog/VBoxContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="InputField" type="LineEdit" parent="OverlayLayer/InputDialog/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "이름을 입력하세요"
+alignment = 1
+theme_override_font_sizes/font_size = 22
+
+[node name="WarningLabel" type="Label" parent="OverlayLayer/InputDialog/VBoxContainer"]
+layout_mode = 2
+visible = false
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="ConfirmBtn" type="Button" parent="OverlayLayer/InputDialog/VBoxContainer"]
+layout_mode = 2
+text = "확인"
+theme_override_font_sizes/font_size = 18
+
+[node name="AutoTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true

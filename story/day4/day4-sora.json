@@ -1,0 +1,213 @@
+{
+  "Day4SoraAfternoon": [
+    {
+      "cmd": "show_scene",
+      "id": "classroom3_afternoon",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "오후, 소라를 찾아 교실로 간다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "normal",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "소라의 표정은 평소와 같지만, 어딘가 조심스러운 거리감이 느껴진다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "...어제 일은 괜찮아요. 신경 쓰지 마세요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "소라야..."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "정말이에요. 저도... 정리할 시간이 필요했으니까요."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "s",
+      "sprite": "normal"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "그보다──"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "오늘 유우 선배가 왔다면서요?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "응. 만났어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "...네."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "s",
+      "sprite": "worried"
+    },
+    {
+      "cmd": "narration",
+      "text": "소라가 고개를 숙인다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "유우 선배를 보니까... 그때 생각이 났어요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "혼자서 도서관에만 있던 시절. 아무도 말을 걸어주지 않던 날들."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "유우 선배가 처음으로... \"같이 밥 먹을래?\" 하고 물어봤어요."
+    },
+    {
+      "cmd": "narration",
+      "text": "소라의 눈가가 촉촉해진다."
+    },
+    {
+      "cmd": "narration",
+      "text": "소라의 손이 무의식적으로 책상 모서리를 잡는다. 잠깐의 정적."
+    },
+    {
+      "cmd": "wait",
+      "duration": 600
+    },
+    {
+      "cmd": "hide_character",
+      "id": "s",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "sora-past-tears_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "sora-past-tears"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "classroom3_afternoon",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "worried",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "그때부터... 사람과 함께하는 게 두렵지만은 않게 됐어요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "그리고 {{player.name}} 씨를 만나서..."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "s",
+      "sprite": "surprised"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "아, 죄송해요. 갑자기 이런 이야기를──"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "아니, 들려줘서 고마워요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "소라의 이야기를 더 듣고 싶어."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "s",
+      "sprite": "happy"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "...감사해요, {{player.name}} 씨."
+    },
+    {
+      "cmd": "narration",
+      "text": "소라가 눈물을 닦으며 작게 웃는다."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "s",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day4Evening"
+    }
+  ]
+}

@@ -1,0 +1,842 @@
+{
+  "Day4Start": [
+    {
+      "cmd": "play_music",
+      "id": "acoustic-chill",
+      "loop": true
+    },
+    {
+      "cmd": "show_scene",
+      "id": "school_front_day",
+      "transition": "fadeFromBlack duration 1500"
+    },
+    {
+      "cmd": "centered",
+      "text": "── 4일차: 지나간 봄의 기억 ──"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "school_grounds_day",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "전시회가 끝나고 월요일 아침."
+    },
+    {
+      "cmd": "narration",
+      "text": "어딘가 허전한 기분으로 교문을 지나는데──"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...전시회 끝나니까 갑자기 조용하네."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "narration",
+      "text": "교문 앞에서 낯선 인물이 서 있다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "u",
+      "sprite": "normal",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "conditional",
+      "branches": [
+        {
+          "condition": "unknown_interest >= 2",
+          "action": "jump",
+          "target": "Day4MeetUnknownHigh"
+        }
+      ],
+      "default": {
+        "action": "jump",
+        "target": "Day4MeetUnknownNormal"
+      }
+    }
+  ],
+  "Day4MeetUnknownHigh": [
+    {
+      "cmd": "set_var",
+      "path": "met_unknown",
+      "value": true
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "surprised",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...어제 정류장에서 본──?!"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "u",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "yuu-first-meet_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "yuu-first-meet"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "school_grounds_day",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "u",
+      "sprite": "normal",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "surprised",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "후후, 눈치가 빠르구나."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "안녕. 나는 유우. 작년에 이 학교를 졸업했어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "유우... 선배? 소라와 하나가 이야기하던──"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "맞아. 그 아이들의 선배이자, 오래된 친구."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "전시회에 한번 들르려고 했는데 하루 늦었네."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "u",
+      "sprite": "normal"
+    },
+    {
+      "cmd": "narration",
+      "text": "유우가 밝게 웃으며 말한다."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "u",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day4Morning"
+    }
+  ],
+  "Day4MeetUnknownNormal": [
+    {
+      "cmd": "set_var",
+      "path": "met_unknown",
+      "value": true
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "surprised",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...저기, 혹시 이 학교 학생이세요?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "아, 아니. 작년에 졸업했어. 나는 유우."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "잠깐 학교에 볼일이 있어서 왔어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "넌... 소라와 하나의 새 친구구나?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "네? 저를 아세요?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "후후, 소문이 빠르거든."
+    },
+    {
+      "cmd": "narration",
+      "text": "유우가 의미심장하게 웃는다."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "u",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day4Morning"
+    }
+  ],
+  "Day4Morning": [
+    {
+      "cmd": "show_scene",
+      "id": "classroom_day",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "1교시가 끝나고, 유우와 함께 과학실로 향한다."
+    },
+    {
+      "cmd": "show_scene",
+      "id": "science_lab_02",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "u",
+      "sprite": "normal",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "여기... 변한 게 없네. 내가 실험하던 자리도 그대로고."
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "유우 선배, 소라와 하나에 대해... 좀 더 알려주실 수 있나요?"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "science_lab_04",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "u",
+      "sprite": "normal",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "그래, 궁금하겠지."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...유우 선배라면 분명 많은 걸 알고 있을 거다."
+    },
+    {
+      "cmd": "narration",
+      "text": "가장 듣고 싶은 이야기가 뭔지, 스스로에게 물어본다."
+    },
+    {
+      "cmd": "choice",
+      "dialog": "p 유우 선배에게...",
+      "choices": [
+        {
+          "key": "AboutSora",
+          "text": "소라에게 특별한 존재였나요?",
+          "target": "Day4AskAboutSora"
+        },
+        {
+          "key": "AboutHana",
+          "text": "하나에게 특별한 존재였나요?",
+          "target": "Day4AskAboutHana"
+        },
+        {
+          "key": "AboutAll",
+          "text": "셋이서 어떤 사이였어요?",
+          "target": "Day4AskAboutAll"
+        }
+      ]
+    }
+  ],
+  "Day4AskAboutSora": [
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "소라는... 예전에는 아무에게도 마음을 열지 않는 아이였어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "혼자가 편하다고, 그게 안전하다고 생각했지."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "내가 처음으로 그 벽에 균열을 낸 거야. 그리고 하나가 그 틈을 넓혔고."
+    },
+    {
+      "cmd": "set_var",
+      "path": "sora_affection",
+      "value": 1,
+      "op": "add"
+    },
+    {
+      "cmd": "affinity_hint",
+      "character": "sora"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "그런데 지금은... 너라는 사람이 그 벽을 완전히 허물고 있는 것 같더라."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...저요?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "후후. 표정을 보면 알 수 있어."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "u",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day4Lunch"
+    }
+  ],
+  "Day4AskAboutHana": [
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "하나는 항상 밝게 웃잖아? 근데 그게 전부가 아니야."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "중학교 때 왕따를 당한 적이 있어. 그래서... 밝은 척하는 거야."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "웃으면 아무도 자기를 미워하지 않을 거라고 생각하거든."
+    },
+    {
+      "cmd": "set_var",
+      "path": "hana_affection",
+      "value": 1,
+      "op": "add"
+    },
+    {
+      "cmd": "affinity_hint",
+      "character": "hana"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "하지만 너 앞에서는... 진짜 웃고 있더라."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...하나가 그런 과거를..."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "소중히 대해줘. 그 아이의 진짜 웃음을."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "u",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day4Lunch"
+    }
+  ],
+  "Day4AskAboutAll": [
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "우리 셋은... 특별했어. 서로 다른 결핍을 가진 세 사람이었지."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "소라는 외로움, 하나는 불안, 나는... 음, 방향 상실?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "그래도 셋이 모이면 왜인지 괜찮았어. 서로의 빈자리를 채워주니까."
+    },
+    {
+      "cmd": "set_var",
+      "path": "sora_affection",
+      "value": 1,
+      "op": "add"
+    },
+    {
+      "cmd": "set_var",
+      "path": "hana_affection",
+      "value": 1,
+      "op": "add"
+    },
+    {
+      "cmd": "affinity_hint",
+      "character": "both"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "그리고 지금... 그 자리에 네가 있는 거야."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "저는 그런 대단한 사람이──"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "대단할 필요 없어. 그냥 곁에 있어주는 것만으로도 충분해."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "u",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day4Lunch"
+    }
+  ],
+  "Day4Lunch": [
+    {
+      "cmd": "show_scene",
+      "id": "swimming_pool",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "유우가 데려간 곳은 학교 수영장 뒤편의 작은 공간."
+    },
+    {
+      "cmd": "show_character",
+      "id": "u",
+      "sprite": "normal",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "여기는 내 비밀 장소였어. 아무도 안 오거든."
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "조용하고 좋네요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "소라와 하나도 여기서 많이 이야기했어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "소라가 처음으로 울었던 곳이기도 하고..."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "하나가 처음으로 진짜 속마음을 보여준 곳이기도 하고."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...두 사람 모두, 겉으로는 안 보이는 아픔이 있었군요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "누구나 그렇지. 너도 마찬가지일 거야."
+    },
+    {
+      "cmd": "narration",
+      "text": "유우가 하늘을 올려다보며 말한다."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "u",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "pool-secret_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "pool-secret"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "swimming_pool",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "u",
+      "sprite": "normal",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "수면 위로 잔물결이 퍼진다. 햇살이 물결 위에서 부서진다."
+    },
+    {
+      "cmd": "wait",
+      "duration": 800
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "중요한 건... 그 아픔을 나눌 수 있는 사람이 곁에 있느냐야."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "u",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "conditional",
+      "branches": [
+        {
+          "condition": "day3_ending_type == sora_deepen",
+          "action": "jump",
+          "target": "Day4SoraAfternoon"
+        },
+        {
+          "condition": "day3_ending_type == hana_deepen",
+          "action": "jump",
+          "target": "Day4HanaAfternoon"
+        }
+      ],
+      "default": {
+        "action": "jump",
+        "target": "Day4TogetherAfternoon"
+      }
+    }
+  ],
+  "Day4Evening": [
+    {
+      "cmd": "fade_scene",
+      "id": "busstop_evening",
+      "duration": 1.5,
+      "wait": 0.2,
+      "color": "#000000"
+    },
+    {
+      "cmd": "play_sound",
+      "id": "footsteps"
+    },
+    {
+      "cmd": "narration",
+      "text": "하교 시간. 유우가 버스 정류장까지 함께 걸어준다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "u",
+      "sprite": "normal",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "오늘 하루... 어땠어?"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "많은 걸 알게 됐어요. 소라와 하나에 대해서도, 저 자신에 대해서도."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "그래. 그걸로 충분해."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "나는 내일 돌아가야 해. 대학 수업도 있고."
+    },
+    {
+      "cmd": "narration",
+      "text": "유우가 먼 곳을 바라보며 말한다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "마지막으로 하나만 말해줄게."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "...서두르지 마. 하지만 도망치지도 마."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "네 마음이 향하는 곳으로, 솔직하게."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "유우 선배..."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "u",
+      "text": "파이팅, 후배."
+    },
+    {
+      "cmd": "stop_sound"
+    },
+    {
+      "cmd": "narration",
+      "text": "유우가 손을 흔들며 떠난다."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "u",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "p",
+      "sprite": "normal"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "......"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...내 마음이 향하는 곳."
+    },
+    {
+      "cmd": "narration",
+      "text": "며칠간의 기억이 빠르게 스쳐 지나간다."
+    },
+    {
+      "cmd": "narration",
+      "text": "소라의 조용한 미소, 하나의 밝은 웃음, 빈 책상의 낙서, 종이학의 온기."
+    },
+    {
+      "cmd": "narration",
+      "text": "그리고 유우 선배의 말── \"도망치지도 마.\""
+    },
+    {
+      "cmd": "narration",
+      "text": "그 말이 가슴 한구석에 깊이 박힌다."
+    },
+    {
+      "cmd": "narration",
+      "text": "...그래. 나는 도망쳤던 거다."
+    },
+    {
+      "cmd": "narration",
+      "text": "제대로 마주하는 게 무서워서, \"친구\"라는 안전한 말 뒤에 숨었다."
+    },
+    {
+      "cmd": "narration",
+      "text": "진짜 두려웠던 건 거절이 아니라── 이 마음을 인정하는 것이었는지도 모른다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...알겠어. 이번엔 솔직하게."
+    },
+    {
+      "cmd": "wait",
+      "duration": 800
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "choice",
+      "dialog": "p 나는──",
+      "choices": [
+        {
+          "key": "ToSora",
+          "text": "소라에게 다시 한번...",
+          "target": "Day5SoraRoute"
+        },
+        {
+          "key": "ToHana",
+          "text": "하나에게 다시 한번...",
+          "target": "Day5HanaRoute"
+        },
+        {
+          "key": "ToBoth",
+          "text": "두 사람 모두 소중해.",
+          "target": "Day5TogetherRoute"
+        }
+      ]
+    }
+  ]
+}

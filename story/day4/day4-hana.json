@@ -1,0 +1,227 @@
+{
+  "Day4HanaAfternoon": [
+    {
+      "cmd": "show_scene",
+      "id": "auditorium_afternoon",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "오후, 하나를 찾아 강당 뒤편으로 간다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "normal2",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 혼자 앉아 하늘을 바라보고 있다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "하나, 여기 있었어?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "...아, {{player.name}}."
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 웃지만, 평소의 에너지가 없다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "...어제는 좀 부끄러운 거 보여줬다~ 에헤."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "하나..."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "괜찮아, 진짜로! ...아직 좀 아프긴 하지만. 그건 내 몫이니까."
+    },
+    {
+      "cmd": "narration",
+      "text": "잠깐의 침묵."
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 숨을 고르고 말을 잇는다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "유우 선배가 왔더라."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "응, 나도 만났어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "그래...?"
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "worried"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "선배를 보니까... 좀 생각이 많아졌어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "나, 원래... 밝은 척하는 거 잘하잖아."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "웃으면 다들 나를 좋아해줄 거라고 생각했거든."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "근데 유우 선배가 그랬어. \"가면 벗어도 괜찮아\" 라고."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "normal2"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "{{player.name}} 앞에서는... 나도 좀 솔직해지고 싶어."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "항상 밝기만 한 건 아니야. 가끔은 힘들기도 하고."
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 말을 멈춘다. 바람 소리만이 두 사람 사이를 채운다."
+    },
+    {
+      "cmd": "wait",
+      "duration": 600
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "hana-unmasked_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "hana-unmasked"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "auditorium_afternoon",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "worried",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "알아, 하나. 억지로 웃지 않아도 돼."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "울고 싶으면 울어도 돼. 내가 여기 있잖아."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "surprised"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "...{{player.name}}."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "happy"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "고마워. 진짜로."
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 처음으로 꾸밈없는 미소를 짓는다."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day4Evening"
+    }
+  ]
+}

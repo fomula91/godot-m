@@ -1,0 +1,348 @@
+{
+  "Day2WithSora": [
+    {
+      "cmd": "show_scene",
+      "id": "classroom_day",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "set_var",
+      "path": "sora_affection",
+      "value": 2,
+      "op": "add"
+    },
+    {
+      "cmd": "set_var",
+      "path": "day2_studied_together",
+      "value": true
+    },
+    {
+      "cmd": "affinity_hint",
+      "character": "sora"
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "surprised",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "smile",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "소라야, 같이 하자."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "...! 네, 감사합니다."
+    },
+    {
+      "cmd": "narration",
+      "text": "소라의 눈이 반짝인다. 처음 보는 표정이다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "worried",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "에에~ 아쉽다... 그럼 나는 다른 친구한테 가볼게!"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 아쉬운 표정을 지으며 웃는다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "아, 잠깐! 이거 아까 매점에서 산 간식인데, 둘이서 힘내라고!"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 과자 봉지를 책상 위에 올려놓고 환하게 웃는다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "열심히 해~ 응원할게!"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "narration",
+      "text": "방과 후, 교실에서 둘이서 전시회 준비를 시작한다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "저는... 장식을 만드는 건 자신 있어요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "이 종이학을 봐주세요. 이런 식으로 장식하면 어떨까요?"
+    },
+    {
+      "cmd": "narration",
+      "text": "소라가 정성스럽게 접은 종이학을 보여준다."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "s",
+      "sprite": "happy"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "와, 정말 예쁘다. 소라 손재주가 대단하다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "에... 칭찬은 좀 부끄럽지만... 고마워요."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "s",
+      "sprite": "happy"
+    },
+    {
+      "cmd": "narration",
+      "text": "소라가 얼굴을 붉히며 작은 종이학 하나를 건넨다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "이건... 남은 거긴 한데, 괜찮으시면 가져가세요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "소중하게 간직할게요."
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "crane-gift_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "crane-gift"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "classroom_day",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "happy",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "smile",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "(...작은 종이학인데, 왠지 함부로 다룰 수 없는 느낌이다.)"
+    },
+    {
+      "cmd": "narration",
+      "text": "손바닥 위의 종이학이 의외로 따뜻하다. 소라의 체온이 남아 있는 것 같다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "(...뭔가 받으니까 기분이 묘하다. 부담은 아닌데, 신경이 쓰인다.)"
+    },
+    {
+      "cmd": "narration",
+      "text": "소라가 수줍게 미소 짓는다. 왠지 자꾸 의식하게 된다."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "s",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day2Evening"
+    }
+  ],
+  "Day2SoraEvening": [
+    {
+      "cmd": "show_scene",
+      "id": "classroom2_evening",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "종례가 끝나고 교실이 하나둘 비어간다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "normal",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "복도에서 소라를 마주친다. 소라가 창밖을 바라보고 있다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "...아, {{player.name}} 씨."
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "아직 안 갔어요?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "네... 석양이 예뻐서 잠깐 보고 있었어요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "{{player.name}} 씨는... 석양 좋아하세요?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "네, 좋아해요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "...저도요. 특히 이 학교에서 보는 석양은 특별해요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "내일 전시회... 기대돼요. {{player.name}} 씨와 함께니까."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "s",
+      "sprite": "happy"
+    },
+    {
+      "cmd": "narration",
+      "text": "소라가 처음으로 환하게 웃는다."
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "sora-sunset-smile_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "sora-sunset-smile"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "classroom2_evening",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "happy",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "(석양 빛에 비친 소라의 모습이... 자꾸 눈에 밟힌다.)"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...나도, 소라야."
+    },
+    {
+      "cmd": "narration",
+      "text": "두 사람 사이로 석양빛이 부드럽게 비춘다."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "s",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day2End"
+    }
+  ]
+}

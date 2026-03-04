@@ -1,0 +1,293 @@
+{
+  "GoWithHana": [
+    {
+      "cmd": "hide_character",
+      "id": "s",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "auditorium_day",
+      "transition": "slideRight"
+    },
+    {
+      "cmd": "set_var",
+      "path": "hana_affection",
+      "value": 2,
+      "op": "add"
+    },
+    {
+      "cmd": "set_var",
+      "path": "helped_sora",
+      "value": false
+    },
+    {
+      "cmd": "affinity_hint",
+      "character": "hana"
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "laugh",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "smile",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "좋아, 같이 가자 하나!"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "야호~! 가자가자!"
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "happy"
+    },
+    {
+      "cmd": "play_sound",
+      "id": "footsteps"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나에 이끌려 학교 곳곳을 돌아다닌다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "여기가 매점! 그리고 저기가 체육관! 아, 그리고 옥상도 갈 수 있어!"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "하하, 너 정말 활발하다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "에헤헤~ 새 친구랑 같이 다니니까 더 신나지!"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "{{player.name}}는 정말 재밌는 사람이야!"
+    },
+    {
+      "cmd": "stop_sound"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나의 밝은 에너지에 나도 모르게 웃음이 난다."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "normal2"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "......재밌지? 재밌는 거 맞지?"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 살짝 내 표정을 살핀다── 내가 정말 즐거운지 확인하듯이."
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "happy"
+    },
+    {
+      "cmd": "narration",
+      "text": "그 찰나의 불안한 시선이 왠지 마음에 걸린다."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "LunchTime"
+    }
+  ],
+  "Rooftop": [
+    {
+      "cmd": "hide_character",
+      "id": "s",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "auditorium_noon",
+      "transition": "slideRight"
+    },
+    {
+      "cmd": "set_var",
+      "path": "hana_affection",
+      "value": 1,
+      "op": "add"
+    },
+    {
+      "cmd": "set_var",
+      "path": "chose_library",
+      "value": false
+    },
+    {
+      "cmd": "affinity_hint",
+      "character": "hana"
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "happy",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "smile",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "하나, 옥상으로 가자!"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "좋아~! 달려!"
+    },
+    {
+      "cmd": "play_sound",
+      "id": "footsteps"
+    },
+    {
+      "cmd": "narration",
+      "text": "옥상에서 바라보는 풍경은 장관이다."
+    },
+    {
+      "cmd": "stop_sound"
+    },
+    {
+      "cmd": "narration",
+      "text": "세찬 바람이 머리카락을 흩날린다. 교정의 벚꽃이 분홍빛 융단처럼 펼쳐져 있다."
+    },
+    {
+      "cmd": "narration",
+      "text": "높은 곳에서 보는 세상은 어딘가 자유로운 느낌이다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "여기서 보면 벚꽃이 진짜 예쁘지? 나 이 학교에서 여기가 제일 좋아."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "와, 정말 좋은 곳이다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "에헤~ 이건 나만 아는 비밀 장소야. {{player.name}}에게만 알려주는 거다!"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "비밀 장소를 알려줘도 되는 거야?"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "{{player.name}}이니까 괜찮지! 우리 이제 특별한 사이잖아~"
+    },
+    {
+      "cmd": "change_sprite",
+      "id": "h",
+      "sprite": "laugh"
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 장난스럽게 윙크한다."
+    },
+    {
+      "cmd": "show_scene",
+      "id": "rooftop-hana_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "rooftop-hana"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "auditorium_noon",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "smile",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...하나는 정말 밝은 아이다. 같이 있으면 나까지 즐거워져."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day1Afternoon"
+    }
+  ]
+}

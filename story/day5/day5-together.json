@@ -1,0 +1,317 @@
+{
+  "Day5TogetherRoute": [
+    {
+      "cmd": "play_sound",
+      "id": "school-bell"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "school_front_early",
+      "transition": "fadeFromBlack duration 1500"
+    },
+    {
+      "cmd": "centered",
+      "text": "── 5일차: 이어지는 봄 ──"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "school_grounds_day",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "유우 선배의 말이 머릿속에서 맴돈다."
+    },
+    {
+      "cmd": "narration",
+      "text": "\"서두르지 마. 하지만 도망치지도 마.\""
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...소라도, 하나도, 둘 다 놓치고 싶지 않아."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "그건 욕심이 아니야. 그냥... 솔직한 마음이야."
+    },
+    {
+      "cmd": "narration",
+      "text": "옥상에서 내리던 벚꽃 비가 떠오른다. 유우 선배는 이 마음을 이해해줬다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...셋이서 함께라면, 어떤 계절이든."
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "narration",
+      "text": "방과후──"
+    },
+    {
+      "cmd": "jump",
+      "target": "Day5TogetherLetter"
+    }
+  ],
+  "Day5TogetherLetter": [
+    {
+      "cmd": "show_scene",
+      "id": "auditorium_sunrise",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "stop_music",
+      "fade": 1.0
+    },
+    {
+      "cmd": "play_music",
+      "id": "harem-ending",
+      "loop": true
+    },
+    {
+      "cmd": "narration",
+      "text": "강당 앞에서 소라와 하나가 기다리고 있다."
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "normal",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "happy",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "{{player.name}}! 이거 봐! 유우 선배가 편지를 남겼대!"
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "happy",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "우리 사물함에 하나씩 들어있었어요."
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "normal",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "나한테도 왔어. 같이 읽어볼까?"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "s",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "together-letter_cg",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "wait",
+      "duration": 3000
+    },
+    {
+      "cmd": "distraction_free"
+    },
+    {
+      "cmd": "gallery_unlock",
+      "id": "together-letter"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "auditorium_sunrise",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "셋이서 강당 계단에 나란히 앉아 편지를 펼친다."
+    },
+    {
+      "cmd": "narration",
+      "text": "\"──소라, 하나, 그리고 하루에게.\""
+    },
+    {
+      "cmd": "narration",
+      "text": "\"너희 셋을 보면서 안심했어.\""
+    },
+    {
+      "cmd": "narration",
+      "text": "\"소라는 더 이상 혼자가 아니고, 하나는 진짜 웃음을 찾았고,\""
+    },
+    {
+      "cmd": "narration",
+      "text": "\"하루는 두 사람 사이에서 제 역할을 잘 해주고 있더라.\""
+    },
+    {
+      "cmd": "narration",
+      "text": "\"내가 졸업하면서 걱정했던 게 하나 있었거든.\""
+    },
+    {
+      "cmd": "narration",
+      "text": "\"소라와 하나가 다시 외로워지지 않을까.\""
+    },
+    {
+      "cmd": "narration",
+      "text": "\"하지만 이제 안심이야. 하루가 있으니까.\""
+    },
+    {
+      "cmd": "narration",
+      "text": "\"셋이서 함께라면 어떤 계절이 와도 괜찮을 거야.\""
+    },
+    {
+      "cmd": "narration",
+      "text": "\"──봄은 끝나지 않아. 너희가 함께라면.\""
+    },
+    {
+      "cmd": "narration",
+      "text": "\"유우 올림.\""
+    },
+    {
+      "cmd": "show_character",
+      "id": "s",
+      "sprite": "happy",
+      "position": "left",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "h",
+      "sprite": "laugh",
+      "position": "right",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "show_character",
+      "id": "p",
+      "sprite": "smile",
+      "position": "center",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "narration",
+      "text": "소라의 눈에 눈물이 맺힌다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "유우 선배... 고마워요."
+    },
+    {
+      "cmd": "narration",
+      "text": "하나가 코를 훌쩍인다."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "아~ 선배 때문에 울잖아!"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "하하... 나도 좀 울 것 같아."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "s",
+      "text": "{{player.name}} 씨, 하나... 우리 앞으로도 함께해요."
+    },
+    {
+      "cmd": "dialogue",
+      "character": "h",
+      "text": "당연하지! 우리 셋은 평생 같이야!"
+    },
+    {
+      "cmd": "dialogue",
+      "character": "p",
+      "text": "...그래. 우리 셋이서, 이 봄을 이어가자."
+    },
+    {
+      "cmd": "narration",
+      "text": "벚꽃잎이 강당 앞에 흩날리며 세 사람을 감싼다."
+    },
+    {
+      "cmd": "narration",
+      "text": "졸업한 선배의 마음이, 세 사람의 우정이, 봄바람에 실려 퍼져나간다."
+    },
+    {
+      "cmd": "narration",
+      "text": "이 봄은 끝나지 않는다."
+    },
+    {
+      "cmd": "narration",
+      "text": "셋이 함께라면──"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "s",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "h",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "hide_character",
+      "id": "p",
+      "transition": "fadeOut"
+    },
+    {
+      "cmd": "show_scene",
+      "id": "auditorium_sunrise",
+      "transition": "fadeIn"
+    },
+    {
+      "cmd": "centered",
+      "text": "── 트루 엔딩: 이어지는 봄 ──"
+    },
+    {
+      "cmd": "end"
+    }
+  ]
+}
