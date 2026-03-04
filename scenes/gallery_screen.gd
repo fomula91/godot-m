@@ -38,6 +38,7 @@ const GALLERY_FILES: Dictionary = {
 
 @onready var grid: GridContainer = $VBoxContainer/ScrollContainer/Grid
 @onready var back_btn: Button = $VBoxContainer/TopBar/BackBtn
+@onready var fullscreen_bg: ColorRect = $FullscreenBG
 @onready var fullscreen_viewer: TextureRect = $FullscreenViewer
 
 
@@ -50,6 +51,7 @@ func _build_gallery() -> void:
 	for id in GALLERY_IDS:
 		var panel := Panel.new()
 		panel.custom_minimum_size = Vector2(320, 180)
+		panel.clip_contents = true
 
 		var unlocked := id in GameManager.gallery_unlocked
 		var file_name: String = GALLERY_FILES.get(id, "")
@@ -73,7 +75,7 @@ func _build_gallery() -> void:
 		else:
 			# 잠긴 CG
 			var style := StyleBoxFlat.new()
-			style.bg_color = Color(0.1, 0.05, 0.15, 0.8)
+			style.bg_color = Color(0.1, 0.05, 0.15, 1.0)
 			style.set_corner_radius_all(8)
 			panel.add_theme_stylebox_override("panel", style)
 
@@ -96,11 +98,13 @@ func _view_image(id: String) -> void:
 	var tex := load("res://assets/gallery/" + file_name) as Texture2D
 	if tex:
 		fullscreen_viewer.texture = tex
+		fullscreen_bg.visible = true
 		fullscreen_viewer.visible = true
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if fullscreen_viewer.visible and event is InputEventMouseButton and event.pressed:
+		fullscreen_bg.visible = false
 		fullscreen_viewer.visible = false
 		get_viewport().set_input_as_handled()
 
