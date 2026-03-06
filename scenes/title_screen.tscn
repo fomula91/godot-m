@@ -2,7 +2,14 @@
 
 [ext_resource type="Script" uid="uid://4qmafiwr1gig" path="res://scenes/title_screen.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://cs8ka5ly8civy" path="res://scenes/components/MenuButton.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://scenes/components/TitleHeader.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://bv6vwju37jas7" path="res://assets/particle/dingbats-492.png" id="2_mgrm8"]
+[ext_resource type="PackedScene" uid="uid://ywsydwrnsm0i" path="res://scenes/components/TitleHeader.tscn" id="3"]
+
+[sub_resource type="Gradient" id="Gradient_mgrm8"]
+colors = PackedColorArray(1, 0.4117647, 0.7058824, 1, 1, 0.89411765, 0.9137255, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_dc4i4"]
+gradient = SubResource("Gradient_mgrm8")
 
 [sub_resource type="ParticleProcessMaterial" id="1"]
 emission_shape = 3
@@ -10,7 +17,11 @@ emission_box_extents = Vector3(960, 1, 1)
 direction = Vector3(0, 1, 0)
 initial_velocity_min = 20.0
 initial_velocity_max = 50.0
-gravity = Vector3(0, 40, 0)
+gravity = Vector3(6, 40, 0)
+scale_min = 0.0
+scale_max = 0.07
+color = Color(1, 0.7176471, 0.77254903, 1)
+color_ramp = SubResource("GradientTexture1D_dc4i4")
 
 [node name="TitleScreen" type="Control" unique_id=1782496427]
 layout_mode = 3
@@ -50,6 +61,7 @@ grow_vertical = 2
 [node name="Petals" type="GPUParticles2D" parent="ParticlesLayer" unique_id=429010819]
 position = Vector2(960, -20)
 amount = 30
+texture = ExtResource("2_mgrm8")
 lifetime = 8.0
 process_material = SubResource("1")
 
