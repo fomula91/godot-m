@@ -20,7 +20,7 @@
     {
       "cmd": "show_character",
       "id": "h",
-      "sprite": "laugh",
+      "sprite": "happy",
       "position": "right",
       "transition": "fadeIn"
     },
@@ -49,14 +49,14 @@
       "text": "에이~ 맛있으니까 먹어봐!"
     },
     {
-      "cmd": "change_sprite",
+      "cmd": "hide_character",
       "id": "s",
-      "sprite": "fadeOut"
+      "transition": "fadeOut"
     },
     {
-      "cmd": "change_sprite",
+      "cmd": "hide_character",
       "id": "h",
-      "sprite": "fadeOut"
+      "transition": "fadeOut"
     },
     {
       "cmd": "narration",
@@ -65,7 +65,7 @@
     {
       "cmd": "show_character",
       "id": "p",
-      "sprite": "smile",
+      "sprite": "happy",
       "position": "center",
       "transition": "fadeIn"
     },
@@ -148,7 +148,7 @@
     {
       "cmd": "show_character",
       "id": "p",
-      "sprite": "smile",
+      "sprite": "happy",
       "position": "center",
       "transition": "fadeIn"
     },

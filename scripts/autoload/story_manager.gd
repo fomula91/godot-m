@@ -23,7 +23,7 @@ signal command_completed()
 # 캐릭터 정의 (script.js 기반)
 var characters: Dictionary = {
 	"p": {"name": "{{player.name}}", "color": "#ffa726", "directory": "haru", "sprites": {
-		"normal": "haru_A100.webp", "smile": "haru_A101.webp",
+		"normal": "haru_A100.webp", "happy": "haru_A101.webp",
 		"angry": "haru_A102.webp", "surprised": "haru_A104.webp", "worried": "haru_A103.webp"
 	}},
 	"s": {"name": "소라", "color": "#4a90d9", "directory": "sora", "sprites": {
@@ -33,7 +33,7 @@ var characters: Dictionary = {
 	}},
 	"h": {"name": "하나", "color": "#e87ba1", "directory": "hana", "sprites": {
 		"normal": "hana_A100.webp", "happy": "hana_A201.webp",
-		"normal2": "hana_A200.webp", "laugh": "hana_A201.webp",
+		"normal2": "hana_A200.webp",
 		"angry": "hana_A202.webp", "worried": "hana_A203.webp",
 		"surprised": "hana_A204.webp", "yandere": "hana_B199.webp", "shy": "hana_A199.webp"
 	}},

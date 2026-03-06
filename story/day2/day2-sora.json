@@ -30,7 +30,7 @@
     {
       "cmd": "show_character",
       "id": "p",
-      "sprite": "smile",
+      "sprite": "happy",
       "position": "left",
       "transition": "fadeIn"
     },
@@ -169,7 +169,7 @@
     {
       "cmd": "show_character",
       "id": "p",
-      "sprite": "smile",
+      "sprite": "happy",
       "position": "left",
       "transition": "fadeIn"
     },

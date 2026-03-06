@@ -175,7 +175,7 @@
     {
       "cmd": "show_character",
       "id": "p",
-      "sprite": "smile",
+      "sprite": "happy",
       "position": "right",
       "transition": "fadeIn"
     },
@@ -262,7 +262,7 @@
     {
       "cmd": "show_character",
       "id": "p",
-      "sprite": "smile",
+      "sprite": "happy",
       "position": "right",
       "transition": "fadeIn"
     },

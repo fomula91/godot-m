@@ -23,14 +23,14 @@
     {
       "cmd": "show_character",
       "id": "h",
-      "sprite": "laugh",
+      "sprite": "happy",
       "position": "center",
       "transition": "fadeIn"
     },
     {
       "cmd": "show_character",
       "id": "p",
-      "sprite": "smile",
+      "sprite": "happy",
       "position": "right",
       "transition": "fadeIn"
     },

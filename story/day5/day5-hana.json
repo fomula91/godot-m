@@ -342,7 +342,7 @@
     {
       "cmd": "change_sprite",
       "id": "h",
-      "sprite": "laugh"
+      "sprite": "happy"
     },
     {
       "cmd": "narration",
@@ -376,7 +376,7 @@
     {
       "cmd": "change_sprite",
       "id": "h",
-      "sprite": "laugh"
+      "sprite": "happy"
     },
     {
       "cmd": "dialogue",

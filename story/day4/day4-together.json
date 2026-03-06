@@ -50,7 +50,7 @@
     {
       "cmd": "show_character",
       "id": "h",
-      "sprite": "laugh",
+      "sprite": "happy",
       "position": "right",
       "transition": "fadeIn"
     },
@@ -96,9 +96,9 @@
       "text": "그 말 들으니까 안심이다."
     },
     {
-      "cmd": "change_sprite",
+      "cmd": "hide_character",
       "id": "p",
-      "sprite": "fadeOut"
+      "transition": "fadeOut"
     },
     {
       "cmd": "show_character",
