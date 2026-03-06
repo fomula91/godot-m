@@ -15,6 +15,24 @@ func _ready() -> void:
 	hover.border_color = Color(0.957, 0.561, 0.694, 0.6)
 	add_theme_stylebox_override("hover", hover)
 
+	# Pressed 상태 스타일
+	var pressed_style := style.duplicate()
+	pressed_style.bg_color = Color(0.05, 0.02, 0.8, 0.95)
+	pressed_style.border_color = Color(0.957, 0.561, 0.694, 0.8)
+	add_theme_stylebox_override("pressed", pressed_style)
+
+	#  disabled 상태 스타일
+	var disabled_style := style.duplicate()
+	disabled_style.bg_color = Color(0.1, 0.1, 0.1, 0.4)
+	disabled_style.border_color = Color(0.3, 0.3, 0.3, 0.2)
+	add_theme_stylebox_override("disabled", disabled_style)
+
+	# focus: 키보드 포커스 (테두리만 강조)
+	var focus_style := style.duplicate()
+	focus_style.border_color = Color(0.957, 0.561, 0.694, 0.9)
+	focus_style.set_border_width_all(2)
+	add_theme_stylebox_override("focus", focus_style)
+
 	#클릭 사운드
 	pressed.connect(AudioManager.play_ui_click)
 
