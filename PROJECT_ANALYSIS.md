@@ -12,7 +12,6 @@
 | 장르 | 비주얼 노벨 (Visual Novel) |
 | 엔진 | Godot 4.6 |
 | 렌더러 | GL Compatibility (모바일 포함) |
-| 물리 엔진 | Jolt Physics 3D |
 | 스크립트 언어 | GDScript |
 | 해상도 | 1920 x 1080 |
 | 화면 스트레치 | canvas_items |
@@ -341,7 +340,6 @@ OverlayLayer        → TransitionRect, AffinityHint, InputDialog
 
 ### 특이사항
 - `tools/convert_stories.py`로 Monogatari에서 변환한 마이그레이션 프로젝트
-- 물리 엔진(Jolt Physics 3D)이 설정되어 있으나 실제 게임에서 3D 물리를 사용하지 않음
 - Supabase 통계 연동 코드가 존재하나 현재 비활성 상태
 - 캐릭터 이미지에 `.enc` 암호화 버전이 함께 존재
 
