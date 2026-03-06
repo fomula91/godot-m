@@ -17,3 +17,12 @@ func _ready() -> void:
 
 	#클릭 사운드
 	pressed.connect(AudioManager.play_ui_click)
+
+	# 반응형 폰트
+	get_viewport().size_changed.connect(_update_font_size)
+	_update_font_size()
+
+func _update_font_size() -> void:
+	var viewport_h := get_viewport().get_visible_rect().size.y
+	var font_size := clampi(int(viewport_h * 0.03), 16, 36)
+	add_theme_font_size_override("font_size", font_size)

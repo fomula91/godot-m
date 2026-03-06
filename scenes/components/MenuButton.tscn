@@ -3,6 +3,6 @@
 [ext_resource type="Script" uid="uid://bi10dgervauv4" path="res://scenes/components/MenuButton.gd" id="1"]
 
 [node name="MenuButton" type="Button" unique_id=1473959774]
-custom_minimum_size = Vector2(350, 150)
-theme_override_font_sizes/font_size = 22
+size_flags_horizontal = 3
 script = ExtResource("1")
+ 
