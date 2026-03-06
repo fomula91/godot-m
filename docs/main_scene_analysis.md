@@ -7,7 +7,11 @@
 
 ## 1. 아키텍처 개요
 
-MainScene은 **MVC 패턴의 View + Controller** 역할을 수행한다. StoryManager(Model)가 JSON 스토리 데이터를 파싱하여 시그널을 발생시키면, MainScene이 이를 수신하여 UI를 갱신한다.
+MainScene은 **시그널 기반 Observer + Mediator 패턴**으로 동작한다. StoryManager가 JSON 스토리 데이터를 파싱하여 시그널을 발행하면, MainScene이 Mediator로서 이를 수신하고 여러 UI 노드에 분배하여 갱신한다.
+
+- **StoryManager** = 데이터 + 로직 (시그널 발행자, Publisher)
+- **MainScene** = 중재자 (시그널 수신 → UI 노드 분배, Mediator)
+- **각 UI 노드** = 단순 표시 요소 (Subscriber)
 
 ```
 [StoryManager] --시그널--> [MainScene] --노드 조작--> [UI 컴포넌트]
@@ -35,7 +39,239 @@ UI 업데이트 (텍스트 타이핑, 배경 전환, 캐릭터 표시 등)
 
 ---
 
-## 2. 씬 트리 구조 (main_scene.tscn)
+## 2. 디자인 패턴 심층 분석
+
+미연시/비주얼 노벨에서 전형적으로 사용되는 패턴들이 이 프로젝트에 어떻게 적용되어 있는지 분석한다.
+
+### 2.1 Command 패턴 — 스토리 명령 체계
+
+가장 핵심적인 패턴. 각 스토리 행위(대사, 배경변경, 캐릭터 등장 등)를 독립된 **명령 객체(JSON Dictionary)**로 표현한다.
+
+**구조**:
+```
+story/day1/start.json
+  └─ "Start": [
+       { "cmd": "show_scene", "id": "school_front_early", "transition": "fadeIn" },
+       { "cmd": "dialogue", "character": "s", "text": "안녕!" },
+       { "cmd": "choice", "choices": [...] },
+       ...
+     ]
+```
+
+**실행 흐름** (`story_manager.gd`):
+```
+advance()  →  cmd = lines[line_index]  →  _dispatch_command(cmd)
+                                              ↓
+                                         match cmd_type:
+                                           "dialogue"       → dialogue_requested.emit()
+                                           "show_scene"     → scene_change_requested.emit()
+                                           "show_character"  → character_show_requested.emit()
+                                           "choice"         → choice_requested.emit()
+                                           "jump"           → jump(target)
+                                           "conditional"    → evaluate → jump/advance
+                                           "fade_jump"      → fade → jump
+                                           "set_var"        → GameManager.set_var()
+                                           "play_music"     → AudioManager.play_music()
+                                           ...
+```
+
+**장점**: 스토리 작성자가 GDScript를 몰라도 JSON만으로 연출을 제어할 수 있다. 명령 추가도 `_dispatch_command()`에 case 하나만 추가하면 된다.
+
+### 2.2 Observer 패턴 (Signal) — 시그널 기반 이벤트 전달
+
+StoryManager가 **16개 시그널**을 발행하고, MainScene이 구독하는 1:1 Observer 구조.
+
+```
+[StoryManager]                          [MainScene]
+  dialogue_requested  ─────connect────→  _on_dialogue()
+  narration_requested ─────connect────→  _on_narration()
+  scene_change_requested ──connect────→  _on_scene_change()
+  character_show_requested ─connect───→  _on_character_show()
+  fade_requested  ─────────connect────→  _on_fade()
+  choice_requested  ───────connect────→  _on_choice()
+  ...                                    ...
+```
+
+**설계 의도**: StoryManager는 UI를 전혀 모른다. 시그널만 발행하므로 MainScene을 다른 프레젠터(예: 3D 씬, 미니맵 뷰)로 교체해도 StoryManager 수정이 필요 없다.
+
+**현재 한계**: 구독자가 MainScene 하나뿐인 1:1 관계. 다중 구독자가 필요하면(예: 로그 패널이 dialogue_requested를 동시 수신) 추가 연결만 하면 되므로 확장성은 확보되어 있다.
+
+### 2.3 Mediator 패턴 — MainScene의 중재자 역할
+
+MainScene은 StoryManager 시그널을 받아 **여러 UI 노드에 분배**하는 Mediator다.
+
+```
+_on_dialogue(char_id, name_text, text):
+    dialogue_box.visible = true       ← DialogueBox 제어
+    centered_text.visible = false     ← CenteredText 제어
+    name_label.text = name_text       ← NameLabel 제어
+    name_label.add_theme_color...     ← NameLabel 스타일 제어
+    _start_typing(text)               ← TextLabel + Tween 제어
+    _dialogue_log.append(...)         ← 내부 로그 축적
+```
+
+하나의 시그널이 5개 이상의 노드 상태를 변경한다. UI 노드들은 서로를 모르고, MainScene만이 전체 상태를 파악하여 조율한다.
+
+### 2.4 State Machine 패턴 — 플레이 상태 관리
+
+명시적 State enum은 없지만, **bool 플래그 조합**으로 암묵적 상태 머신을 구현한다.
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    MainScene 상태                     │
+├──────────────┬──────────────────────────────────────┤
+│ _typing      │ 텍스트 출력 중 (클릭→즉시 완료)        │
+│ _auto_mode   │ 자동 진행 (타이머 기반)                │
+│ _skip_mode   │ 고속 스킵 (0.05초 간격)               │
+│ _distraction │ UI 숨김 모드 (클릭→복원)               │
+│ choice_panel │ 선택지 대기 (입력 차단)                │
+│ input_dialog │ 텍스트 입력 대기 (입력 차단)            │
+└──────────────┴──────────────────────────────────────┘
+
+StoryManager 측:
+│ _waiting       │ fade_jump/wait/input 대기 중 (advance 차단) │
+│ _choice_pending│ 선택지 응답 대기 중 (advance 차단)          │
+```
+
+**상태 전이 (입력 처리 시)**:
+```
+_unhandled_input("vn_advance")
+    │
+    ├── input_dialog.visible? → 무시 (return)
+    │
+    ├── _distraction_free?    → 해제, UI 복원
+    │
+    ├── centered_text.visible? → 숨김, advance()
+    │
+    ├── _typing?              → _complete_typing() (즉시 완료)
+    │
+    ├── choice_panel.visible? → 무시 (선택 강제)
+    │
+    └── else                  → StoryManager.advance()
+```
+
+### 2.5 Strategy 패턴 — 트랜지션 처리
+
+`match transition:` 분기가 Strategy 패턴의 인라인 구현에 해당한다.
+
+**캐릭터 표시** (`_on_character_show`):
+```
+transition 값에 따라 서로 다른 애니메이션 전략 선택:
+  "fadeIn"       → Tween: alpha 0→1
+  "fadeInUp"     → Tween: alpha 0→1 + Y -30px (병렬)
+  "slideInLeft"  → Tween: X -200px→0 (EASE_OUT, CUBIC)
+  "slideInRight" → Tween: X +200px→0 (EASE_OUT, CUBIC)
+  "bounceIn"     → Tween: scale 0.8→1.0 (EASE_OUT, BACK) + alpha
+  _              → 즉시 표시
+```
+
+동일 인터페이스(슬롯에 텍스처 설정 + 애니메이션)에 대해 전환 방식만 교체. 별도 클래스로 분리하지 않고 match문으로 처리하는 것은 Godot/VN에서 흔한 경량 구현이다.
+
+### 2.6 Memento 패턴 — 세이브/로드
+
+게임 상태의 **스냅샷을 캡처하고 복원**하는 구조.
+
+**캡처 (Memento 생성)**:
+```gdscript
+func _quick_save():
+    var extra = StoryManager.get_save_data()  # {current_label, line_index}
+    extra["background"] = _current_bg_id
+    extra["bgm"] = AudioManager.get_current_bgm()
+    extra["characters"] = _character_slots.duplicate()
+    GameManager.save_game(0, extra)           # → JSON 파일로 직렬화
+```
+
+**복원 (Memento 적용)**:
+```gdscript
+func _restore_state(data):
+    _on_scene_change(data["background"], "instant")   # 배경 즉시 복원
+    AudioManager.play_music(data["bgm"])               # BGM 복원
+    # 캐릭터 슬롯 초기화
+    StoryManager.restore_from_save(data)               # 라벨/인덱스 복원
+    StoryManager.advance()                             # 재개
+```
+
+**저장 경로**: `user://saves/slot_0.json` (퀵 세이브), 최대 10슬롯.
+
+### 2.7 Interpreter 패턴 — JSON 스토리 스크립트 해석
+
+StoryManager가 JSON 배열을 순차적으로 읽어 실행하는 **인터프리터** 역할.
+
+```
+_labels["Start"] = [            ← 프로그램 (명령 배열)
+    "나레이션 텍스트",             ← String → 나레이션으로 해석
+    {"cmd": "dialogue", ...},    ← Dictionary → _dispatch_command()
+    {"cmd": "conditional", ...}, ← 조건 분기 (if-else)
+    {"cmd": "jump", ...},        ← 라벨 점프 (goto)
+]
+```
+
+**프로그래밍 언어 요소와의 대응**:
+
+| JSON 명령 | 프로그래밍 개념 |
+|-----------|---------------|
+| `line_index++` / `advance()` | 프로그램 카운터 (PC) |
+| `"jump"` | goto / 함수 호출 |
+| `"conditional"` | if-else 분기 |
+| `"choice"` | switch + 사용자 입력 대기 |
+| `"set_var"` | 변수 할당 |
+| `"wait"` / `"fade_jump"` | sleep / blocking call |
+| `current_label` | 현재 실행 중인 함수명 |
+
+### 2.8 Singleton 패턴 — Autoload 전역 매니저
+
+Godot의 Autoload 시스템을 통해 4개 싱글톤이 전역 접근 가능.
+
+```
+project.godot [autoload] 섹션:
+  StoryManager  → scripts/autoload/story_manager.gd
+  GameManager   → scripts/autoload/game_manager.gd
+  AudioManager  → scripts/autoload/audio_manager.gd
+  DebugOverlay  → scripts/autoload/debug_overlay.gd
+```
+
+**책임 분리**:
+
+| 싱글톤 | 담당 영역 | MainScene과의 관계 |
+|--------|----------|-------------------|
+| StoryManager | 스토리 데이터, 명령 실행, 라벨 관리 | 시그널 발행자 (16개 시그널) |
+| GameManager | 게임 변수, 설정, 세이브/로드, 갤러리 | 상태 저장소 + 유틸리티 |
+| AudioManager | BGM 크로스페이드, SFX 재생 | 음향 제어 위임 |
+| DebugOverlay | 디버그 로그, FPS/입력 추적 | 로깅 전용 |
+
+### 2.9 패턴 간 상호작용 다이어그램
+
+```
+사용자 클릭
+    │
+    ▼
+[State Machine] ─── 현재 상태 확인 (typing? choice? distraction?)
+    │
+    ▼
+[Observer] ─── StoryManager.advance() 호출
+    │
+    ▼
+[Interpreter] ─── JSON 명령 읽기 (line_index++)
+    │
+    ▼
+[Command] ─── _dispatch_command(cmd) → 명령 타입별 분기
+    │
+    ├──[Observer]──→ 시그널 발행 (dialogue_requested 등)
+    │                    │
+    │                    ▼
+    │              [Mediator] ─── MainScene이 UI 노드들 조율
+    │                    │
+    │                    ▼
+    │              [Strategy] ─── 트랜지션 방식 선택 (fadeIn, slideIn 등)
+    │
+    ├──[Singleton]──→ GameManager.set_var() / AudioManager.play_music()
+    │
+    └──[Interpreter]──→ jump(target) → 다른 라벨로 PC 이동
+```
+
+---
+
+## 3. 씬 트리 구조 (main_scene.tscn)
 
 ```
 MainScene (Control, 전체화면)
@@ -90,9 +326,9 @@ MainScene (Control, 전체화면)
 
 ---
 
-## 3. 스크립트 기능별 상세 분석
+## 4. 스크립트 기능별 상세 분석
 
-### 3.1 초기화 (`_ready`)
+### 5.1 초기화 (`_ready`)
 
 ```gdscript
 func _ready() -> void:
@@ -105,7 +341,7 @@ func _ready() -> void:
 
 **마우스 패스스루 전략**: 루트 Control과 배경/캐릭터 레이어를 `MOUSE_FILTER_IGNORE`로 설정하여, 클릭 이벤트가 `_unhandled_input()`까지 전파되도록 한다. 이렇게 하면 대화 진행 클릭이 UI 요소에 의해 소비되지 않는다.
 
-### 3.2 입력 처리
+### 5.2 입력 처리
 
 ```gdscript
 func _unhandled_input(event: InputEvent) -> void:
@@ -121,7 +357,7 @@ func _unhandled_input(event: InputEvent) -> void:
 4. 선택지 표시 중 → 무시 (선택 강제)
 5. 그 외 → StoryManager.advance()
 
-### 3.3 텍스트 타이핑 시스템
+### 5.3 텍스트 타이핑 시스템
 
 ```
 텍스트 속도 = GameManager.settings["text_speed"] (ms/char)
@@ -132,7 +368,7 @@ duration = 글자수 × speed_ms / 1000.0
 - **스킵 모드**: duration = 0.05초 (거의 즉시)
 - **타이핑 완료 후**: auto_mode면 타이머 시작, skip_mode면 0.05초 후 자동 진행
 
-### 3.4 대화 처리 (3가지 모드)
+### 5.4 대화 처리 (3가지 모드)
 
 | 모드 | 핸들러 | 이름 라벨 | 대화창 |
 |------|--------|----------|--------|
@@ -140,7 +376,7 @@ duration = 글자수 × speed_ms / 1000.0
 | 나레이션 | `_on_narration()` | 숨김 | 표시 |
 | 중앙 텍스트 | `_on_centered()` | - | 숨김, 중앙 라벨 페이드인 |
 
-### 3.5 선택지 시스템
+### 4.5 선택지 시스템
 
 **버튼 동적 생성**:
 - 기존 자식 노드 `queue_free()` 후 새로 생성
@@ -153,7 +389,7 @@ duration = 글자수 × speed_ms / 1000.0
 2. 선택 클릭 시 → `_record_vote_and_show_stats()` (투표 + 결과 표시)
 3. 2.5초 대기 후 → `_finalize_choice()` (스토리 진행)
 
-### 3.6 배경 전환
+### 4.6 배경 전환
 
 | 전환 타입 | 동작 |
 |----------|------|
@@ -163,7 +399,7 @@ duration = 글자수 × speed_ms / 1000.0
 
 **더블 버퍼링**: bg1(현재) + bg2(다음)으로 크로스페이드 구현. 페이드 완료 후 bg2 → bg1 복사.
 
-### 3.7 캐릭터 표시/숨김 애니메이션
+### 4.7 캐릭터 표시/숨김 애니메이션
 
 **표시 트랜지션 (5종)**:
 
@@ -185,7 +421,7 @@ duration = 글자수 × speed_ms / 1000.0
 
 **슬롯 매핑**: `_character_slots` Dictionary로 캐릭터 ID → 포지션(left/center/right) 추적.
 
-### 3.8 페이드 전환
+### 4.8 페이드 전환
 
 ```gdscript
 "to_black"  → TransitionRect alpha 0→1 (어두워짐)
@@ -194,7 +430,7 @@ duration = 글자수 × speed_ms / 1000.0
 
 Color 파라미터로 검은색 외 다른 색상 페이드도 지원.
 
-### 3.9 호감도 알림
+### 4.9 호감도 알림
 
 4가지 캐릭터별 설정:
 
@@ -207,13 +443,13 @@ Color 파라미터로 검은색 외 다른 색상 페이드도 지원.
 
 **표시 타이밍**: 1400ms 표시 → 400ms 페이드아웃 (총 1800ms)
 
-### 3.10 Auto/Skip 모드
+### 5.10 Auto/Skip 모드
 
 - **Auto**: 타이핑 완료 후 `auto_speed` 초 대기 → 자동 advance
 - **Skip**: 타이핑 duration을 0.05초로 강제 → 타이핑 완료 후 0.05초 대기 → advance
 - **상호 배타**: Auto 켜면 Skip 끔, Skip 켜면 Auto 끔
 
-### 3.11 세이브/로드
+### 5.11 세이브/로드
 
 **퀵 세이브 (slot 0)**:
 ```
@@ -230,7 +466,7 @@ Color 파라미터로 검은색 외 다른 색상 페이드도 지원.
 3. 캐릭터 슬롯 초기화 (모든 슬롯 텍스처/alpha 리셋)
 4. 스토리 위치 복원 → advance()
 
-### 3.12 대화창 스타일
+### 5.12 대화창 스타일
 
 코드에서 동적으로 생성하는 StyleBoxFlat:
 - 배경: `rgba(20, 10, 30, 0.82)` (반투명 다크 퍼플)
@@ -240,9 +476,9 @@ Color 파라미터로 검은색 외 다른 색상 페이드도 지원.
 
 ---
 
-## 4. 싱글톤 의존성
+## 5. 싱글톤 의존성
 
-### 4.1 StoryManager (`scripts/autoload/story_manager.gd`)
+### 5.1 StoryManager (`scripts/autoload/story_manager.gd`)
 
 **역할**: JSON 스토리 파싱, 명령 디스패치, 라벨 점프
 
@@ -256,7 +492,7 @@ MainScene이 연결하는 시그널 16개:
 
 핵심 호출: `start()`, `advance()`, `on_choice_selected()`, `on_input_completed()`
 
-### 4.2 GameManager (`scripts/autoload/game_manager.gd`)
+### 5.2 GameManager (`scripts/autoload/game_manager.gd`)
 
 **역할**: 게임 상태, 설정, 세이브/로드
 
@@ -266,7 +502,7 @@ MainScene이 연결하는 시그널 16개:
 - `save_game()` / `load_game()` — 세이브 슬롯
 - `unlock_gallery()` — 갤러리 해금
 
-### 4.3 AudioManager (`scripts/autoload/audio_manager.gd`)
+### 5.3 AudioManager (`scripts/autoload/audio_manager.gd`)
 
 **역할**: BGM 크로스페이드, 효과음 재생
 
@@ -275,7 +511,7 @@ MainScene이 연결하는 시그널 16개:
 - `play_music()` — 로드 시 BGM 복원
 - `get_current_bgm()` — 세이브 시 현재 BGM 저장
 
-### 4.4 DebugOverlay (`scripts/autoload/debug_overlay.gd`)
+### 5.4 DebugOverlay (`scripts/autoload/debug_overlay.gd`)
 
 **역할**: 디버그 로그 (F3 토글)
 
@@ -283,7 +519,7 @@ MainScene이 연결하는 시그널 16개:
 
 ---
 
-## 5. 상태 변수 정리
+## 6. 상태 변수 정리
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
@@ -300,7 +536,7 @@ MainScene이 연결하는 시그널 16개:
 
 ---
 
-## 6. 개선 가능 포인트
+## 7. 개선 가능 포인트
 
 ### 미구현 / 부분 구현
 - `_display_stats_preview()` (342줄): 통계 프리뷰 로직 본문 비어있음
