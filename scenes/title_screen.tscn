@@ -84,28 +84,16 @@ custom_minimum_size = Vector2(0, 40)
 
 [node name="StartBtn" parent="CenterContainer/VBoxContainer" instance=ExtResource("2")]
 layout_mode = 2
-text = "시작하기(새로운)"
+text = "시작하기"
 
-; [node name="StartBtn" type="Button" parent="CenterContainer/VBoxContainer"]
-; layout_mode = 2
-; custom_minimum_size = Vector2(300, 50)
-; text = "시작하기"
-; theme_override_font_sizes/font_size = 22
-
-[node name="ContinueBtn" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="ContinueBtn" parent="CenterContainer/VBoxContainer" instance=ExtResource("2")]
 layout_mode = 2
-custom_minimum_size = Vector2(300, 50)
 text = "이어하기"
-theme_override_font_sizes/font_size = 22
 
-[node name="GalleryBtn" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="GalleryBtn" parent="CenterContainer/VBoxContainer" instance=ExtResource("2")]
 layout_mode = 2
-custom_minimum_size = Vector2(300, 50)
 text = "갤러리"
-theme_override_font_sizes/font_size = 22
 
-[node name="SettingsBtn" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="SettingsBtn" parent="CenterContainer/VBoxContainer" instance=ExtResource("2")]
 layout_mode = 2
-custom_minimum_size = Vector2(300, 50)
 text = "설정"
-theme_override_font_sizes/font_size = 22
