@@ -1,19 +1,22 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://ywsydwrnsm0i"]
 
-[ext_resource type="Script" path="res://scenes/components/TitleHeader.gd" id="3"]
+[ext_resource type="Script" uid="uid://bhvj53jofm6ri" path="res://scenes/components/TitleHeader.gd" id="3"]
 
-[node name="TitleHeader" type="VBoxContainer"]
+[node name="TitleHeader" type="VBoxContainer" unique_id=817223128]
 script = ExtResource("3")
 
-[node name="TitleLabel" type="Label" parent="."]
-horizontal_alignment = 1
+[node name="TitleLabel" type="Label" parent="." unique_id=1508600889]
+layout_mode = 2
 size_flags_horizontal = 3
 text = "사쿠라학원"
-
-[node name="SubtitleLabel" type="Label" parent="."]
 horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="." unique_id=708315212]
+layout_mode = 2
 size_flags_horizontal = 3
 text = "─ 봄날의 이야기 ─"
+horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="."]
-custom_minimum_size = Vector2(0, 40) 
+[node name="Spacer" type="Control" parent="." unique_id=1870581456]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
