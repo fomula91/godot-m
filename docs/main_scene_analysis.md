@@ -17,6 +17,16 @@
 Observer 패턴 기반으로 StoryManager의 시그널을 구독하는 Mediator 역할.
 스토리 로직과 프레젠테이션이 분리되어 있어 구조적으로 건전함.
 
+캐릭터 관련 로직은 `character_controller.gd`로 분리되어
+CharacterLayer 노드에서 StoryManager 시그널을 직접 구독함.
+
+```
+[StoryManager (Autoload)]
+        | signals (character_show/hide/sprite_changed)
+        v
+[character_controller.gd (CharacterLayer)]
+```
+
 ---
 
 ## 2. 씬 트리 구조 (main_scene.tscn)
@@ -26,7 +36,7 @@ MainScene (Control) -- 루트, 전체 화면
 +-- BackgroundLayer (Control)
 |   +-- Background1 (TextureRect) -- 현재 배경
 |   +-- Background2 (TextureRect) -- 전환용 배경 (alpha=0)
-+-- CharacterLayer (Control)
++-- CharacterLayer (Control, script=character_controller.gd)
 |   +-- LeftSlot (TextureRect)    -- 왼쪽 캐릭터 (alpha=0)
 |   +-- CenterSlot (TextureRect)  -- 중앙 캐릭터 (alpha=0)
 |   +-- RightSlot (TextureRect)   -- 오른쪽 캐릭터 (alpha=0)
@@ -68,7 +78,6 @@ MainScene (Control) -- 루트, 전체 화면
 | `_skip_mode` | bool | 스킵 모드 |
 | `_distraction_free` | bool | UI 숨김 모드 |
 | `_current_bg_id` | String | 현재 배경 ID (세이브용) |
-| `_character_slots` | Dictionary | `{char_id: "left"/"center"/"right"}` 매핑 |
 | `_dialogue_log` | Array[Dictionary] | 대화 이력 |
 | `_affinity_config` | Dictionary | 거리감 알림 설정 (하드코딩) |
 | `_supabase_url` | String | Supabase 통계 URL (빈 문자열이면 비활성) |
@@ -76,6 +85,12 @@ MainScene (Control) -- 루트, 전체 화면
 | `_vote_http` | HTTPRequest | 투표 기록용 HTTP |
 | `_bg_tween` | Tween | 배경 크로스페이드 트윈 추적 (충돌 방지용) |
 | `_pending_choice_data` | Dictionary | 비동기 투표 중 임시 선택 데이터 |
+
+#### character_controller.gd 상태 변수
+
+| 변수 | 타입 | 용도 |
+|------|------|------|
+| `_character_slots` | Dictionary | `{char_id: "left"/"center"/"right"}` 매핑 |
 
 ---
 
@@ -103,9 +118,6 @@ vn_advance 액션 입력 (_unhandled_input)
 | `centered_requested` | `_on_centered` | 대화창 숨김, 중앙 텍스트 페이드인 |
 | `choice_requested` | `_on_choice` | 선택지 버튼 동적 생성 |
 | `scene_change_requested` | `_on_scene_change` | 배경 교체 (크로스페이드/즉시) |
-| `character_show_requested` | `_on_character_show` | 캐릭터 슬롯에 스프라이트 표시 |
-| `character_hide_requested` | `_on_character_hide` | 캐릭터 페이드아웃 |
-| `character_sprite_changed` | `_on_character_sprite_change` | 표정 교체 |
 | `fade_requested` | `_on_fade` | 화면 페이드 인/아웃 |
 | `wait_requested` | `_on_wait` | 대기 (StoryManager이 타이머 처리) |
 | `input_requested` | `_on_input_request` | 이름 입력 다이얼로그 |
@@ -113,6 +125,14 @@ vn_advance 액션 입력 (_unhandled_input)
 | `gallery_unlock_requested` | `_on_gallery_unlock` | 갤러리 해금 |
 | `distraction_free_toggled` | `_on_distraction_free` | UI 토글 |
 | `end_requested` | `_on_end` | 타이틀 화면으로 복귀 |
+
+#### character_controller.gd 시그널 (CharacterLayer에서 직접 구독)
+
+| StoryManager 시그널 | 핸들러 | 동작 |
+|---------------------|--------|------|
+| `character_show_requested` | `_on_show` | 캐릭터 슬롯에 스프라이트 표시 |
+| `character_hide_requested` | `_on_hide` | 캐릭터 페이드아웃 |
+| `character_sprite_changed` | `_on_sprite_change` | 표정 교체 |
 
 ---
 
@@ -132,7 +152,7 @@ vn_advance 액션 입력 (_unhandled_input)
 - `"instant"` -> bg1에 즉시 교체
 - 그 외 -> bg2에 로드 후 1초 크로스페이드, 완료 시 bg1으로 swap
 
-### 6.3 캐릭터 애니메이션
+### 6.3 캐릭터 애니메이션 (character_controller.gd에서 처리)
 
 | 전환 타입 | 등장 효과 |
 |-----------|-----------|
@@ -164,7 +184,9 @@ vn_advance 액션 입력 (_unhandled_input)
 ### 6.6 세이브/로드
 
 - 퀵세이브 (slot 0): 현재 배경, BGM, 캐릭터 슬롯, 스토리 위치 저장
+  - 캐릭터 상태는 `$CharacterLayer.get_state()`로 조회
 - 퀵로드 (slot 0): 상태 복원 후 `StoryManager.advance()` 호출
+  - 캐릭터 상태는 `$CharacterLayer.restore_state()`로 복원
 
 ### 6.7 외부 진입점
 
@@ -190,12 +212,13 @@ vn_advance 액션 입력 (_unhandled_input)
 
 ### 7.2 발견된 문제점
 
-#### [높음] God Object -- 670줄, 관심사 7개 이상 혼재
+#### [높음] God Object -- 573줄, 관심사 6개 이상 혼재 (캐릭터 분리 후 개선됨)
 
 **위치**: 전체 파일
 
-하나의 스크립트가 대화창, 배경 전환, 캐릭터 관리, 선택지 UI,
-세이브/로드, 입력 다이얼로그, Supabase 통계까지 모두 담당.
+캐릭터 관리가 `character_controller.gd`로 분리되어 670줄 → 573줄로 감소.
+여전히 대화창, 배경 전환, 선택지 UI, 세이브/로드, 입력 다이얼로그,
+Supabase 통계를 담당.
 
 #### ~~[높음] 캐릭터 상태 로드 미복원 (버그)~~ ✅ 수정 완료
 
@@ -213,34 +236,34 @@ vn_advance 액션 입력 (_unhandled_input)
 
 #### [중간] Supabase 코드가 뷰에 존재 (SRP 위반)
 
-**위치**: line 320~391 (약 70줄)
+**위치**: line 316~385 (약 70줄)
 
 HTTP 통신, JSON 파싱, 통계 표시 로직이 뷰 컨트롤러에 직접 존재.
 별도 매니저로 분리하는 것이 적절함.
 
 #### [중간] `_display_stats_preview` 미구현
 
-**위치**: line 340~351
+**위치**: line 334~345
 
 빈 for 루프. 통계 프리뷰 표시 기능이 구현되지 않은 상태.
 
 #### [중간] await 후 씬 유효성 미검증
 
-**위치**: `_auto_advance_delayed()` (line 241~243)
+**위치**: `_auto_advance_delayed()` (line 234~237)
 
 `await get_tree().create_timer(delay).timeout` 중에 씬 전환이 발생하면
 orphan coroutine이 됨. `is_inside_tree()` 체크가 필요함.
 
 #### [낮음] 선택지 표시 중에도 클릭음 재생
 
-**위치**: `_handle_advance_input()` (line 142)
+**위치**: `_handle_advance_input()` (line 136)
 
 `AudioManager.play_ui_click()`이 choice_panel 가시성 체크 전에 호출됨.
 선택지 표시 중 빈 공간 클릭 시 불필요한 클릭음이 재생됨.
 
 #### [낮음] 불필요한 람다 래핑
 
-**위치**: `_connect_ui_signals()` (line 87~91)
+**위치**: `_connect_ui_signals()` (line 75~85)
 
 ```gdscript
 # 현재
@@ -261,7 +284,7 @@ tw.finished.connect(func(): slot.texture = null; slot.position.x += 100)
 
 #### [낮음] 레거시 match 패턴 dead code
 
-**위치**: `_on_scene_change()` (line 426)
+**위치**: `_on_scene_change()` (line 420)
 
 ```gdscript
 "fadeIn", "fadeFromBlack duration 1500", _:
@@ -271,14 +294,14 @@ tw.finished.connect(func(): slot.texture = null; slot.position.x += 100)
 
 #### [낮음] 같은 position에 두 캐릭터 배치 시 ghost 상태
 
-**위치**: `_on_character_show()` (line 438~478)
+**위치**: `character_controller.gd` `_on_show()` (line 47~58)
 
 같은 position에 새 캐릭터가 배치되면 이전 캐릭터의 `_character_slots` 항목이
-남아 있어 ghost 상태가 됨.
+남아 있어 ghost 상태가 됨. character_controller.gd로 이전되었으나 미해결.
 
 #### [낮음] `queue_free` vs `free`
 
-**위치**: `_on_choice()` (line 268~269)
+**위치**: `_on_choice()` (line 261~263)
 
 ```gdscript
 for child in choice_panel.get_children():
@@ -295,7 +318,8 @@ for child in choice_panel.get_children():
 ### 현재 구조
 
 ```
-main_scene.gd (670줄, 모든 것 담당)
+main_scene.gd (573줄, 캐릭터 분리 후)
+character_controller.gd (139줄, CharacterLayer 스크립트)
 ```
 
 ### 권장 분리 구조
@@ -303,13 +327,13 @@ main_scene.gd (670줄, 모든 것 담당)
 ```
 main_scene.gd              -- 초기화, 입력, 씬 전환 조율만
 dialogue_controller.gd     -- 대화창, 타이핑, 로그
-character_controller.gd    -- 캐릭터 슬롯, 스프라이트, 애니메이션
+character_controller.gd    -- 캐릭터 슬롯, 스프라이트, 애니메이션  ✅ 분리 완료
 choice_controller.gd       -- 선택지 UI, 통계 연동
 save_controller.gd         -- 퀵세이브/로드, 상태 복원
 ```
 
-단, 현재 규모(670줄)에서는 당장 분리하지 않아도 유지보수가 가능한 수준.
-**버그 수정(캐릭터 로드 복원, 트윈 충돌)이 리팩토링보다 우선**.
+`character_controller.gd`는 `scenes/character_controller.gd`로 분리 완료됨.
+캐릭터 슬롯 관리, 스프라이트 표시/숨김, 애니메이션 처리가 독립 스크립트로 이동.
 
 ---
 
@@ -322,4 +346,5 @@ save_controller.gd         -- 퀵세이브/로드, 상태 복원
 | 3 | await 후 is_inside_tree() 체크 추가 | 소 |
 | 4 | 선택지 중 클릭음 재생 조건 수정 | 소 |
 | 5 | Supabase 코드 분리 또는 미구현 코드 정리 | 중 |
-| 6 | 전체 컨트롤러 분리 리팩토링 | 대 |
+| ~~6~~ | ~~캐릭터 컨트롤러 분리~~ | ✅ 완료 |
+| 7 | 나머지 컨트롤러 분리 (dialogue, choice, save) | 대 |
