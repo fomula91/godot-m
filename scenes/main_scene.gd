@@ -655,6 +655,20 @@ func _restore_state(data: Dictionary) -> void:
 	left_slot.texture = null; left_slot.modulate.a = 0.0
 	center_slot.texture = null; center_slot.modulate.a = 0.0
 	right_slot.texture = null; right_slot.modulate.a = 0.0
+	if data.has("characters"):
+		var chars: Dictionary = data["characters"]
+		for char_id in chars:
+			var position: String = chars[char_id]
+			var slot := _get_slot_for_position(position)
+			var sprite = StoryManager.get_current_character_sprite(char_id)
+			var path = StoryManager.get_character_sprite_path(char_id, sprite)
+			if path.is_empty():
+				continue
+			var tex := load(path) as Texture2D
+			if tex:
+				slot.texture = tex
+				slot.modulate.a = 1.0
+			_character_slots[char_id] = position
 
 	# 스토리 위치 복원
 	StoryManager.restore_from_save(data)
