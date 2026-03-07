@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="사쿠라 학원"
-config/description="사쿠라 학원 비주얼 노벨"
+config/name="너를 이해하기엔, 봄이 너무 짧았다"
+config/description="너를 이해하기엔, 봄이 너무 짧았다 - 비주얼 노벨"
 run/main_scene="res://scenes/title_screen.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
