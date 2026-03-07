@@ -313,7 +313,110 @@ for child in choice_panel.get_children():
 
 ---
 
-## 8. 권장 리팩토링 방향
+## 8. 퀵세이브 / 스킵 / 자동재생 분석
+
+### 8.1 퀵세이브 문제점
+
+#### [높음] 캐릭터 스프라이트 상태 유실
+
+**위치**: `_quick_save()` / `_restore_state()`
+
+`_character_slots`에는 `{char_id: "left"/"center"/"right"}` 매핑만 저장되고,
+현재 표시 중인 **스프라이트 ID**(표정 등)가 포함되지 않음.
+로드 시 `StoryManager.get_current_character_sprite()`로 조회하지만,
+StoryManager 자체가 스프라이트 상태를 추적하지 않으면 항상 `"normal"`로 복원됨.
+
+```gdscript
+# 현재: 슬롯 위치만 저장
+"characters": $CharacterLayer.get_state()  # {char_id: slot_name}
+
+# 필요: 스프라이트 정보도 함께 저장
+# {char_id: {"slot": "left", "sprite": "happy"}}
+```
+
+#### [중간] 현재 대사 미저장
+
+퀵세이브 시점의 대사 텍스트, 화자 이름이 저장되지 않음.
+로드 후 `StoryManager.advance()`를 호출하여 **다음 대사**부터 표시되므로,
+세이브 시점의 대사가 스킵됨.
+
+### 8.2 스킵 문제점
+
+#### [높음] 스킵 불가 명령어 존재
+
+| 명령어 | 문제 | 원인 |
+|--------|------|------|
+| `fade_scene` | 스킵 무시, 강제 대기 | `await` 기반 트윈 완료 대기 |
+| `fade_jump` | 스킵 무시, 강제 대기 | 페이드아웃 → 점프 → 페이드인 순차 `await` |
+| `wait` | 스킵 무시, 강제 대기 | `StoryManager`에서 타이머 `await` |
+
+스킵 모드에서도 이들 명령어를 만나면 전체 트랜지션 시간(0.5~1.5초)을
+강제로 대기해야 함. 다른 비주얼 노벨 엔진에서는 스킵 모드 시
+트랜지션을 즉시 완료(duration=0)하는 것이 일반적.
+
+#### [중간] centered 텍스트 스킵 미연동
+
+`_on_centered()`에서 페이드인 후 사용자 입력을 기다리지만,
+스킵 모드에서 자동으로 넘어가는 로직이 없음.
+스킵 모드에서도 수동 클릭이 필요함.
+
+### 8.3 자동재생 문제점
+
+#### [중간] centered 텍스트에서 자동재생 안 됨
+
+`_on_centered()`는 대화창을 숨기고 중앙 텍스트를 표시하지만,
+타이핑 완료 콜백(`_on_typing_done`)을 거치지 않으므로
+AutoTimer가 시작되지 않음. 자동재생 모드에서도 수동 클릭 필요.
+
+#### [중간] `_auto_advance_after`와 AutoTimer 동시 진행 가능
+
+`_auto_advance_after(delay)`는 독립적인 `create_timer`를 사용하고,
+`_on_typing_done()`에서 시작하는 AutoTimer와 별개로 동작함.
+두 타이머가 동시에 진행되면 `advance()`가 이중 호출될 수 있음.
+
+### 8.4 `_auto_advance_after` 구조적 문제
+
+#### [높음] fire-and-forget 타이머로 인한 다중 advance
+
+**위치**: `_auto_advance_after()` (line 234~237)
+
+```gdscript
+func _auto_advance_after(delay: float) -> void:
+    await get_tree().create_timer(delay).timeout
+    StoryManager.advance()
+```
+
+이 코루틴은 생성 후 취소할 수 없음(fire-and-forget).
+스킵 모드로 빠르게 진행하면 이전 타이머가 아직 대기 중인 상태에서
+새 타이머가 생성되어, 완료 시 `advance()`가 여러 번 호출됨.
+
+**개선 방향**: 취소 가능한 타이머 패턴 사용
+
+```gdscript
+var _advance_timer: SceneTreeTimer = null
+
+func _auto_advance_after(delay: float) -> void:
+    # 이전 타이머 무효화
+    _advance_timer = get_tree().create_timer(delay)
+    var current = _advance_timer
+    await current.timeout
+    if current == _advance_timer and is_inside_tree():
+        StoryManager.advance()
+```
+
+### 8.5 개선 방향 요약
+
+| 우선순위 | 항목 | 예상 작업량 |
+|----------|------|-------------|
+| 1 | `_auto_advance_after` 취소 가능 타이머로 교체 | 소 |
+| 2 | 스킵 모드 시 트랜지션 즉시 완료 | 중 |
+| 3 | centered 텍스트 스킵/자동재생 연동 | 소 |
+| 4 | 퀵세이브에 스프라이트 ID 포함 | 중 |
+| 5 | 퀵세이브에 현재 대사 포함 | 중 |
+
+---
+
+## 9. 권장 리팩토링 방향
 
 ### 현재 구조
 
@@ -337,7 +440,7 @@ save_controller.gd         -- 퀵세이브/로드, 상태 복원
 
 ---
 
-## 9. 우선순위별 액션 아이템
+## 10. 우선순위별 액션 아이템
 
 | 우선순위 | 항목 | 예상 작업량 |
 |----------|------|-------------|
@@ -348,3 +451,7 @@ save_controller.gd         -- 퀵세이브/로드, 상태 복원
 | 5 | Supabase 코드 분리 또는 미구현 코드 정리 | 중 |
 | ~~6~~ | ~~캐릭터 컨트롤러 분리~~ | ✅ 완료 |
 | 7 | 나머지 컨트롤러 분리 (dialogue, choice, save) | 대 |
+| 8 | `_auto_advance_after` 취소 가능 타이머로 교체 | 소 |
+| 9 | 스킵 모드 시 트랜지션 즉시 완료 | 중 |
+| 10 | centered 텍스트 스킵/자동재생 연동 | 소 |
+| 11 | 퀵세이브에 스프라이트 ID 및 현재 대사 포함 | 중 |
