@@ -36,12 +36,10 @@ var _current_bg_id: String = ""
 var _character_slots: Dictionary = {}  # char_id -> slot_name
 var _dialogue_log: Array[Dictionary] = []
 
-# 호감도 알림 설정
+# 거리감 알림 설정
 var _affinity_config: Dictionary = {
-	"sora": {"icon": "✧", "text": "소라의 마음이 가까워진 것 같다."},
-	"hana": {"icon": "✨", "text": "하나의 마음이 가까워진 것 같다."},
-	"both": {"icon": "✧✨", "text": "소라와 하나의 마음이 가까워진 것 같다."},
-	"unknown": {"icon": "?", "text": "누군가의 존재가 느껴진다..."},
+	"closer": {"icon": "♡", "text": "수아와의 거리가 가까워진 것 같다."},
+	"farther": {"icon": "...", "text": "수아와의 거리가 멀어진 것 같다."},
 }
 
 # Supabase 설정

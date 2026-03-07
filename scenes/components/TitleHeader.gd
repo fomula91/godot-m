@@ -1,12 +1,12 @@
 extends VBoxContainer
 class_name TitleHeader
 
-@export var title_text: String = "사쿠라학원":
+@export var title_text: String = "너를 이해하기엔, 봄이 너무 짧았다":
     set(value):
         title_text = value
         if title_label:
             title_label.text = value
-@export var subtitle_text: String = "─ 봄날의 이야기 ─":
+@export var subtitle_text: String = "우리가 처음을 만났던 시간":
     set(value):
         subtitle_text = value
         if subtitle_label:

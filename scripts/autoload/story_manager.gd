@@ -20,113 +20,75 @@ signal distraction_free_toggled()
 signal end_requested()
 signal command_completed()
 
-# 캐릭터 정의 (script.js 기반)
+# 캐릭터 정의
 var characters: Dictionary = {
-	"p": {"name": "{{player.name}}", "color": "#ffa726", "directory": "haru", "sprites": {
-		"normal": "haru_A100.webp", "happy": "haru_A101.webp",
-		"angry": "haru_A102.webp", "surprised": "haru_A104.webp", "worried": "haru_A103.webp"
+	"p": {"name": "{{player.name}}", "color": "#ffa726", "directory": "hyunwoo", "sprites": {
+		"normal": "hyunwoo_normal.webp", "happy": "hyunwoo_happy.webp",
+		"surprised": "hyunwoo_surprised.webp", "worried": "hyunwoo_worried.webp"
 	}},
-	"s": {"name": "소라", "color": "#4a90d9", "directory": "sora", "sprites": {
-		"normal": "sora_A100.webp", "happy": "sora_A101.webp",
-		"angry": "sora_A102.webp", "surprised": "sora_A104.webp",
-		"worried": "sora_A103.webp", "angry2": "sora_A190.webp"
-	}},
-	"h": {"name": "하나", "color": "#e87ba1", "directory": "hana", "sprites": {
-		"normal": "hana_A100.webp", "happy": "hana_A201.webp",
-		"normal2": "hana_A200.webp",
-		"angry": "hana_A202.webp", "worried": "hana_A203.webp",
-		"surprised": "hana_A204.webp", "yandere": "hana_B199.webp", "shy": "hana_A199.webp"
-	}},
-	"u": {"name": "???", "color": "#9370db", "directory": "unknown", "sprites": {
-		"normal": "unknown_B290.webp"
+	"sua": {"name": "이수아", "color": "#e87ba1", "directory": "sua", "sprites": {
+		"normal": "sua_normal.webp", "happy": "sua_happy.webp",
+		"shy": "sua_shy.webp", "sad": "sua_sad.webp",
+		"surprised": "sua_surprised.webp", "worried": "sua_worried.webp"
 	}},
 }
 
-# 씬(배경) 매핑 (script.js scenes 기반)
+# 씬(배경) 매핑
 var scene_map: Dictionary = {
-	"opening_cg": "gallery/opening.webp",
-	"school_front_early": "backgrounds/early01.webp",
-	"school_front_day": "backgrounds/day01.webp",
-	"school_grounds_early": "backgrounds/early02.webp",
-	"school_grounds_day": "backgrounds/day02.webp",
-	"school_grounds_evening": "backgrounds/evening02.webp",
-	"classroom_day": "backgrounds/classroom_01_day.webp",
-	"classroom_afternoon": "backgrounds/classroom_01_afternoon.webp",
-	"classroom2_morning": "backgrounds/classroom_02_morning.webp",
-	"classroom2_evening": "backgrounds/classroom_02_evening.webp",
-	"classroom3_morning": "backgrounds/classroom_03_morning.webp",
-	"classroom3_afternoon": "backgrounds/classroom_03_afternoon.webp",
-	"classroom4_morning": "backgrounds/classroom_04_morning.webp",
-	"auditorium_sunrise": "backgrounds/Auditorium_Outside_Sunrise.webp",
-	"auditorium_day": "backgrounds/Auditorium_Outside_Day.webp",
-	"auditorium_noon": "backgrounds/Auditorium_Outside_Noon.webp",
-	"auditorium_afternoon": "backgrounds/Auditorium_Outside_Afternoon.webp",
-	"auditorium_evening": "backgrounds/Auditorium_Outside_Evening.webp",
-	"busstop_evening": "backgrounds/bus_stop_evening.webp",
-	"busstop_night": "backgrounds/bus_stop_night.webp",
-	"busstop_morning": "backgrounds/bus_stop_morning.webp",
-	"busstop_noon": "backgrounds/bus_stop_noon.webp",
-	"science_lab_01": "backgrounds/school_science_lab_day01.webp",
-	"science_lab_02": "backgrounds/school_science_lab_day02.webp",
-	"science_lab_03": "backgrounds/school_science_lab_day03.webp",
-	"science_lab_04": "backgrounds/school_science_lab_day04.webp",
-	"science_lab_05": "backgrounds/school_science_lab_day05.webp",
-	"science_lab_06": "backgrounds/school_science_lab_day06.webp",
-	"science_lab_07": "backgrounds/school_science_lab_day07.webp",
-	"science_lab_08": "backgrounds/school_science_lab_day08.webp",
-	"swimming_pool": "backgrounds/school_swimming_pool.webp",
-	"another_building_day": "backgrounds/another_school_building_day.webp",
-	"classroom_night": "backgrounds/classroom_01_night.webp",
-	"classroom3_evening": "backgrounds/classroom_03_evening.webp",
-	"bedroom_night": "backgrounds/classroom_01_night.webp",
-	"afternoon01": "backgrounds/afternoon01.webp",
-	"afternoon02": "backgrounds/afternoon02.webp",
-	"noon01": "backgrounds/noon01.webp",
-	"noon02": "backgrounds/noon02.webp",
-	"classroom2_afternoon": "backgrounds/classroom_02_afternoon.webp",
-	"classroom2_evening_alt": "backgrounds/classroom_02_evening.webp",
-	"classroom4_afternoon": "backgrounds/classroom_04_afternoon.webp",
-	"classroom4_evening": "backgrounds/classroom_04_evening.webp",
+	# 학교 외부
+	"school_front_morning": "backgrounds/school_front_morning.webp",
+	"school_front_day": "backgrounds/school_front_day.webp",
+	"school_front_evening": "backgrounds/school_front_evening.webp",
+	# 교실
+	"classroom_morning": "backgrounds/classroom_morning.webp",
+	"classroom_day": "backgrounds/classroom_day.webp",
+	"classroom_afternoon": "backgrounds/classroom_afternoon.webp",
+	"classroom_evening": "backgrounds/classroom_evening.webp",
+	# 급식실 / 점심
+	"cafeteria_day": "backgrounds/cafeteria_day.webp",
+	"lunch_spot": "backgrounds/lunch_spot.webp",
+	# 복도
+	"hallway_day": "backgrounds/hallway_day.webp",
+	"hallway_evening": "backgrounds/hallway_evening.webp",
+	# 운동장
+	"school_grounds_day": "backgrounds/school_grounds_day.webp",
+	"school_grounds_evening": "backgrounds/school_grounds_evening.webp",
+	# 시내
+	"city_day": "backgrounds/city_day.webp",
+	"city_evening": "backgrounds/city_evening.webp",
+	# 수학여행 (제주도)
+	"jeju_scenery": "backgrounds/jeju_scenery.webp",
+	"jeju_lodging": "backgrounds/jeju_lodging.webp",
+	# 체육대회
+	"sports_festival": "backgrounds/sports_festival.webp",
 	# CG scenes
-	"silhouette_cg": "gallery/silhouette.webp",
-	"rooftop-hana_cg": "gallery/rooftop-hana.webp",
-	"library-sora_cg": "gallery/library-sora.webp",
-	"photo-discovery_cg": "gallery/photo-discovery.webp",
-	"crane-gift_cg": "gallery/crane-gift.webp",
-	"sora-sunset-smile_cg": "gallery/sora-sunset-smile.webp",
-	"hana-sunset-promise_cg": "gallery/hana-sunset-promise.webp",
-	"three-walk-home_cg": "gallery/three-walk-home.webp",
-	"busstop-silhouette_cg": "gallery/busstop-silhouette.webp",
-	"sora-exhibition_cg": "gallery/sora-exhibition.webp",
-	"rooftop-sakura-rain_cg": "gallery/rooftop-sakura-rain.webp",
-	"three-hands_cg": "gallery/three-hands.webp",
-	"pool-secret_cg": "gallery/pool-secret.webp",
-	"hana-unmasked_cg": "gallery/hana-unmasked.webp",
-	"yuu-first-meet_cg": "gallery/yuu-first-meet.webp",
-	"sora-past-tears_cg": "gallery/sora-past-tears.webp",
-	"sora-confession_cg": "gallery/sora-confession.webp",
-	"sora-truelove_cg": "gallery/sora-truelove.webp",
-	"hana-confession_cg": "gallery/hana-confession.webp",
-	"hana-truelove_cg": "gallery/hana-truelove.webp",
-	"together-letter_cg": "gallery/together-letter.webp",
-	"sora-warm_cg": "gallery/sora-warm.webp",
-	"hana-warm_cg": "gallery/hana-warm.webp",
+	"first_lunch_cg": "gallery/first_lunch.webp",
+	"seat_assignment_cg": "gallery/seat_assignment.webp",
+	"group_project_cg": "gallery/group_project.webp",
+	"math_class_cg": "gallery/math_class.webp",
+	"jeju_together_cg": "gallery/jeju_together.webp",
+	"jeju_delivery_cg": "gallery/jeju_delivery.webp",
+	"sports_festival_cg": "gallery/sports_festival.webp",
+	"birthday_gift_cg": "gallery/birthday_gift.webp",
+	"city_outing_cg": "gallery/city_outing.webp",
+	"sua_confession_cg": "gallery/sua_confession.webp",
+	"ending_a_cg": "gallery/ending_a.webp",
+	"ending_b_cg": "gallery/ending_b.webp",
+	"ending_c_cg": "gallery/ending_c.webp",
 }
 
-# 선택지 통계 추적 대상 (choice-stats.js 기반)
+# 선택지 통계 추적 대상
 var tracked_scenes: Dictionary = {
-	"Day1UnknownHint": true,
-	"MorningEvent": true,
-	"LunchTimeChoice": true,
-	"Day2Morning": true,
-	"Day2ScienceLab": true,
-	"Day3BothHigh": true,
-	"Day3SoraClimax": true,
-	"Day3HanaClimax": true,
-	"Day4Morning": true,
-	"Day4Evening": true,
-	"Day5SoraConfess2": true,
-	"Day5HanaConfess2": true,
+	"SeatAssignment": true,
+	"GroupProject": true,
+	"MathClass": true,
+	"LunchTime": true,
+	"SchoolTrip": true,
+	"CrackAfterSchool": true,
+	"CrackLunchTime": true,
+	"CrackSportsFest": true,
+	"CrackExam": true,
+	"JulyChoice": true,
 }
 
 # 스토리 데이터
@@ -142,7 +104,7 @@ func _ready() -> void:
 
 
 func load_all_stories() -> void:
-	var dirs: Array[String] = ["day1", "day2", "day3", "day4", "day5"]
+	var dirs: Array[String] = ["april", "may", "crack", "july"]
 	for dir_name in dirs:
 		var dir_path: String = "res://story/" + dir_name
 		var dir := DirAccess.open(dir_path)

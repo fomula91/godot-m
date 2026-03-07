@@ -6,20 +6,13 @@ extends Node
 signal state_changed(key: String, value: Variant)
 signal gallery_item_unlocked(id: String)
 
-# 기본 상태 (storage.js 매핑)
+# 기본 상태
 var _default_state: Dictionary = {
 	"player": {"name": ""},
-	"sora_affection": 0,
-	"hana_affection": 0,
-	"helped_sora": false,
-	"chose_library": false,
-	"day2_sora_walk": false,
-	"day2_studied_together": false,
-	"confessed": false,
-	"chose_both": false,
-	"unknown_interest": 0,
-	"met_unknown": false,
-	"day3_ending_type": "",
+	"distance": 50,          # 거리감 (0=가장 가까움, 100=가장 멀음)
+	"april_events": 0,       # 4월 이벤트 진행 횟수
+	"crack_progress": 0,     # 균열 파트 진행도
+	"ending_type": "",       # 엔딩 타입 (a, b, c, gameover)
 }
 
 var state: Dictionary = {}
