@@ -31,6 +31,9 @@ var characters: Dictionary = {
 		"shy": "sua_shy.webp", "sad": "sua_sad.webp",
 		"surprised": "sua_surprised.webp", "worried": "sua_worried.webp"
 	}},
+	"friend": {"name": "친구", "color": "#8bc34a", "directory": "friend", "sprites": {
+		"normal": "friend_normal.webp"
+	}},
 }
 
 # 씬(배경) 매핑
