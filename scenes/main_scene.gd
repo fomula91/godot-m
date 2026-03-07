@@ -6,9 +6,6 @@ extends Control
 # 노드 참조
 @onready var bg1: TextureRect = $BackgroundLayer/Background1
 @onready var bg2: TextureRect = $BackgroundLayer/Background2
-@onready var left_slot: TextureRect = $CharacterLayer/LeftSlot
-@onready var center_slot: TextureRect = $CharacterLayer/CenterSlot
-@onready var right_slot: TextureRect = $CharacterLayer/RightSlot
 @onready var dialogue_box: PanelContainer = $UILayer/DialogueBox
 @onready var name_label: Label = $UILayer/DialogueBox/MarginContainer/VBoxContainer/NameLabel
 @onready var text_label: RichTextLabel = $UILayer/DialogueBox/MarginContainer/VBoxContainer/TextLabel
@@ -33,7 +30,6 @@ var _auto_mode := false
 var _skip_mode := false
 var _distraction_free := false
 var _current_bg_id: String = ""
-var _character_slots: Dictionary = {}  # char_id -> slot_name
 var _dialogue_log: Array[Dictionary] = []
 var _bg_tween: Tween
 
@@ -67,9 +63,6 @@ func _connect_story_signals() -> void:
 	StoryManager.centered_requested.connect(_on_centered)
 	StoryManager.choice_requested.connect(_on_choice)
 	StoryManager.scene_change_requested.connect(_on_scene_change)
-	StoryManager.character_show_requested.connect(_on_character_show)
-	StoryManager.character_hide_requested.connect(_on_character_hide)
-	StoryManager.character_sprite_changed.connect(_on_character_sprite_change)
 	StoryManager.fade_requested.connect(_on_fade)
 	StoryManager.wait_requested.connect(_on_wait)
 	StoryManager.input_requested.connect(_on_input_request)
@@ -443,100 +436,6 @@ func _on_scene_change(id: String, transition: String) -> void:
 			)
 
 
-func _on_character_show(id: String, sprite: String, position: String, transition: String) -> void:
-	DebugOverlay.log_message("Show: %s [%s] @%s" % [id, sprite, position])
-	var slot := _get_slot_for_position(position)
-	var path := StoryManager.get_character_sprite_path(id, sprite)
-	if path.is_empty():
-		return
-	var tex := load(path) as Texture2D
-	if not tex:
-		return
-
-	slot.texture = tex
-	_character_slots[id] = position
-
-	match transition:
-		"fadeIn", "fadeInUp":
-			slot.modulate.a = 0.0
-			var tw := create_tween()
-			if transition == "fadeInUp":
-				slot.position.y += 30
-				tw.set_parallel(true)
-				tw.tween_property(slot, "position:y", slot.position.y - 30, 0.5)
-			tw.tween_property(slot, "modulate:a", 1.0, 0.5)
-		"slideInLeft":
-			slot.modulate.a = 1.0
-			slot.position.x -= 200
-			var tw := create_tween()
-			tw.tween_property(slot, "position:x", slot.position.x + 200, 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-		"slideInRight":
-			slot.modulate.a = 1.0
-			slot.position.x += 200
-			var tw := create_tween()
-			tw.tween_property(slot, "position:x", slot.position.x - 200, 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-		"bounceIn":
-			slot.modulate.a = 0.0
-			slot.scale = Vector2(0.8, 0.8)
-			var tw := create_tween().set_parallel(true)
-			tw.tween_property(slot, "modulate:a", 1.0, 0.3)
-			tw.tween_property(slot, "scale", Vector2(1.0, 1.0), 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
-		_:
-			slot.modulate.a = 1.0
-
-
-func _on_character_hide(id: String, transition: String) -> void:
-	DebugOverlay.log_message("Hide: %s (%s)" % [id, transition])
-	if id not in _character_slots:
-		return
-	var position: String = _character_slots[id]
-	var slot := _get_slot_for_position(position)
-
-	match transition:
-		"fadeOut":
-			var tw := create_tween()
-			tw.tween_property(slot, "modulate:a", 0.0, 0.5)
-			tw.finished.connect(func(): slot.texture = null)
-		"fadeOutLeft":
-			var tw := create_tween().set_parallel(true)
-			tw.tween_property(slot, "modulate:a", 0.0, 0.5)
-			tw.tween_property(slot, "position:x", slot.position.x - 100, 0.5)
-			tw.finished.connect(func(): slot.texture = null; slot.position.x += 100)
-		"fadeOutRight":
-			var tw := create_tween().set_parallel(true)
-			tw.tween_property(slot, "modulate:a", 0.0, 0.5)
-			tw.tween_property(slot, "position:x", slot.position.x + 100, 0.5)
-			tw.finished.connect(func(): slot.texture = null; slot.position.x -= 100)
-		_:
-			slot.modulate.a = 0.0
-			slot.texture = null
-
-	_character_slots.erase(id)
-
-
-func _on_character_sprite_change(id: String, sprite: String) -> void:
-	if id not in _character_slots:
-		return
-	var position: String = _character_slots[id]
-	var slot := _get_slot_for_position(position)
-	var path := StoryManager.get_character_sprite_path(id, sprite)
-	if path.is_empty():
-		return
-	var tex := load(path) as Texture2D
-	if tex:
-		slot.texture = tex
-
-
-func _get_slot_for_position(position: String) -> TextureRect:
-	match position:
-		"left":
-			return left_slot
-		"right":
-			return right_slot
-		_:
-			return center_slot
-
-
 # === Transitions ===
 
 func _on_fade(fade_type: String, duration: float, color: Color) -> void:
@@ -638,7 +537,7 @@ func _quick_save() -> void:
 	var extra := StoryManager.get_save_data()
 	extra["background"] = _current_bg_id
 	extra["bgm"] = AudioManager.get_current_bgm()
-	extra["characters"] = _character_slots.duplicate()
+	extra["characters"] = $CharacterLayer.get_state()
 	GameManager.save_game(0, extra)  # slot 0 = auto/quick
 
 
@@ -659,24 +558,7 @@ func _restore_state(data: Dictionary) -> void:
 		AudioManager.play_music(data["bgm"])
 
 	# 캐릭터 복원
-	_character_slots.clear()
-	left_slot.texture = null; left_slot.modulate.a = 0.0
-	center_slot.texture = null; center_slot.modulate.a = 0.0
-	right_slot.texture = null; right_slot.modulate.a = 0.0
-	if data.has("characters"):
-		var chars: Dictionary = data["characters"]
-		for char_id in chars:
-			var position: String = chars[char_id]
-			var slot := _get_slot_for_position(position)
-			var sprite = StoryManager.get_current_character_sprite(char_id)
-			var path = StoryManager.get_character_sprite_path(char_id, sprite)
-			if path.is_empty():
-				continue
-			var tex := load(path) as Texture2D
-			if tex:
-				slot.texture = tex
-				slot.modulate.a = 1.0
-			_character_slots[char_id] = position
+	$CharacterLayer.restore_state(data.get("characters", {}))
 
 	# 스토리 위치 복원
 	StoryManager.restore_from_save(data)
