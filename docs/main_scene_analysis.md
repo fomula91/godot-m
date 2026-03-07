@@ -74,6 +74,7 @@ MainScene (Control) -- 루트, 전체 화면
 | `_supabase_url` | String | Supabase 통계 URL (빈 문자열이면 비활성) |
 | `_stats_http` | HTTPRequest | 통계 조회용 HTTP |
 | `_vote_http` | HTTPRequest | 투표 기록용 HTTP |
+| `_bg_tween` | Tween | 배경 크로스페이드 트윈 추적 (충돌 방지용) |
 | `_pending_choice_data` | Dictionary | 비동기 투표 중 임시 선택 데이터 |
 
 ---
@@ -196,21 +197,19 @@ vn_advance 액션 입력 (_unhandled_input)
 하나의 스크립트가 대화창, 배경 전환, 캐릭터 관리, 선택지 UI,
 세이브/로드, 입력 다이얼로그, Supabase 통계까지 모두 담당.
 
-#### [높음] 캐릭터 상태 로드 미복원 (버그)
+#### ~~[높음] 캐릭터 상태 로드 미복원 (버그)~~ ✅ 수정 완료
 
-**위치**: `_restore_state()` (line 644~661)
+**위치**: `_restore_state()` (line 653~671)
 
-세이브 데이터에 characters 정보를 저장하지만 (`_quick_save`에서 `_character_slots.duplicate()`),
-로드 시 캐릭터 슬롯을 초기화만 하고 복원하지 않음.
-저장 시점의 캐릭터 상태가 손실됨.
+저장된 `characters` Dictionary를 순회하며 `StoryManager.get_current_character_sprite()`로
+현재 스프라이트를 조회하고, 각 슬롯에 텍스처와 알파를 복원하도록 수정됨.
 
-#### [높음] 연속 배경 전환 시 트윈 충돌 가능
+#### ~~[높음] 연속 배경 전환 시 트윈 충돌 가능~~ ✅ 수정 완료
 
-**위치**: `_on_scene_change()` (line 428~435)
+**위치**: `_on_scene_change()` (line 426~442)
 
-크로스페이드 트윈 완료 콜백에서 bg1/bg2를 swap하는데,
-연속 빠른 씬 전환 시 이전 트윈의 콜백이 새 배경을 덮어쓸 수 있음.
-트윈을 인스턴스 변수로 관리하고 새 전환 시 이전 트윈을 kill해야 함.
+`_bg_tween` 인스턴스 변수를 추가하여 크로스페이드 트윈을 추적.
+새 전환 시작 시 이전 트윈이 실행 중이면 `kill()` 후 즉시 swap 처리하여 충돌 방지.
 
 #### [중간] Supabase 코드가 뷰에 존재 (SRP 위반)
 
@@ -318,8 +317,8 @@ save_controller.gd         -- 퀵세이브/로드, 상태 복원
 
 | 우선순위 | 항목 | 예상 작업량 |
 |----------|------|-------------|
-| 1 | 캐릭터 상태 로드 복원 버그 수정 | 소 |
-| 2 | 배경 전환 트윈 충돌 방지 | 소 |
+| ~~1~~ | ~~캐릭터 상태 로드 복원 버그 수정~~ | ✅ 완료 |
+| ~~2~~ | ~~배경 전환 트윈 충돌 방지~~ | ✅ 완료 |
 | 3 | await 후 is_inside_tree() 체크 추가 | 소 |
 | 4 | 선택지 중 클릭음 재생 조건 수정 | 소 |
 | 5 | Supabase 코드 분리 또는 미구현 코드 정리 | 중 |
