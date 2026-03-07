@@ -100,6 +100,7 @@ var current_label: String = ""
 var line_index: int = 0
 var _waiting: bool = false
 var _choice_pending: bool = false
+var _active_sprites: Dictionary = {} # cahr_id -> sprite_name
 
 
 func _ready() -> void:
@@ -209,18 +210,21 @@ func _dispatch_command(cmd: Dictionary) -> void:
 			var sprite: String = cmd.get("sprite", "normal")
 			var position: String = cmd.get("position", "center")
 			var transition: String = cmd.get("transition", "fadeIn")
+			_active_sprites[id] = sprite
 			character_show_requested.emit(id, sprite, position, transition)
 			_auto_advance_after(0.05)
 
 		"hide_character":
 			var id: String = cmd.get("id", "")
 			var transition: String = cmd.get("transition", "fadeOut")
+			_active_sprites.erase(id)
 			character_hide_requested.emit(id, transition)
 			_auto_advance_after(0.05)
 
 		"change_sprite":
 			var id: String = cmd.get("id", "")
 			var sprite: String = cmd.get("sprite", "normal")
+			_active_sprites[id] = sprite
 			character_sprite_changed.emit(id, sprite)
 			_auto_advance_after(0.05)
 
@@ -388,7 +392,11 @@ func get_save_data() -> Dictionary:
 func restore_from_save(data: Dictionary) -> void:
 	current_label = data.get("current_label", "")
 	line_index = data.get("line_index", 0)
+	_active_sprites.clear()
 
 
 func is_tracked_scene() -> bool:
 	return current_label in tracked_scenes
+
+func get_current_character_sprite(char_id: String) -> String:
+	return _active_sprites.get(char_id, "normal")
