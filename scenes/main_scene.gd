@@ -20,6 +20,7 @@ enum ModalType { NONE, SETTINGS, SAVE_LOAD }
 var _active_modal: ModalType = ModalType.NONE
 var _auto_before_modal := false
 var _skip_before_modal := false
+var _modal_layer: CanvasLayer = null
 
 # Supabase 설정
 var _supabase_url: String = ""
@@ -62,7 +63,11 @@ func _open_settings() -> void:
 	var settings = load("res://scenes/settings_screen.tscn").instantiate()
 	settings.set_overlay_mode()
 	settings.tree_exiting.connect(_on_modal_closed)
-	get_tree().root.add_child(settings)
+	var layer := CanvasLayer.new()
+	layer.layer = 25
+	layer.add_child(settings)
+	_modal_layer = layer
+	get_tree().root.add_child(layer)
 
 
 func _setup_http_nodes() -> void:
@@ -385,7 +390,11 @@ func _open_save_load(load_mode: bool) -> void:
 	screen.set_overlay_mode()
 	screen.set_mode(load_mode)
 	screen.tree_exiting.connect(_on_modal_closed)
-	get_tree().root.add_child(screen)
+	var layer := CanvasLayer.new()
+	layer.layer = 25
+	layer.add_child(screen)
+	_modal_layer = layer
+	get_tree().root.add_child(layer)
 
 
 # === Modal Helpers ===
@@ -394,6 +403,9 @@ func _on_modal_closed() -> void:
 	_active_modal = ModalType.NONE
 	_set_quick_menu_disabled(false)
 	_resume_auto_skip()
+	if _modal_layer:
+		_modal_layer.queue_free()
+		_modal_layer = null
 
 
 func _pause_auto_skip() -> void:
