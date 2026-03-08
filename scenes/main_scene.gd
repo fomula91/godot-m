@@ -4,23 +4,15 @@ extends Control
 ## StoryManager 시그널을 받아 UI 컴포넌트 업데이트
 
 # 노드 참조
-@onready var dialogue_box: PanelContainer = $UILayer/DialogueBox
-@onready var name_label: Label = $UILayer/DialogueBox/MarginContainer/VBoxContainer/NameLabel
-@onready var text_label: RichTextLabel = $UILayer/DialogueBox/MarginContainer/VBoxContainer/TextLabel
 @onready var choice_panel: VBoxContainer = $UILayer/ChoicePanel
-@onready var centered_text: Label = $UILayer/CenteredText
 @onready var quick_menu: HBoxContainer = $UILayer/QuickMenu
 @onready var auto_timer: Timer = $AutoTimer
+@onready var dialogue_layer: Control = $UILayer/DialogueLayer
 
 # 상태
-var _typing := false
-var _typing_tween: Tween
 var _auto_mode := false
 var _skip_mode := false
 var _distraction_free := false
-var _dialogue_log: Array[Dictionary] = []
-
-
 
 # Supabase 설정
 var _supabase_url: String = ""
@@ -28,22 +20,14 @@ var _stats_http: HTTPRequest
 var _vote_http: HTTPRequest
 var _pending_choice_data: Dictionary = {}
 
-
 func _ready() -> void:
-	_apply_dialogue_box_style()
 	_connect_story_signals()
 	_connect_ui_signals()
 	_setup_http_nodes()
 	_setup_mouse_passthrough()
-	dialogue_box.visible = false
 	choice_panel.visible = false
-	centered_text.visible = false
-
 
 func _connect_story_signals() -> void:
-	StoryManager.dialogue_requested.connect(_on_dialogue)
-	StoryManager.narration_requested.connect(_on_narration)
-	StoryManager.centered_requested.connect(_on_centered)
 	StoryManager.choice_requested.connect(_on_choice)
 	StoryManager.gallery_unlock_requested.connect(_on_gallery_unlock)
 	StoryManager.distraction_free_toggled.connect(_on_distraction_free)
@@ -52,6 +36,7 @@ func _connect_story_signals() -> void:
 
 func _connect_ui_signals() -> void:
 	auto_timer.timeout.connect(_on_auto_timeout)
+	dialogue_layer.typing_finished.connect(_on_typing_finished)
 
 	# Quick menu
 	$UILayer/QuickMenu/SaveBtn.pressed.connect(func(): _quick_save())
@@ -75,8 +60,7 @@ func _setup_mouse_passthrough() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_set_mouse_ignore_recursive($BackgroundLayer)
 	_set_mouse_ignore_recursive($CharacterLayer)
-	_set_mouse_ignore_recursive(dialogue_box)
-	centered_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_set_mouse_ignore_recursive($UILayer/DialogueLayer)
 	choice_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	quick_menu.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
@@ -87,15 +71,6 @@ func _set_mouse_ignore_recursive(node: Node) -> void:
 	for child in node.get_children():
 		_set_mouse_ignore_recursive(child)
 
-
-func _apply_dialogue_box_style() -> void:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.078, 0.039, 0.118, 0.82)  # rgba(20,10,30,0.82)
-	style.border_color = Color(0.957, 0.561, 0.694, 0.2)  # rgba(244,143,177,0.2)
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(16)
-	style.set_content_margin_all(20)
-	dialogue_box.add_theme_stylebox_override("panel", style)
 
 
 # === Input ===
@@ -114,17 +89,17 @@ func _handle_advance_input() -> void:
 
 	if _distraction_free:
 		_distraction_free = false
-		dialogue_box.visible = true
+		dialogue_layer.show_dialogue_box()
 		quick_menu.visible = true
 		return
 
-	if centered_text.visible:
-		centered_text.visible = false
+	if dialogue_layer.is_centered_visible():
+		dialogue_layer.hide_centered()
 		StoryManager.advance()
 		return
 
-	if _typing:
-		_complete_typing()
+	if dialogue_layer.is_typing():
+		dialogue_layer.complete_typing()
 		return
 
 	if choice_panel.visible:
@@ -135,66 +110,7 @@ func _handle_advance_input() -> void:
 
 # === Dialogue ===
 
-func _on_dialogue(char_id: String, name_text: String, text: String) -> void:
-	DebugOverlay.log_message("Dialogue: %s" % name_text)
-	dialogue_box.visible = true
-	centered_text.visible = false
-
-	name_label.text = name_text
-	name_label.add_theme_color_override("font_color", StoryManager.get_character_color(char_id))
-	name_label.visible = true
-
-	_start_typing(text)
-	_dialogue_log.append({"name": name_text, "text": text})
-
-
-func _on_narration(text: String) -> void:
-	dialogue_box.visible = true
-	centered_text.visible = false
-
-	name_label.visible = false
-	_start_typing(text)
-	_dialogue_log.append({"name": "", "text": text})
-
-
-func _on_centered(text: String) -> void:
-	dialogue_box.visible = false
-	centered_text.text = text
-	centered_text.visible = true
-	centered_text.modulate.a = 0.0
-	var tw := create_tween()
-	tw.tween_property(centered_text, "modulate:a", 1.0, 0.5)
-
-
-func _start_typing(text: String) -> void:
-	text_label.text = text
-	text_label.visible_ratio = 0.0
-	_typing = true
-
-	if _typing_tween:
-		_typing_tween.kill()
-
-	var char_count := text.length()
-	var speed_ms: float = GameManager.settings["text_speed"]
-	var duration: float = char_count * speed_ms / 1000.0
-
-	if _skip_mode:
-		duration = 0.05
-
-	_typing_tween = create_tween()
-	_typing_tween.tween_property(text_label, "visible_ratio", 1.0, duration)
-	_typing_tween.finished.connect(_on_typing_done)
-
-
-func _complete_typing() -> void:
-	if _typing_tween:
-		_typing_tween.kill()
-	text_label.visible_ratio = 1.0
-	_on_typing_done()
-
-
-func _on_typing_done() -> void:
-	_typing = false
+func _on_typing_finished() -> void:
 	if _auto_mode:
 		auto_timer.wait_time = GameManager.settings["auto_speed"]
 		auto_timer.start()
@@ -203,7 +119,7 @@ func _on_typing_done() -> void:
 
 
 func _on_auto_timeout() -> void:
-	if _auto_mode and not _typing and not choice_panel.visible:
+	if _auto_mode and not dialogue_layer.is_typing() and not choice_panel.visible:
 		StoryManager.advance()
 
 
@@ -217,22 +133,15 @@ func _auto_advance_delayed(delay: float) -> void:
 
 func _on_choice(dialog: String, choices: Array) -> void:
 	if dialog and not dialog.is_empty():
-		# 선택지 대사를 대화창에 표시
 		var parts := dialog.split(" ", true, 1)
 		if parts.size() >= 2 and parts[0] in StoryManager.characters:
 			var char_id := parts[0]
 			var char_data: Dictionary = StoryManager.characters[char_id]
 			var char_name: String = GameManager.replace_templates(char_data.get("name", ""))
-			name_label.text = char_name
-			name_label.add_theme_color_override("font_color", StoryManager.get_character_color(char_id))
-			name_label.visible = true
-			text_label.text = parts[1]
-			text_label.visible_ratio = 1.0
+			dialogue_layer.show_choice_dialog(char_id, char_name, parts[1])
 		else:
-			name_label.visible = false
-			text_label.text = dialog
-			text_label.visible_ratio = 1.0
-		dialogue_box.visible = true
+			dialogue_layer.show_raw_text(dialog)
+		
 
 	# 선택지 버튼 생성
 	for child in choice_panel.get_children():
@@ -367,7 +276,10 @@ func _on_gallery_unlock(id: String) -> void:
 
 func _on_distraction_free() -> void:
 	_distraction_free = !_distraction_free
-	dialogue_box.visible = !_distraction_free
+	if _distraction_free:
+		dialogue_layer.hide_dialogue_box()
+	else:
+		dialogue_layer.show_dialogue_box()
 	quick_menu.visible = !_distraction_free
 
 
@@ -382,7 +294,7 @@ func _toggle_auto(enabled: bool) -> void:
 	if enabled:
 		_skip_mode = false
 		$UILayer/QuickMenu/SkipBtn.button_pressed = false
-		if not _typing and not choice_panel.visible:
+		if not dialogue_layer.is_typing() and not choice_panel.visible:
 			auto_timer.start()
 	else:
 		auto_timer.stop()
@@ -393,7 +305,7 @@ func _toggle_skip(enabled: bool) -> void:
 	if enabled:
 		_auto_mode = false
 		$UILayer/QuickMenu/AutoBtn.button_pressed = false
-		if not _typing and not choice_panel.visible:
+		if not dialogue_layer.is_typing() and not choice_panel.visible:
 			StoryManager.advance()
 
 
@@ -436,4 +348,4 @@ func start_story(label: String = "Start") -> void:
 
 
 func get_dialogue_log() -> Array[Dictionary]:
-	return _dialogue_log
+	return dialogue_layer.get_dialogue_log()
