@@ -12,15 +12,6 @@ extends Control
 @onready var choice_panel: VBoxContainer = $UILayer/ChoicePanel
 @onready var centered_text: Label = $UILayer/CenteredText
 @onready var quick_menu: HBoxContainer = $UILayer/QuickMenu
-@onready var transition_rect: ColorRect = $OverlayLayer/TransitionRect
-@onready var affinity_hint: PanelContainer = $OverlayLayer/AffinityHint
-@onready var affinity_icon: Label = $OverlayLayer/AffinityHint/HBoxContainer/Icon
-@onready var affinity_text: Label = $OverlayLayer/AffinityHint/HBoxContainer/Text
-@onready var input_dialog: PanelContainer = $OverlayLayer/InputDialog
-@onready var input_prompt: Label = $OverlayLayer/InputDialog/VBoxContainer/PromptLabel
-@onready var input_field: LineEdit = $OverlayLayer/InputDialog/VBoxContainer/InputField
-@onready var input_warning: Label = $OverlayLayer/InputDialog/VBoxContainer/WarningLabel
-@onready var input_confirm: Button = $OverlayLayer/InputDialog/VBoxContainer/ConfirmBtn
 @onready var auto_timer: Timer = $AutoTimer
 
 # 상태
@@ -32,13 +23,7 @@ var _distraction_free := false
 var _current_bg_id: String = ""
 var _dialogue_log: Array[Dictionary] = []
 var _bg_tween: Tween
-var _default_name: String = ""
 
-# 거리감 알림 설정
-var _affinity_config: Dictionary = {
-	"closer": {"icon": "♡", "text": "수아와의 거리가 가까워진 것 같다."},
-	"farther": {"icon": "...", "text": "수아와의 거리가 멀어진 것 같다."},
-}
 
 # Supabase 설정
 var _supabase_url: String = ""
@@ -64,18 +49,12 @@ func _connect_story_signals() -> void:
 	StoryManager.centered_requested.connect(_on_centered)
 	StoryManager.choice_requested.connect(_on_choice)
 	StoryManager.scene_change_requested.connect(_on_scene_change)
-	StoryManager.fade_requested.connect(_on_fade)
-	StoryManager.wait_requested.connect(_on_wait)
-	StoryManager.input_requested.connect(_on_input_request)
-	StoryManager.affinity_hint_requested.connect(_on_affinity_hint)
 	StoryManager.gallery_unlock_requested.connect(_on_gallery_unlock)
 	StoryManager.distraction_free_toggled.connect(_on_distraction_free)
 	StoryManager.end_requested.connect(_on_end)
 
 
 func _connect_ui_signals() -> void:
-	input_confirm.pressed.connect(_on_input_confirm)
-	input_field.text_submitted.connect(func(_t): _on_input_confirm())
 	auto_timer.timeout.connect(_on_auto_timeout)
 
 	# Quick menu
@@ -126,7 +105,7 @@ func _apply_dialogue_box_style() -> void:
 # === Input ===
 
 func _unhandled_input(event: InputEvent) -> void:
-	if input_dialog.visible:
+	if $OverlayLayer.is_input_active():
 		return
 	if event.is_action_pressed("vn_advance"):
 		_handle_advance_input()
@@ -398,7 +377,7 @@ func _on_scene_change(id: String, transition: String) -> void:
 		bg1.modulate = color
 		bg2.texture = null
 		bg2.modulate = Color(1,1,1,0)
-		transition_rect.color = Color(0, 0, 0, 0)
+		$OverlayLayer.clear_transition()
 		return
 
 	var path := StoryManager.get_scene_path(id)
@@ -410,7 +389,7 @@ func _on_scene_change(id: String, transition: String) -> void:
 		push_warning("MainScene: Cannot load scene texture: " + path)
 		return
 
-	transition_rect.color = Color(0, 0, 0, 0)
+	$OverlayLayer.clear_transition()
 
 	match transition:
 		"instant":
@@ -433,66 +412,6 @@ func _on_scene_change(id: String, transition: String) -> void:
 				bg1.modulate.a = 1.0
 				bg2.modulate.a = 0.0
 			)
-
-
-# === Transitions ===
-
-func _on_fade(fade_type: String, duration: float, color: Color) -> void:
-	match fade_type:
-		"to_black":
-			transition_rect.color = Color(color.r, color.g, color.b, 0.0)
-			var tw := create_tween()
-			tw.tween_property(transition_rect, "color:a", 1.0, duration)
-		"from_black":
-			transition_rect.color = Color(color.r, color.g, color.b, 1.0)
-			var tw := create_tween()
-			tw.tween_property(transition_rect, "color:a", 0.0, duration)
-
-
-func _on_wait(_duration: float) -> void:
-	pass  # StoryManager이 타이머 처리
-
-
-# === Input Dialog ===
-
-func _on_input_request(prompt: String, warning: String, default_name: String) -> void:
-	DebugOverlay.log_message("Input requested")
-	input_prompt.text = prompt
-	input_field.text = ""
-	input_field.placeholder_text = default_name if default_name != "" else "이름을 입력하세요."
-	input_warning.text = warning
-	input_warning.visible = false
-	input_dialog.visible = true
-	input_field.grab_focus()
-
-
-func _on_input_confirm() -> void:
-	var text := input_field.text.strip_edges()
-	if text.is_empty():
-		if _default_name.is_empty():
-			input_warning.visible = true
-			return
-		text = _default_name
-	input_dialog.visible = false
-	StoryManager.on_input_completed(text)
-
-
-# === Affinity Hint ===
-
-func _on_affinity_hint(character: String) -> void:
-	var cfg: Dictionary = _affinity_config.get(character, {})
-	if cfg.is_empty():
-		return
-
-	affinity_icon.text = cfg["icon"]
-	affinity_text.text = cfg["text"]
-	affinity_hint.visible = true
-	affinity_hint.modulate.a = 1.0
-
-	var tw := create_tween()
-	tw.tween_interval(1.4)  # 1800ms total - 400ms fade = 1400ms visible
-	tw.tween_property(affinity_hint, "modulate:a", 0.0, 0.4)
-	tw.finished.connect(func(): affinity_hint.visible = false)
 
 
 # === Gallery & Misc ===
