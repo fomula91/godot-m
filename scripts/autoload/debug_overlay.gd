@@ -33,6 +33,7 @@ var _lbl_platform: Label
 var _lbl_fps: Label
 var _lbl_pos: Label
 var _lbl_input_type: Label
+var _lbl_auto: Label
 var _lbl_log: Label
 
 var _log_entries: Array[String] = []
@@ -112,6 +113,7 @@ func _build_ui() -> void:
 	_lbl_fps = _make_label(vbox, "FPS: —")
 	_lbl_pos = _make_label(vbox, "Pos: —")
 	_lbl_input_type = _make_label(vbox, "Input: —")
+	_lbl_auto = _make_label(vbox, "Auto: OFF (%.1fs)" % GameManager.settings["auto_speed"])
 
 	var sep := HSeparator.new()
 	sep.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -145,6 +147,8 @@ func _get_platform_name() -> String:
 func _process(_delta: float) -> void:
 	if overlay_visible:
 		_lbl_fps.text = "FPS: %d" % Engine.get_frames_per_second()
+		var auto_state := "ON" if GameManager.auto_mode else "OFF"
+		_lbl_auto.text = "Auto: %s (%.1fs)" % [auto_state, GameManager.settings["auto_speed"]]
 
 
 func _input(event: InputEvent) -> void:

@@ -324,6 +324,7 @@ func _on_end() -> void:
 
 func _toggle_auto(enabled: bool) -> void:
 	_auto_mode = enabled
+	GameManager.auto_mode = enabled
 	var auto_btn: Button = $UILayer/QuickMenu/AutoBtn
 	var skip_btn: Button = $UILayer/QuickMenu/SkipBtn
 	if enabled:

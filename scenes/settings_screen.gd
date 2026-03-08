@@ -18,7 +18,7 @@ func _ready() -> void:
 	music_slider.value = GameManager.settings["music_volume"]
 	sound_slider.value = GameManager.settings["sound_volume"]
 	text_speed_slider.value = GameManager.settings["text_speed"]
-	auto_speed_slider.value = GameManager.settings["auto_speed"]
+	auto_speed_slider.value = 10.5 - GameManager.settings["auto_speed"]
 
 	# 시그널 연결
 	music_slider.value_changed.connect(_on_music_changed)
@@ -46,7 +46,7 @@ func _on_text_speed_changed(value: float) -> void:
 
 
 func _on_auto_speed_changed(value: float) -> void:
-	GameManager.settings["auto_speed"] = value
+	GameManager.settings["auto_speed"] = 10.5 - value
 	GameManager.save_settings()
 
 

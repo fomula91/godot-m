@@ -17,6 +17,7 @@ var _default_state: Dictionary = {
 
 var state: Dictionary = {}
 var gallery_unlocked: Array[String] = []
+var auto_mode := false
 
 # 설정
 var settings: Dictionary = {
