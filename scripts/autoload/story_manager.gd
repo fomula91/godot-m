@@ -21,18 +21,19 @@ signal end_requested()
 signal command_completed()
 
 # 캐릭터 정의
+# 임시 에셋을 사용한다. 변경 예정중
 var characters: Dictionary = {
-	"p": {"name": "{{player.name}}", "color": "#ffa726", "directory": "hyunwoo", "sprites": {
-		"normal": "hyunwoo_normal.webp", "happy": "hyunwoo_happy.webp",
-		"surprised": "hyunwoo_surprised.webp", "worried": "hyunwoo_worried.webp"
+	"p": {"name": "{{player.name}}", "color": "#ffa726", "directory": "haru", "sprites": {
+		"normal": "haru_A100.webp", "happy": "haru_A101.webp",
+		"surprised": "haru_A102.webp", "worried": "haru_A103.webp"
 	}},
-	"sua": {"name": "이수아", "color": "#e87ba1", "directory": "sua", "sprites": {
-		"normal": "sua_normal.webp", "happy": "sua_happy.webp",
-		"shy": "sua_shy.webp", "sad": "sua_sad.webp",
-		"surprised": "sua_surprised.webp", "worried": "sua_worried.webp"
+	"sua": {"name": "이수아", "color": "#e87ba1", "directory": "sora", "sprites": {
+		"normal": "sora_A100.webp", "happy": "sora_A101.webp",
+		"shy": "sora_A101.webp", "sad": "sora_A101.webp",
+		"surprised": "sora_A104.webp", "worried": "sora_A103.webp"
 	}},
-	"friend": {"name": "친구", "color": "#8bc34a", "directory": "friend", "sprites": {
-		"normal": "friend_normal.webp"
+	"friend": {"name": "친구", "color": "#8bc34a", "directory": "unknown", "sprites": {
+		"normal": "unknown_B290_A100.webp"
 	}},
 }
 
