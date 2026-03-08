@@ -24,7 +24,7 @@
 		{"cmd": "affinity_hint", "character": "closer"},
 		{"cmd": "narration", "text": "(거리감이 줄어든 것 같다. distance -10 적용 확인)"},
 		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
-		{"cmd": "jump", "target": "Opening"}
+		{"cmd": "jump", "target": "TestEvent"}
 	],
 
 	"Test_Farther": [
@@ -35,7 +35,7 @@
 		{"cmd": "affinity_hint", "character": "farther"},
 		{"cmd": "narration", "text": "(거리감이 늘어난 것 같다. distance +10 적용 확인)"},
 		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
-		{"cmd": "jump", "target": "Opening"}
+		{"cmd": "jump", "target": "TestEvent"}
 	],
 
 	"Opening": [
