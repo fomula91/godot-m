@@ -4,8 +4,6 @@ extends Control
 ## StoryManager 시그널을 받아 UI 컴포넌트 업데이트
 
 # 노드 참조
-@onready var bg1: TextureRect = $BackgroundLayer/Background1
-@onready var bg2: TextureRect = $BackgroundLayer/Background2
 @onready var dialogue_box: PanelContainer = $UILayer/DialogueBox
 @onready var name_label: Label = $UILayer/DialogueBox/MarginContainer/VBoxContainer/NameLabel
 @onready var text_label: RichTextLabel = $UILayer/DialogueBox/MarginContainer/VBoxContainer/TextLabel
@@ -20,9 +18,8 @@ var _typing_tween: Tween
 var _auto_mode := false
 var _skip_mode := false
 var _distraction_free := false
-var _current_bg_id: String = ""
 var _dialogue_log: Array[Dictionary] = []
-var _bg_tween: Tween
+
 
 
 # Supabase 설정
@@ -48,7 +45,6 @@ func _connect_story_signals() -> void:
 	StoryManager.narration_requested.connect(_on_narration)
 	StoryManager.centered_requested.connect(_on_centered)
 	StoryManager.choice_requested.connect(_on_choice)
-	StoryManager.scene_change_requested.connect(_on_scene_change)
 	StoryManager.gallery_unlock_requested.connect(_on_gallery_unlock)
 	StoryManager.distraction_free_toggled.connect(_on_distraction_free)
 	StoryManager.end_requested.connect(_on_end)
@@ -363,57 +359,6 @@ func _show_stats_result(stats: Array, selected_key: String) -> void:
 	# 2.5초 표시
 	await get_tree().create_timer(2.5).timeout
 
-
-# === Scene & Characters ===
-
-func _on_scene_change(id: String, transition: String) -> void:
-	DebugOverlay.log_message("Scene: %s (%s)" % [id, transition])
-	_current_bg_id = id
-
-	if id.begins_with("#"):
-		# 색상 배경
-		var color := Color(id)
-		bg1.texture = null
-		bg1.modulate = color
-		bg2.texture = null
-		bg2.modulate = Color(1,1,1,0)
-		$OverlayLayer.clear_transition()
-		return
-
-	var path := StoryManager.get_scene_path(id)
-	if path.is_empty():
-		return
-
-	var tex := load(path) as Texture2D
-	if not tex:
-		push_warning("MainScene: Cannot load scene texture: " + path)
-		return
-
-	$OverlayLayer.clear_transition()
-
-	match transition:
-		"instant":
-			bg1.texture = tex
-			bg1.modulate.a = 1.0
-		"fadeIn", "fadeFromBlack duration 1500", _:
-			# 이전 트윈이 진행 중이면 즉시 완료 처리
-			if _bg_tween and _bg_tween.is_running():
-				_bg_tween.kill()
-				bg1.texture = bg2.texture
-				bg1.modulate.a = 1.0
-				bg2.modulate.a = 0.0
-
-			bg2.texture = tex
-			bg2.modulate.a = 0.0
-			_bg_tween = create_tween()
-			_bg_tween.tween_property(bg2, "modulate:a", 1.0, 1.0)
-			_bg_tween.finished.connect(func():
-				bg1.texture = bg2.texture
-				bg1.modulate.a = 1.0
-				bg2.modulate.a = 0.0
-			)
-
-
 # === Gallery & Misc ===
 
 func _on_gallery_unlock(id: String) -> void:
@@ -456,7 +401,7 @@ func _toggle_skip(enabled: bool) -> void:
 
 func _quick_save() -> void:
 	var extra := StoryManager.get_save_data()
-	extra["background"] = _current_bg_id
+	extra["background"] = $BackgroundLayer.get_current_bg_id()
 	extra["bgm"] = AudioManager.get_current_bgm()
 	extra["characters"] = $CharacterLayer.get_state()
 	GameManager.save_game(0, extra)  # slot 0 = auto/quick
@@ -472,7 +417,7 @@ func _quick_load() -> void:
 func _restore_state(data: Dictionary) -> void:
 	# 배경 복원
 	if data.has("background") and not data["background"].is_empty():
-		_on_scene_change(data["background"], "instant")
+		$BackgroundLayer.restore_background(data["background"])
 
 	# BGM 복원
 	if data.has("bgm") and not data["bgm"].is_empty():
