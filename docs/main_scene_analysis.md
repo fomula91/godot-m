@@ -17,7 +17,7 @@
 Observer 패턴 기반으로 StoryManager의 시그널을 구독하는 Mediator 역할.
 스토리 로직과 프레젠테이션이 분리되어 있어 구조적으로 건전함.
 
-각 레이어별 컨트롤러가 StoryManager 시그널을 직접 구독하는 구조로 리팩토링 진행 중.
+각 레이어별 컨트롤러가 StoryManager 시그널을 직접 구독하는 구조로 리팩토링 완료.
 
 ```
 [StoryManager (Autoload)]
@@ -28,8 +28,10 @@ Observer 패턴 기반으로 StoryManager의 시그널을 구독하는 Mediator 
         |       scene_change_requested
         +---> [overlay_controller.gd (OverlayLayer)]       ✅ 분리 완료
         |       fade/wait/input/affinity_hint_requested
+        +---> [dialogue_controller.gd (DialogueLayer)]     ✅ 분리 완료
+        |       dialogue/narration/centered
         +---> [main_scene.gd (Coordinator)]
-                dialogue/narration/centered/choice/gallery/distraction_free/end
+                choice/gallery/distraction_free/end
 ```
 
 ---
@@ -46,13 +48,14 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 |   +-- CenterSlot (TextureRect)  -- 중앙 캐릭터 (alpha=0)
 |   +-- RightSlot (TextureRect)   -- 오른쪽 캐릭터 (alpha=0)
 +-- UILayer (CanvasLayer, layer=10)
-|   +-- DialogueBox (PanelContainer) -- 하단 70%~100% 영역
-|   |   +-- MarginContainer
-|   |       +-- VBoxContainer
-|   |           +-- NameLabel (Label, 24px)
-|   |           +-- TextLabel (RichTextLabel, 22px, bbcode)
+|   +-- DialogueLayer (Control, script=dialogue_controller.gd) ✅
+|   |   +-- DialogueBox (PanelContainer) -- 하단 70%~100% 영역
+|   |   |   +-- MarginContainer
+|   |   |       +-- VBoxContainer
+|   |   |           +-- NameLabel (Label, 24px)
+|   |   |           +-- TextLabel (RichTextLabel, 22px, bbcode)
+|   |   +-- CenteredText (Label, 32px)  -- 화면 중앙, 숨김 상태
 |   +-- ChoicePanel (VBoxContainer) -- 화면 중앙, 숨김 상태
-|   +-- CenteredText (Label, 32px)  -- 화면 중앙, 숨김 상태
 |   +-- QuickMenu (HBoxContainer)   -- 우상단
 |       +-- SaveBtn / LoadBtn / AutoBtn(toggle) / SkipBtn(toggle) / LogBtn / SettingsBtn
 +-- OverlayLayer (CanvasLayer, layer=20, script=overlay_controller.gd) ✅
@@ -75,22 +78,45 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 
 ## 3. 핵심 상태 변수
 
-### main_scene.gd (440줄, 조율자)
+### main_scene.gd (351줄, 조율자)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
-| `_typing` | bool | 타이핑 애니메이션 진행 중 여부 |
-| `_typing_tween` | Tween | 현재 타이핑 트윈 참조 |
 | `_auto_mode` | bool | 자동 진행 모드 |
 | `_skip_mode` | bool | 스킵 모드 |
 | `_distraction_free` | bool | UI 숨김 모드 |
-| `_dialogue_log` | Array[Dictionary] | 대화 이력 |
 | `_supabase_url` | String | Supabase 통계 URL (빈 문자열이면 비활성) |
 | `_stats_http` | HTTPRequest | 통계 조회용 HTTP |
 | `_vote_http` | HTTPRequest | 투표 기록용 HTTP |
 | `_pending_choice_data` | Dictionary | 비동기 투표 중 임시 선택 데이터 |
 
-### character_controller.gd (139줄)
+| @onready 참조 | 타입 | 용도 |
+|----------------|------|------|
+| `choice_panel` | VBoxContainer | 선택지 패널 |
+| `quick_menu` | HBoxContainer | 퀵메뉴 |
+| `auto_timer` | Timer | 자동 진행 타이머 |
+| `dialogue_layer` | Control | DialogueLayer 참조 (dialogue_controller.gd) |
+
+### dialogue_controller.gd (129줄)
+
+| 시그널 | 용도 |
+|--------|------|
+| `typing_finished` | 타이핑 완료 시 발신 (auto/skip 모드 연동용) |
+
+| 변수 | 타입 | 용도 |
+|------|------|------|
+| `_typing` | bool | 타이핑 애니메이션 진행 중 여부 |
+| `_typing_tween` | Tween | 현재 타이핑 트윈 참조 |
+| `_dialogue_log` | Array[Dictionary] | 대화 이력 |
+
+| @onready 참조 | 타입 | 용도 |
+|----------------|------|------|
+| `dialogue_box` | PanelContainer | 대화창 패널 |
+| `name_label` | Label | 화자 이름 |
+| `text_label` | RichTextLabel | 대사 텍스트 |
+| `centered_text` | Label | 중앙 텍스트 |
+
+### character_controller.gd (138줄)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
@@ -103,7 +129,7 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `_current_bg_id` | String | 현재 배경 ID (세이브용) |
 | `_bg_tween` | Tween | 배경 크로스페이드 트윈 추적 (충돌 방지용) |
 
-### overlay_controller.gd (99줄)
+### overlay_controller.gd (98줄)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
@@ -119,8 +145,8 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
   +-- $OverlayLayer.is_input_active() -> 무시
   +-- play_ui_click() (항상 재생)
   +-- distraction_free 모드 -> UI 복원, return
-  +-- CenteredText 표시 중 -> 숨기고 advance(), return
-  +-- 타이핑 중 -> 즉시 완료 (_complete_typing), return
+  +-- CenteredText 표시 중 -> 숨기고 advance(), return  [dialogue_layer 위임]
+  +-- 타이핑 중 -> 즉시 완료 (dialogue_layer.complete_typing), return
   +-- 선택지 표시 중 -> 무시, return
   +-- 그 외 -> StoryManager.advance()
 ```
@@ -133,13 +159,23 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 | StoryManager 시그널 | 핸들러 | 동작 |
 |---------------------|--------|------|
-| `dialogue_requested` | `_on_dialogue` | 이름+텍스트 표시, 타이핑 애니메이션 |
-| `narration_requested` | `_on_narration` | 이름 숨김, 텍스트만 타이핑 |
-| `centered_requested` | `_on_centered` | 대화창 숨김, 중앙 텍스트 페이드인 |
 | `choice_requested` | `_on_choice` | 선택지 버튼 동적 생성 |
 | `gallery_unlock_requested` | `_on_gallery_unlock` | 갤러리 해금 |
 | `distraction_free_toggled` | `_on_distraction_free` | UI 토글 |
 | `end_requested` | `_on_end` | 타이틀 화면으로 복귀 |
+
+| 내부 시그널 | 핸들러 | 동작 |
+|-------------|--------|------|
+| `dialogue_layer.typing_finished` | `_on_typing_finished` | auto/skip 모드 자동 진행 |
+| `auto_timer.timeout` | `_on_auto_timeout` | auto 모드 대기 후 advance |
+
+### dialogue_controller.gd (DialogueLayer에서 직접 구독)
+
+| StoryManager 시그널 | 핸들러 | 동작 |
+|---------------------|--------|------|
+| `dialogue_requested` | `_on_dialogue` | 이름+텍스트 표시, 타이핑 애니메이션 |
+| `narration_requested` | `_on_narration` | 이름 숨김, 텍스트만 타이핑 |
+| `centered_requested` | `_on_centered` | 대화창 숨김, 중앙 텍스트 페이드인 |
 
 ### background_controller.gd (BackgroundLayer에서 직접 구독)
 
@@ -168,13 +204,16 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 ## 6. 주요 기능 상세
 
-### 6.1 타이핑 시스템 (main_scene.gd)
+### 6.1 타이핑 시스템 (dialogue_controller.gd)
 
 - `visible_ratio`를 0->1로 트윈하여 글자 출력 효과
 - 속도: `GameManager.settings["text_speed"]` (ms/글자)
-- 스킵 모드일 때 0.05초로 단축
-- 완료 후 auto_mode면 AutoTimer 시작, skip_mode면 0.05초 후 자동 진행
-- `_complete_typing()`은 트윈을 kill하고 `_on_typing_done()`을 수동 호출
+- `start_typing_fast()`: 스킵 모드용 가속 (0.05초로 단축)
+- 완료 시 `typing_finished` 시그널 발신 → main_scene.gd에서 auto/skip 처리
+- `complete_typing()`: 트윈 kill 후 `_on_typing_done()` 수동 호출
+- Public API: `is_typing()`, `complete_typing()`, `is_centered_visible()`, `hide_centered()`
+- Public API: `show_dialogue_box()`, `hide_dialogue_box()`, `show_choice_dialog()`, `show_raw_text()`
+- Public API: `get_dialogue_log()`
 
 ### 6.2 배경 전환 (background_controller.gd)
 
@@ -253,7 +292,7 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 ### 7.2 발견된 문제점
 
-#### ~~[높음] God Object~~ 개선 중 (670줄 → 573줄 → 440줄)
+#### ~~[높음] God Object~~ 개선 중 (670줄 → 573줄 → 440줄 → 351줄)
 
 **위치**: main_scene.gd 전체
 
@@ -261,8 +300,8 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 - ~~캐릭터 관리~~ → `character_controller.gd` ✅ 분리 완료
 - ~~배경 전환~~ → `background_controller.gd` ✅ 분리 완료
 - ~~페이드/입력/거리감~~ → `overlay_controller.gd` ✅ 분리 완료
+- ~~대화창/타이핑~~ → `dialogue_controller.gd` ✅ 분리 완료
 - 선택지 + Supabase → `choice_controller.gd` 분리 예정
-- 대화창/타이핑 → `dialogue_controller.gd` 분리 예정
 
 #### ~~[높음] 캐릭터 상태 로드 미복원 (버그)~~ ✅ 수정 완료
 
@@ -452,20 +491,20 @@ func _auto_advance_after(delay: float) -> void:
 ### 현재 구조
 
 ```
-main_scene.gd              (440줄, 조율자 + 대화/선택지/세이브)
-character_controller.gd    (139줄, CharacterLayer 스크립트)   ✅ 분리 완료
-background_controller.gd   (70줄, BackgroundLayer 스크립트)   ✅ 분리 완료
-overlay_controller.gd      (99줄, OverlayLayer 스크립트)      ✅ 분리 완료
+main_scene.gd              (351줄, 조율자 + 선택지/세이브)
+dialogue_controller.gd     (129줄, DialogueLayer 스크립트)    ✅ 분리 완료
+character_controller.gd    (138줄, CharacterLayer 스크립트)   ✅ 분리 완료
+background_controller.gd   (69줄, BackgroundLayer 스크립트)   ✅ 분리 완료
+overlay_controller.gd      (98줄, OverlayLayer 스크립트)      ✅ 분리 완료
 ```
 
 ### 권장 분리 구조 (남은 작업)
 
 ```
-main_scene.gd              -- 초기화, 입력, auto/skip, 세이브/로드 조율만 (~100줄)
-dialogue_controller.gd     -- 대화창, 타이핑, 로그
 choice_controller.gd       -- 선택지 UI, Supabase 통계 연동
 ```
 
+분리 완료 시 main_scene.gd는 ~200줄 (초기화, 입력, auto/skip, 세이브/로드 조율만) 예상.
 모든 컨트롤러는 `scenes/controller/` 디렉토리에 위치.
 
 ---
@@ -480,7 +519,7 @@ choice_controller.gd       -- 선택지 UI, Supabase 통계 연동
 | ~~4~~ | ~~배경 컨트롤러 분리~~ | ✅ 완료 |
 | ~~5~~ | ~~오버레이 컨트롤러 분리~~ | ✅ 완료 |
 | 6 | 선택지 컨트롤러 분리 (choice_controller.gd) | 중 |
-| 7 | 대화 컨트롤러 분리 (dialogue_controller.gd) | 중 |
+| ~~7~~ | ~~대화 컨트롤러 분리 (dialogue_controller.gd)~~ | ✅ 완료 |
 | 8 | `_auto_advance_after` 취소 가능 타이머로 교체 | 소 |
 | 9 | await 후 is_inside_tree() 체크 추가 | 소 |
 | 10 | 선택지 중 클릭음 재생 조건 수정 | 소 |
