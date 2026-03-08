@@ -13,6 +13,7 @@ extends Control
 var _auto_mode := false
 var _skip_mode := false
 var _distraction_free := false
+var _advance_timer: SceneTreeTimer = null
 
 # Supabase 설정
 var _supabase_url: String = ""
@@ -124,8 +125,10 @@ func _on_auto_timeout() -> void:
 
 
 func _auto_advance_delayed(delay: float) -> void:
-	await get_tree().create_timer(delay).timeout
-	if not choice_panel.visible:
+	_advance_timer = get_tree().create_timer(delay)
+	var current := _advance_timer
+	await current.timeout
+	if current == _advance_timer and is_inside_tree() and not choice_panel.visible:
 		StoryManager.advance()
 
 

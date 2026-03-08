@@ -85,6 +85,7 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `_auto_mode` | bool | 자동 진행 모드 |
 | `_skip_mode` | bool | 스킵 모드 |
 | `_distraction_free` | bool | UI 숨김 모드 |
+| `_advance_timer` | SceneTreeTimer | 취소 가능한 자동 진행 타이머 참조 |
 | `_supabase_url` | String | Supabase 통계 URL (빈 문자열이면 비활성) |
 | `_stats_http` | HTTPRequest | 통계 조회용 HTTP |
 | `_vote_http` | HTTPRequest | 투표 기록용 HTTP |
@@ -327,12 +328,10 @@ HTTP 통신, JSON 파싱, 통계 표시 로직이 뷰 컨트롤러에 직접 존
 
 빈 for 루프. 통계 프리뷰 표시 기능이 구현되지 않은 상태.
 
-#### [중간] await 후 씬 유효성 미검증
+#### ~~[중간] await 후 씬 유효성 미검증~~ ✅ 수정 완료
 
-**위치**: main_scene.gd `_auto_advance_delayed()`
-
-`await get_tree().create_timer(delay).timeout` 중에 씬 전환이 발생하면
-orphan coroutine이 됨. `is_inside_tree()` 체크가 필요함.
+`_auto_advance_delayed()`에 `_advance_timer` 참조 패턴과 `is_inside_tree()` 체크를 추가하여
+취소 가능한 타이머로 교체. orphan coroutine과 다중 advance() 호출 문제 모두 해결.
 
 #### [낮음] 선택지 표시 중에도 클릭음 재생
 
@@ -444,41 +443,16 @@ AutoTimer가 시작되지 않음. 자동재생 모드에서도 수동 클릭 필
 `_on_typing_done()`에서 시작하는 AutoTimer와 별개로 동작함.
 두 타이머가 동시에 진행되면 `advance()`가 이중 호출될 수 있음.
 
-### 8.4 `_auto_advance_after` 구조적 문제
+### ~~8.4 `_auto_advance_after` 구조적 문제~~ ✅ 수정 완료
 
-#### [높음] fire-and-forget 타이머로 인한 다중 advance
-
-**위치**: main_scene.gd `_auto_advance_delayed()`
-
-```gdscript
-func _auto_advance_after(delay: float) -> void:
-    await get_tree().create_timer(delay).timeout
-    StoryManager.advance()
-```
-
-이 코루틴은 생성 후 취소할 수 없음(fire-and-forget).
-스킵 모드로 빠르게 진행하면 이전 타이머가 아직 대기 중인 상태에서
-새 타이머가 생성되어, 완료 시 `advance()`가 여러 번 호출됨.
-
-**개선 방향**: 취소 가능한 타이머 패턴 사용
-
-```gdscript
-var _advance_timer: SceneTreeTimer = null
-
-func _auto_advance_after(delay: float) -> void:
-    # 이전 타이머 무효화
-    _advance_timer = get_tree().create_timer(delay)
-    var current = _advance_timer
-    await current.timeout
-    if current == _advance_timer and is_inside_tree():
-        StoryManager.advance()
-```
+`_advance_timer` 인스턴스 변수를 추가하여 취소 가능한 타이머 패턴으로 교체.
+`current == _advance_timer` 비교로 이전 코루틴 무효화, `is_inside_tree()` 체크로 orphan 방지.
 
 ### 8.5 개선 방향 요약
 
 | 우선순위 | 항목 | 예상 작업량 |
 |----------|------|-------------|
-| 1 | `_auto_advance_after` 취소 가능 타이머로 교체 | 소 |
+| ~~1~~ | ~~`_auto_advance_after` 취소 가능 타이머로 교체~~ | ✅ 완료 |
 | 2 | 스킵 모드 시 트랜지션 즉시 완료 | 중 |
 | 3 | centered 텍스트 스킵/자동재생 연동 | 소 |
 | 4 | 퀵세이브에 스프라이트 ID 포함 | 중 |
@@ -520,8 +494,8 @@ choice_controller.gd       -- 선택지 UI, Supabase 통계 연동
 | ~~5~~ | ~~오버레이 컨트롤러 분리~~ | ✅ 완료 |
 | 6 | 선택지 컨트롤러 분리 (choice_controller.gd) | 중 |
 | ~~7~~ | ~~대화 컨트롤러 분리 (dialogue_controller.gd)~~ | ✅ 완료 |
-| 8 | `_auto_advance_after` 취소 가능 타이머로 교체 | 소 |
-| 9 | await 후 is_inside_tree() 체크 추가 | 소 |
+| ~~8~~ | ~~`_auto_advance_after` 취소 가능 타이머로 교체~~ | ✅ 완료 |
+| ~~9~~ | ~~await 후 is_inside_tree() 체크 추가~~ | ✅ 완료 |
 | 10 | 선택지 중 클릭음 재생 조건 수정 | 소 |
 | 11 | 스킵 모드 시 트랜지션 즉시 완료 | 중 |
 | 12 | centered 텍스트 스킵/자동재생 연동 | 소 |
