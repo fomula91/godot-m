@@ -25,6 +25,8 @@ var settings: Dictionary = {
 	"auto_speed": 5.0,   # seconds
 	"music_volume": 1.0,
 	"sound_volume": 1.0,
+	"resolution": "1920x1080",
+	"window_mode": 0,  # 0=창모드, 1=전체화면(창모드/보더리스), 2=전체화면
 }
 
 const SAVE_DIR := "user://saves/"
@@ -36,6 +38,7 @@ func _ready() -> void:
 	_ensure_save_dir()
 	_load_settings()
 	_load_gallery()
+	apply_display_settings()
 
 
 func reset_state() -> void:
@@ -233,6 +236,33 @@ func delete_save(slot: int) -> void:
 	var path := SAVE_DIR + "slot_%d.json" % slot
 	if FileAccess.file_exists(path):
 		DirAccess.remove_absolute(path)
+
+
+func apply_display_settings() -> void:
+	var win := get_window()
+	# 화면 모드 적용
+	var mode: int = int(settings.get("window_mode", 0))
+	match mode:
+		0:
+			win.mode = Window.MODE_WINDOWED
+		1:
+			win.mode = Window.MODE_FULLSCREEN
+		2:
+			win.mode = Window.MODE_EXCLUSIVE_FULLSCREEN
+	# 해상도 적용 (창모드일 때만 창 크기 변경)
+	if mode == 0:
+		var res_str: String = settings.get("resolution", "1920x1080")
+		var parts := res_str.split("x")
+		if parts.size() == 2:
+			var w := parts[0].to_int()
+			var h := parts[1].to_int()
+			win.size = Vector2i(w, h)
+			# 화면 중앙에 위치
+			var screen_size := DisplayServer.screen_get_size()
+			win.position = Vector2i(
+				(screen_size.x - w) / 2,
+				(screen_size.y - h) / 2
+			)
 
 
 # --- 설정 ---
