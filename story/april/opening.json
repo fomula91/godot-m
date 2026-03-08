@@ -23,7 +23,8 @@
 			{"text": "5. 변수/조건 분기", "key": "var", "target": "Test_Variable"},
 			{"text": "6. 페이드/점프/대기", "key": "fade", "target": "Test_FadeJump"},
 			{"text": "7. 갤러리/어피니티/방해금지", "key": "special", "target": "Test_Special"},
-			{"text": "8. 전체 통합 테스트 (스토리)", "key": "full", "target": "Opening"}
+			{"text": "8. 전체 통합 테스트 (스토리)", "key": "full", "target": "Opening"},
+			{"text": "9. 오토/스킵 테스트", "key": "autoskip", "target": "Test_AutoSkip"}
 		]}
 	],
 
@@ -345,6 +346,61 @@
 			{"text": "타이틀로 돌아가기 (end 테스트)", "key": "end", "target": "Test_End"},
 			{"text": "메뉴로 돌아가기", "key": "menu", "target": "TestMenu"}
 		]}
+	],
+
+	"Test_AutoSkip": [
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
+		{"cmd": "centered", "text": "— 오토/스킵 테스트 —"},
+
+		{"cmd": "narration", "text": "=== 오토 모드 테스트 ==="},
+		{"cmd": "narration", "text": "Auto 버튼을 켜세요. 아래 텍스트가 자동으로 진행되어야 합니다."},
+		{"cmd": "narration", "text": "[오토 1/5] 봄 하늘은 높고 맑다."},
+		{"cmd": "narration", "text": "[오토 2/5] 교실 창문 너머로 벚꽃이 보인다."},
+		{"cmd": "narration", "text": "[오토 3/5] 바람이 불 때마다 꽃잎이 흩날린다."},
+		{"cmd": "narration", "text": "[오토 4/5] 누군가의 웃음소리가 복도에서 들려온다."},
+		{"cmd": "narration", "text": "[오토 5/5] 평범한 오후다. 이 텍스트까지 자동으로 넘어왔다면 오토 모드 정상."},
+
+		{"cmd": "narration", "text": "▶ 오토 모드가 choice에서 멈추는지 확인합니다."},
+		{"cmd": "choice", "dialog": "오토 모드가 여기서 멈췄나요?", "choices": [
+			{"text": "예, 멈췄습니다 (정상)", "key": "yes", "target": "Test_AutoSkip_AfterAuto"},
+			{"text": "아니요, 자동으로 넘어갔습니다 (버그)", "key": "no", "target": "Test_AutoSkip_AfterAuto"}
+		]}
+	],
+
+	"Test_AutoSkip_AfterAuto": [
+		{"cmd": "narration", "text": "오토 테스트 구간 완료. 스킵 테스트로 넘어갑니다."},
+		{"cmd": "jump", "target": "Test_AutoSkip_Skip"}
+	],
+
+	"Test_AutoSkip_Skip": [
+		{"cmd": "centered", "text": "— 스킵 모드 테스트 —"},
+
+		{"cmd": "narration", "text": "=== 스킵 모드 테스트 ==="},
+		{"cmd": "narration", "text": "Skip 버튼을 켜세요. 아래 텍스트가 빠르게 넘어가야 합니다."},
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
+		{"cmd": "dialogue", "character": "sua", "text": "[스킵 1/5] 오늘 날씨 좋다."},
+		{"cmd": "narration", "text": "[스킵 2/5] 수아가 창밖을 바라보고 있다."},
+		{"cmd": "dialogue", "character": "sua", "text": "[스킵 3/5] …바람이 시원해."},
+		{"cmd": "narration", "text": "[스킵 4/5] 교실은 조용하다."},
+		{"cmd": "dialogue", "character": "sua", "text": "[스킵 5/5] 이 텍스트까지 빠르게 넘어왔다면 스킵 모드 정상."},
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
+
+		{"cmd": "narration", "text": "▶ 스킵 모드가 choice에서 멈추는지 확인합니다."},
+		{"cmd": "choice", "dialog": "스킵 모드가 여기서 멈췄나요?", "choices": [
+			{"text": "예, 멈췄습니다 (정상)", "key": "yes", "target": "Test_AutoSkip_AfterSkip"},
+			{"text": "아니요, 자동으로 넘어갔습니다 (버그)", "key": "no", "target": "Test_AutoSkip_AfterSkip"}
+		]}
+	],
+
+	"Test_AutoSkip_AfterSkip": [
+		{"cmd": "centered", "text": "— 상호 배타 테스트 안내 —"},
+		{"cmd": "narration", "text": "=== 오토/스킵 상호 배타 확인 ==="},
+		{"cmd": "narration", "text": "1. Auto 버튼을 켜세요."},
+		{"cmd": "narration", "text": "2. Auto가 켜진 상태에서 Skip 버튼을 누르세요."},
+		{"cmd": "narration", "text": "3. Auto가 자동으로 꺼지고, Skip만 활성화되어야 합니다."},
+		{"cmd": "narration", "text": "4. 반대로 Skip이 켜진 상태에서 Auto를 누르면 Skip이 꺼져야 합니다."},
+		{"cmd": "narration", "text": "[오토/스킵 테스트 완료]"},
+		{"cmd": "jump", "target": "TestMenu2"}
 	],
 
 	"Test_End": [
