@@ -44,7 +44,13 @@ func _connect_ui_signals() -> void:
 	$UILayer/QuickMenu/LoadBtn.pressed.connect(_quick_load)
 	$UILayer/QuickMenu/AutoBtn.toggled.connect(_toggle_auto)
 	$UILayer/QuickMenu/SkipBtn.toggled.connect(_toggle_skip)
-	$UILayer/QuickMenu/SettingsBtn.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/settings_screen.tscn"))
+	$UILayer/QuickMenu/SettingsBtn.pressed.connect(_open_settings)
+
+
+func _open_settings() -> void:
+	var settings = load("res://scenes/settings_screen.tscn").instantiate()
+	settings.set_overlay_mode()
+	get_tree().root.add_child(settings)
 
 
 func _setup_http_nodes() -> void:

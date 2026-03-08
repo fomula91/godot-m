@@ -6,6 +6,12 @@ extends Control
 @onready var auto_speed_slider: HSlider = $CenterContainer/VBoxContainer/AutoSpeedRow/AutoSpeedSlider
 @onready var back_btn: Button = $CenterContainer/VBoxContainer/BackBtn
 
+var _overlay_mode := false
+
+
+func set_overlay_mode() -> void:
+	_overlay_mode = true
+
 
 func _ready() -> void:
 	# 현재 설정 로드
@@ -46,4 +52,7 @@ func _on_auto_speed_changed(value: float) -> void:
 
 func _on_back() -> void:
 	AudioManager.play_ui_click()
-	get_tree().change_scene_to_file("res://scenes/title_screen.tscn")
+	if _overlay_mode:
+		queue_free()
+	else:
+		get_tree().change_scene_to_file("res://scenes/title_screen.tscn")
