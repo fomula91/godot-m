@@ -50,7 +50,7 @@ func _on_scene_change(id: String, transition: String) -> void:
         "instant":
             bg1.texture = tex
             bg1.modulate.a = 1.0
-        "fadeIn", "fadeFromBlack duration 1500", _:
+        _:
             # 이전 트윈이 진행 중이면 즉시 완료 처리
             if _bg_tween and _bg_tween.is_running():
                 _bg_tween.kill()

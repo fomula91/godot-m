@@ -85,6 +85,12 @@ func _on_show(id: String, sprite: String, position: String, transition: String) 
 	if not tex:
 		return
 
+	# 같은 position을 점유하던 이전 캐릭터 제거 (ghost 방지)
+	for existing_id in _character_slots:
+		if existing_id != id and _character_slots[existing_id] == position:
+			_character_slots.erase(existing_id)
+			break
+
 	_prepare_slot(position, slot)
 	slot.texture = tex
 	_character_slots[id] = position

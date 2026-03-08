@@ -40,10 +40,10 @@ func _connect_ui_signals() -> void:
 	dialogue_layer.typing_finished.connect(_on_typing_finished)
 
 	# Quick menu
-	$UILayer/QuickMenu/SaveBtn.pressed.connect(func(): _quick_save())
-	$UILayer/QuickMenu/LoadBtn.pressed.connect(func(): _quick_load())
-	$UILayer/QuickMenu/AutoBtn.toggled.connect(func(v): _toggle_auto(v))
-	$UILayer/QuickMenu/SkipBtn.toggled.connect(func(v): _toggle_skip(v))
+	$UILayer/QuickMenu/SaveBtn.pressed.connect(_quick_save)
+	$UILayer/QuickMenu/LoadBtn.pressed.connect(_quick_load)
+	$UILayer/QuickMenu/AutoBtn.toggled.connect(_toggle_auto)
+	$UILayer/QuickMenu/SkipBtn.toggled.connect(_toggle_skip)
 	$UILayer/QuickMenu/SettingsBtn.pressed.connect(func(): get_tree().change_scene_to_file("res://scenes/settings_screen.tscn"))
 
 
@@ -85,27 +85,29 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _handle_advance_input() -> void:
-	AudioManager.play_ui_click()
-	DebugOverlay.log_message("Advance input")
-
 	if _distraction_free:
+		AudioManager.play_ui_click()
 		_distraction_free = false
 		dialogue_layer.show_dialogue_box()
 		quick_menu.visible = true
 		return
 
 	if dialogue_layer.is_centered_visible():
+		AudioManager.play_ui_click()
 		dialogue_layer.hide_centered()
 		StoryManager.advance()
 		return
 
 	if dialogue_layer.is_typing():
+		AudioManager.play_ui_click()
 		dialogue_layer.complete_typing()
 		return
 
 	if choice_panel.visible:
 		return
 
+	AudioManager.play_ui_click()
+	DebugOverlay.log_message("Advance input")
 	StoryManager.advance()
 
 
@@ -116,6 +118,7 @@ func _on_typing_finished() -> void:
 		auto_timer.wait_time = GameManager.settings["auto_speed"]
 		auto_timer.start()
 	elif _skip_mode:
+		auto_timer.stop()
 		_auto_advance_delayed(0.05)
 
 
@@ -148,7 +151,7 @@ func _on_choice(dialog: String, choices: Array) -> void:
 
 	# 선택지 버튼 생성
 	for child in choice_panel.get_children():
-		child.queue_free()
+		child.free()
 
 	for choice in choices:
 		var btn := Button.new()

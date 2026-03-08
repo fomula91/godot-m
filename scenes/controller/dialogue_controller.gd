@@ -90,6 +90,7 @@ func _on_centered(text: String) -> void:
     centered_text.modulate.a = 0.0
     var tw := create_tween()
     tw.tween_property(centered_text, "modulate:a", 1.0, 0.5)
+    tw.finished.connect(func(): typing_finished.emit())
 
 # === Typing System ===
 
