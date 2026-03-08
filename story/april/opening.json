@@ -286,7 +286,8 @@
 		{"cmd": "narration", "text": "그때의 나는 정말로 그 정도밖에 생각하지 않았다."},
 
 		{"cmd": "stop_music", "fade": 2.0},
-		{"cmd": "fade_jump", "target": "SeatAssignment", "duration": 1.5}
+		{"cmd": "centered", "text": "테스트 종료"},
+		{"cmd": "end"}
 	],
 
 	"SeatAssignment": [
