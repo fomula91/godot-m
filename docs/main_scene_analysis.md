@@ -78,7 +78,7 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 
 ## 3. 핵심 상태 변수
 
-### main_scene.gd (351줄, 조율자)
+### main_scene.gd (386줄, 조율자)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
@@ -98,7 +98,12 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `auto_timer` | Timer | 자동 진행 타이머 |
 | `dialogue_layer` | Control | DialogueLayer 참조 (dialogue_controller.gd) |
 
-### dialogue_controller.gd (129줄)
+| Public API | 반환 타입 | 용도 |
+|------------|-----------|------|
+| `start_story(label)` | void | 새 게임 시작 (기본 라벨: "Start") |
+| `get_dialogue_log()` | Array[Dictionary] | 대화 이력 반환 (dialogue_layer 위임) |
+
+### dialogue_controller.gd (131줄)
 
 | 시그널 | 용도 |
 |--------|------|
@@ -117,11 +122,25 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `text_label` | RichTextLabel | 대사 텍스트 |
 | `centered_text` | Label | 중앙 텍스트 |
 
-### character_controller.gd (138줄)
+### character_controller.gd (200줄)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
 | `_character_slots` | Dictionary | `{char_id: "left"/"center"/"right"}` 매핑 |
+| `_active_tweens` | Dictionary | `{position_name: Tween}` 실행 중 트윈 추적 (충돌 방지) |
+| `_initial_offsets` | Dictionary | `{position_name: offset_values}` 슬롯별 초기 오프셋 저장 |
+
+| @onready 참조 | 타입 | 용도 |
+|----------------|------|------|
+| `left_slot` | TextureRect | 왼쪽 캐릭터 슬롯 |
+| `center_slot` | TextureRect | 중앙 캐릭터 슬롯 |
+| `right_slot` | TextureRect | 오른쪽 캐릭터 슬롯 |
+
+| Public API | 반환 타입 | 용도 |
+|------------|-----------|------|
+| `get_state()` | Dictionary | 캐릭터 슬롯 매핑 복제본 반환 |
+| `restore_state(state)` | void | 세이브 데이터로부터 캐릭터 위치 복원 |
+| `clear_all()` | void | 모든 캐릭터 제거 및 슬롯 초기화 |
 
 ### background_controller.gd (70줄)
 
@@ -130,12 +149,24 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `_current_bg_id` | String | 현재 배경 ID (세이브용) |
 | `_bg_tween` | Tween | 배경 크로스페이드 트윈 추적 (충돌 방지용) |
 
-### overlay_controller.gd (98줄)
+### overlay_controller.gd (99줄)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
 | `_default_name` | String | 입력 다이얼로그 기본 이름 |
 | `_affinity_config` | Dictionary | 거리감 알림 설정 (하드코딩) |
+
+| @onready 참조 | 타입 | 용도 |
+|----------------|------|------|
+| `transition_rect` | ColorRect | 페이드 전환용 |
+| `affinity_hint` | PanelContainer | 거리감 알림 패널 |
+| `affinity_icon` | Label | 거리감 아이콘 |
+| `affinity_text` | Label | 거리감 텍스트 |
+| `input_dialog` | PanelContainer | 이름 입력 다이얼로그 |
+| `input_prompt` | Label | 입력 프롬프트 |
+| `input_field` | LineEdit | 입력 필드 |
+| `input_warning` | Label | 경고 메시지 |
+| `input_confirm_btn` | Button | 확인 버튼 |
 
 ---
 
@@ -225,6 +256,13 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 ### 6.3 캐릭터 애니메이션 (character_controller.gd)
 
+- `_active_tweens` 딕셔너리로 슬롯별 트윈 추적, 새 트윈 시작 시 기존 트윈 kill
+- `_initial_offsets` 딕셔너리로 슬롯별 초기 오프셋 저장, 전환 후 복원
+- `_prepare_slot()`에서 트윈 정리 + 오프셋/스케일 리셋 후 새 전환 시작
+- 슬라이드 전환: `EASE_OUT` + `TRANS_CUBIC` 이징
+- 바운스 전환: `EASE_OUT` + `TRANS_BACK` 이징
+- 퇴장 전환 완료 시 클로저 함수로 오프셋 복원
+
 | 전환 타입 | 등장 효과 |
 |-----------|-----------|
 | `fadeIn` | 단순 알파 페이드 (0.5초) |
@@ -293,7 +331,7 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 ### 7.2 발견된 문제점
 
-#### ~~[높음] God Object~~ 개선 중 (670줄 → 573줄 → 440줄 → 351줄)
+#### ~~[높음] God Object~~ 개선 중 (670줄 → 573줄 → 440줄 → 351줄 → 386줄)
 
 **위치**: main_scene.gd 전체
 
@@ -361,12 +399,12 @@ $UILayer/QuickMenu/SaveBtn.pressed.connect(_quick_save)
 
 `"fadeFromBlack duration 1500"`은 와일드카드 `_`와 같은 분기이므로 실질적 dead code.
 
-#### [낮음] 같은 position에 두 캐릭터 배치 시 ghost 상태
+#### ~~[낮음] 같은 position에 두 캐릭터 배치 시 ghost 상태~~ ✅ 수정 완료
 
 **위치**: character_controller.gd `_on_show()`
 
-같은 position에 새 캐릭터가 배치되면 이전 캐릭터의 `_character_slots` 항목이
-남아 있어 ghost 상태가 됨.
+같은 position에 새 캐릭터가 배치되면 이전 캐릭터의 `_character_slots` 항목을
+자동으로 삭제하도록 수정됨. `_active_tweens` 딕셔너리로 트윈 충돌도 방지.
 
 #### [낮음] `queue_free` vs `free`
 
@@ -465,11 +503,11 @@ AutoTimer가 시작되지 않음. 자동재생 모드에서도 수동 클릭 필
 ### 현재 구조
 
 ```
-main_scene.gd              (351줄, 조율자 + 선택지/세이브)
-dialogue_controller.gd     (129줄, DialogueLayer 스크립트)    ✅ 분리 완료
-character_controller.gd    (138줄, CharacterLayer 스크립트)   ✅ 분리 완료
-background_controller.gd   (69줄, BackgroundLayer 스크립트)   ✅ 분리 완료
-overlay_controller.gd      (98줄, OverlayLayer 스크립트)      ✅ 분리 완료
+main_scene.gd              (386줄, 조율자 + 선택지/세이브)
+dialogue_controller.gd     (131줄, DialogueLayer 스크립트)    ✅ 분리 완료
+character_controller.gd    (200줄, CharacterLayer 스크립트)   ✅ 분리 완료
+background_controller.gd   (70줄, BackgroundLayer 스크립트)   ✅ 분리 완료
+overlay_controller.gd      (99줄, OverlayLayer 스크립트)      ✅ 분리 완료
 ```
 
 ### 권장 분리 구조 (남은 작업)
