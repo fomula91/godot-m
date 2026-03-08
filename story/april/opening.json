@@ -2,40 +2,355 @@
 	"Start": [
 		{"cmd": "show_scene", "id": "school_front_morning", "transition": "instant"},
 		{"cmd": "input", "prompt": "당신의 이름을 입력하세요", "warning": "이름을 입력해주세요!", "default": "강현우"},
-		{"cmd": "jump", "target": "TestEvent"}
+		{"cmd": "jump", "target": "TestMenu"}
 	],
 
-	"TestEvent": [
-		{"cmd": "narration", "text": "{{player.name}}, 안녕. 기능 테스트를 시작할게."},
-		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
-		{"cmd": "dialogue", "character": "sua", "text": "…안녕."},
-		{"cmd": "choice", "dialog": "어떻게 할까?", "choices": [
-			{"text": "반갑게 인사한다", "key": "closer", "target": "Test_Closer"},
-			{"text": "무시한다", "key": "farther", "target": "Test_Farther"},
-			{"text": "테스트 건너뛰기", "key": "skip", "target": "Opening"}
+	"TestMenu": [
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
+		{"cmd": "centered", "text": "— 기능 테스트 메뉴 —"},
+		{"cmd": "narration", "text": "{{player.name}}, 테스트할 기능을 선택해."},
+		{"cmd": "choice", "dialog": "어떤 기능을 테스트할까?", "choices": [
+			{"text": "1. 대화/내레이션/센터 텍스트", "key": "text", "target": "Test_Text"},
+			{"text": "2. 배경 전환 (트랜지션)", "key": "scene", "target": "Test_Scene"},
+			{"text": "3. 캐릭터 표시/숨김/애니메이션", "key": "char", "target": "Test_Character"},
+			{"text": "4. 오디오 (음악/효과음)", "key": "audio", "target": "Test_Audio"}
 		]}
 	],
 
-	"Test_Closer": [
-		{"cmd": "dialogue", "character": "p", "text": "안녕! 반가워, 수아."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "shy"},
-		{"cmd": "dialogue", "character": "sua", "text": "…어, 반가워."},
-		{"cmd": "set_var", "path": "distance", "value": 10, "op": "sub"},
-		{"cmd": "affinity_hint", "character": "closer"},
-		{"cmd": "narration", "text": "(거리감이 줄어든 것 같다. distance -10 적용 확인)"},
-		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
-		{"cmd": "jump", "target": "TestEvent"}
+	"TestMenu2": [
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
+		{"cmd": "choice", "dialog": "다음 테스트를 선택해.", "choices": [
+			{"text": "5. 변수/조건 분기", "key": "var", "target": "Test_Variable"},
+			{"text": "6. 페이드/점프/대기", "key": "fade", "target": "Test_FadeJump"},
+			{"text": "7. 갤러리/어피니티/방해금지", "key": "special", "target": "Test_Special"},
+			{"text": "8. 전체 통합 테스트 (스토리)", "key": "full", "target": "Opening"}
+		]}
 	],
 
-	"Test_Farther": [
-		{"cmd": "dialogue", "character": "p", "text": "……"},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "sad"},
-		{"cmd": "dialogue", "character": "sua", "text": "…그래."},
-		{"cmd": "set_var", "path": "distance", "value": 10, "op": "add"},
-		{"cmd": "affinity_hint", "character": "farther"},
-		{"cmd": "narration", "text": "(거리감이 늘어난 것 같다. distance +10 적용 확인)"},
+	"Test_Text": [
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
+		{"cmd": "centered", "text": "— 텍스트 기능 테스트 —"},
+
+		{"cmd": "narration", "text": "이것은 내레이션입니다. 3인칭 서술에 사용됩니다."},
+		{"cmd": "narration", "text": "플레이어 이름 치환 테스트: {{player.name}}"},
+
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
+		{"cmd": "dialogue", "character": "sua", "text": "이것은 수아의 대사입니다. 이름과 색상이 표시됩니다."},
+
+		{"cmd": "show_character", "id": "p", "sprite": "normal", "position": "left", "transition": "fadeIn"},
+		{"cmd": "dialogue", "character": "p", "text": "이것은 플레이어 대사입니다. 이름이 {{player.name}}으로 표시됩니다."},
+
+		{"cmd": "show_character", "id": "friend", "sprite": "normal", "position": "right", "transition": "fadeIn"},
+		{"cmd": "dialogue", "character": "friend", "text": "이것은 친구 대사입니다."},
+
+		{"cmd": "hide_character", "id": "p", "transition": "fadeOut"},
 		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
-		{"cmd": "jump", "target": "TestEvent"}
+		{"cmd": "hide_character", "id": "friend", "transition": "fadeOut"},
+
+		{"cmd": "centered", "text": "센터 텍스트는 화면 중앙에 표시됩니다."},
+		{"cmd": "centered", "text": "장면 전환이나 시간 경과를 나타낼 때 사용합니다."},
+
+		{"cmd": "narration", "text": "[텍스트 테스트 완료]"},
+		{"cmd": "jump", "target": "TestMenu2"}
+	],
+
+	"Test_Scene": [
+		{"cmd": "centered", "text": "— 배경 전환 테스트 —"},
+
+		{"cmd": "narration", "text": "instant 전환: 즉시 변경"},
+		{"cmd": "show_scene", "id": "classroom_morning", "transition": "instant"},
+		{"cmd": "narration", "text": "교실 아침 배경 (instant)"},
+
+		{"cmd": "narration", "text": "fadeIn 전환: 크로스페이드 효과"},
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "fadeIn"},
+		{"cmd": "narration", "text": "교실 낮 배경 (fadeIn)"},
+
+		{"cmd": "narration", "text": "fade_scene: 암전 후 장면 전환"},
+		{"cmd": "fade_scene", "id": "hallway_day", "duration": 1.0},
+		{"cmd": "narration", "text": "복도 낮 배경 (fade_scene)"},
+
+		{"cmd": "narration", "text": "fade_scene 짧은 전환"},
+		{"cmd": "fade_scene", "id": "school_front_morning", "duration": 0.5},
+		{"cmd": "narration", "text": "학교 앞 아침 배경"},
+
+		{"cmd": "narration", "text": "색상 배경 테스트 (#RRGGBBAA 형식)"},
+		{"cmd": "show_scene", "id": "#000000FF", "transition": "instant"},
+		{"cmd": "narration", "text": "검은 화면 (색상 배경)"},
+
+		{"cmd": "show_scene", "id": "#1a237eff", "transition": "instant"},
+		{"cmd": "narration", "text": "진한 남색 화면"},
+
+		{"cmd": "narration", "text": "다시 일반 배경으로 복귀"},
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "fadeIn"},
+		{"cmd": "narration", "text": "[배경 전환 테스트 완료]"},
+		{"cmd": "jump", "target": "TestMenu2"}
+	],
+
+	"Test_Character": [
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
+		{"cmd": "centered", "text": "— 캐릭터 테스트 —"},
+
+		{"cmd": "narration", "text": "=== 포지션 테스트 (left / center / right) ==="},
+		{"cmd": "show_character", "id": "p", "sprite": "normal", "position": "left", "transition": "fadeIn"},
+		{"cmd": "narration", "text": "플레이어 - left 포지션"},
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
+		{"cmd": "narration", "text": "수아 - center 포지션"},
+		{"cmd": "show_character", "id": "friend", "sprite": "normal", "position": "right", "transition": "fadeIn"},
+		{"cmd": "narration", "text": "친구 - right 포지션 (3명 동시 표시)"},
+
+		{"cmd": "hide_character", "id": "p", "transition": "fadeOut"},
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
+		{"cmd": "hide_character", "id": "friend", "transition": "fadeOut"},
+
+		{"cmd": "narration", "text": "=== 등장 트랜지션 테스트 ==="},
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
+		{"cmd": "narration", "text": "fadeIn 트랜지션"},
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
+
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeInUp"},
+		{"cmd": "narration", "text": "fadeInUp 트랜지션 (아래에서 위로)"},
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
+
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "left", "transition": "slideInLeft"},
+		{"cmd": "narration", "text": "slideInLeft 트랜지션 (왼쪽에서 슬라이드)"},
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
+
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "right", "transition": "slideInRight"},
+		{"cmd": "narration", "text": "slideInRight 트랜지션 (오른쪽에서 슬라이드)"},
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
+
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "bounceIn"},
+		{"cmd": "narration", "text": "bounceIn 트랜지션 (바운스 효과)"},
+
+		{"cmd": "narration", "text": "=== 퇴장 트랜지션 테스트 ==="},
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
+		{"cmd": "narration", "text": "fadeOutLeft 테스트"},
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOutLeft"},
+
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
+		{"cmd": "narration", "text": "fadeOutRight 테스트"},
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOutRight"},
+
+		{"cmd": "narration", "text": "=== 스프라이트 변경 테스트 (수아) ==="},
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
+		{"cmd": "narration", "text": "normal 스프라이트"},
+		{"cmd": "change_sprite", "id": "sua", "sprite": "happy"},
+		{"cmd": "narration", "text": "happy 스프라이트"},
+		{"cmd": "change_sprite", "id": "sua", "sprite": "shy"},
+		{"cmd": "narration", "text": "shy 스프라이트"},
+		{"cmd": "change_sprite", "id": "sua", "sprite": "sad"},
+		{"cmd": "narration", "text": "sad 스프라이트"},
+		{"cmd": "change_sprite", "id": "sua", "sprite": "surprised"},
+		{"cmd": "narration", "text": "surprised 스프라이트"},
+		{"cmd": "change_sprite", "id": "sua", "sprite": "worried"},
+		{"cmd": "narration", "text": "worried 스프라이트"},
+
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
+		{"cmd": "narration", "text": "[캐릭터 테스트 완료]"},
+		{"cmd": "jump", "target": "TestMenu2"}
+	],
+
+	"Test_Audio": [
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
+		{"cmd": "centered", "text": "— 오디오 테스트 —"},
+
+		{"cmd": "narration", "text": "BGM 재생 테스트 (loop: true, 기본값)"},
+		{"cmd": "play_music", "id": "piano-calm"},
+		{"cmd": "narration", "text": "piano-calm 재생 중..."},
+
+		{"cmd": "narration", "text": "효과음 재생 테스트"},
+		{"cmd": "play_sound", "id": "classroom-noise"},
+		{"cmd": "narration", "text": "classroom-noise 효과음 재생"},
+		{"cmd": "wait", "duration": 2000},
+
+		{"cmd": "narration", "text": "효과음 정지 테스트"},
+		{"cmd": "stop_sound"},
+		{"cmd": "narration", "text": "효과음 정지됨"},
+
+		{"cmd": "narration", "text": "다른 효과음 테스트"},
+		{"cmd": "play_sound", "id": "chair-drag"},
+		{"cmd": "wait", "duration": 1000},
+		{"cmd": "play_sound", "id": "school-bell"},
+		{"cmd": "wait", "duration": 1500},
+		{"cmd": "stop_sound"},
+
+		{"cmd": "narration", "text": "BGM 페이드아웃 정지 (2초)"},
+		{"cmd": "stop_music", "fade": 2.0},
+		{"cmd": "wait", "duration": 2500},
+
+		{"cmd": "narration", "text": "BGM 변경 테스트 (daily-life)"},
+		{"cmd": "play_music", "id": "daily-life"},
+		{"cmd": "narration", "text": "daily-life 재생 중..."},
+
+		{"cmd": "narration", "text": "loop: false 테스트 (한 번만 재생)"},
+		{"cmd": "stop_music", "fade": 1.0},
+		{"cmd": "wait", "duration": 1500},
+		{"cmd": "play_music", "id": "warm-afternoon", "loop": false},
+		{"cmd": "narration", "text": "warm-afternoon (loop: false) 재생 중..."},
+
+		{"cmd": "stop_music", "fade": 1.0},
+		{"cmd": "narration", "text": "[오디오 테스트 완료]"},
+		{"cmd": "jump", "target": "TestMenu2"}
+	],
+
+	"Test_Variable": [
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
+		{"cmd": "centered", "text": "— 변수/조건 분기 테스트 —"},
+
+		{"cmd": "narration", "text": "=== set_var 테스트 ==="},
+
+		{"cmd": "narration", "text": "distance를 50으로 설정 (set)"},
+		{"cmd": "set_var", "path": "distance", "value": 50, "op": "set"},
+
+		{"cmd": "narration", "text": "distance에서 20 빼기 (sub) → 30"},
+		{"cmd": "set_var", "path": "distance", "value": 20, "op": "sub"},
+
+		{"cmd": "narration", "text": "distance에 5 더하기 (add) → 35"},
+		{"cmd": "set_var", "path": "distance", "value": 5, "op": "add"},
+
+		{"cmd": "narration", "text": "april_events를 0으로 초기화"},
+		{"cmd": "set_var", "path": "april_events", "value": 0, "op": "set"},
+
+		{"cmd": "narration", "text": "april_events +1"},
+		{"cmd": "set_var", "path": "april_events", "value": 1, "op": "add"},
+
+		{"cmd": "narration", "text": "=== conditional 테스트 ==="},
+		{"cmd": "narration", "text": "현재 distance = 35. 조건: distance <= 40 → Close, 아니면 Far"},
+		{"cmd": "conditional", "branches": [
+			{"condition": "distance <= 40", "action": "jump", "target": "Test_Cond_Close"}
+		], "default": "Test_Cond_Far"},
+
+		{"cmd": "narration", "text": "이 줄은 보이면 안 됩니다 (conditional 뒤)"}
+	],
+
+	"Test_Cond_Close": [
+		{"cmd": "narration", "text": "✓ 조건 분기 성공: distance <= 40 → Close 분기 진입"},
+		{"cmd": "jump", "target": "Test_Cond_And"}
+	],
+
+	"Test_Cond_Far": [
+		{"cmd": "narration", "text": "✗ 조건 분기 실패: Far 분기에 진입함 (distance가 40 이하인데?)"},
+		{"cmd": "jump", "target": "Test_Cond_And"}
+	],
+
+	"Test_Cond_And": [
+		{"cmd": "narration", "text": "=== AND 복합 조건 테스트 ==="},
+		{"cmd": "narration", "text": "조건: distance <= 40 AND april_events >= 1"},
+		{"cmd": "conditional", "branches": [
+			{"condition": "distance <= 40 AND april_events >= 1", "action": "jump", "target": "Test_Cond_AndPass"}
+		], "default": "Test_Cond_AndFail"}
+	],
+
+	"Test_Cond_AndPass": [
+		{"cmd": "narration", "text": "✓ AND 조건 성공: 두 조건 모두 참"},
+		{"cmd": "jump", "target": "Test_Cond_Or"}
+	],
+
+	"Test_Cond_AndFail": [
+		{"cmd": "narration", "text": "✗ AND 조건 실패"},
+		{"cmd": "jump", "target": "Test_Cond_Or"}
+	],
+
+	"Test_Cond_Or": [
+		{"cmd": "narration", "text": "=== OR 복합 조건 테스트 ==="},
+		{"cmd": "narration", "text": "조건: distance > 100 OR april_events >= 1 (왼쪽 거짓, 오른쪽 참)"},
+		{"cmd": "conditional", "branches": [
+			{"condition": "distance > 100 OR april_events >= 1", "action": "jump", "target": "Test_Cond_OrPass"}
+		], "default": "Test_Cond_OrFail"}
+	],
+
+	"Test_Cond_OrPass": [
+		{"cmd": "narration", "text": "✓ OR 조건 성공: 하나 이상 참"},
+		{"cmd": "narration", "text": "[변수/조건 분기 테스트 완료]"},
+		{"cmd": "jump", "target": "TestMenu2"}
+	],
+
+	"Test_Cond_OrFail": [
+		{"cmd": "narration", "text": "✗ OR 조건 실패"},
+		{"cmd": "narration", "text": "[변수/조건 분기 테스트 완료]"},
+		{"cmd": "jump", "target": "TestMenu2"}
+	],
+
+	"Test_FadeJump": [
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
+		{"cmd": "centered", "text": "— 페이드/점프/대기 테스트 —"},
+
+		{"cmd": "narration", "text": "=== wait 테스트 (1.5초 대기) ==="},
+		{"cmd": "narration", "text": "지금부터 1.5초 대기합니다..."},
+		{"cmd": "wait", "duration": 1500},
+		{"cmd": "narration", "text": "대기 완료!"},
+
+		{"cmd": "narration", "text": "=== fade_scene 테스트 ==="},
+		{"cmd": "narration", "text": "암전 후 복도로 전환 (1초)"},
+		{"cmd": "fade_scene", "id": "hallway_day", "duration": 1.0},
+		{"cmd": "narration", "text": "fade_scene 완료 — 복도"},
+
+		{"cmd": "narration", "text": "=== fade_jump 테스트 ==="},
+		{"cmd": "narration", "text": "암전 후 다른 라벨로 점프합니다 (1.5초)"},
+		{"cmd": "fade_jump", "target": "Test_FadeJump_Dest", "duration": 1.5}
+	],
+
+	"Test_FadeJump_Dest": [
+		{"cmd": "show_scene", "id": "school_front_morning", "transition": "instant"},
+		{"cmd": "narration", "text": "fade_jump 도착! 학교 앞으로 이동했습니다."},
+
+		{"cmd": "narration", "text": "=== fade_jump color 파라미터 테스트 ==="},
+		{"cmd": "narration", "text": "흰색 페이드로 전환합니다"},
+		{"cmd": "fade_jump", "target": "Test_FadeJump_Color", "duration": 1.0, "color": "#FFFFFF"}
+	],
+
+	"Test_FadeJump_Color": [
+		{"cmd": "show_scene", "id": "classroom_afternoon", "transition": "instant"},
+		{"cmd": "narration", "text": "흰색 페이드 도착! 교실 오후 배경."},
+		{"cmd": "narration", "text": "[페이드/점프/대기 테스트 완료]"},
+		{"cmd": "jump", "target": "TestMenu2"}
+	],
+
+	"Test_Special": [
+		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
+		{"cmd": "centered", "text": "— 특수 기능 테스트 —"},
+
+		{"cmd": "narration", "text": "=== affinity_hint 테스트 ==="},
+		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
+		{"cmd": "narration", "text": "closer 힌트 표시 (♡ 아이콘)"},
+		{"cmd": "affinity_hint", "character": "closer"},
+		{"cmd": "wait", "duration": 1500},
+
+		{"cmd": "narration", "text": "farther 힌트 표시 (… 아이콘)"},
+		{"cmd": "affinity_hint", "character": "farther"},
+		{"cmd": "wait", "duration": 1500},
+		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
+
+		{"cmd": "narration", "text": "=== gallery_unlock 테스트 ==="},
+		{"cmd": "narration", "text": "first_lunch 갤러리 아이템 언락"},
+		{"cmd": "gallery_unlock", "id": "first_lunch"},
+		{"cmd": "narration", "text": "갤러리 언락 완료"},
+
+		{"cmd": "narration", "text": "=== distraction_free 테스트 ==="},
+		{"cmd": "narration", "text": "다음 클릭 시 UI가 숨겨집니다 (방해 금지 모드)"},
+		{"cmd": "distraction_free"},
+		{"cmd": "wait", "duration": 2000},
+		{"cmd": "narration", "text": "이 텍스트가 보이면 distraction_free가 토글됐을 수도 있습니다."},
+		{"cmd": "distraction_free"},
+		{"cmd": "narration", "text": "UI 복귀 완료"},
+
+		{"cmd": "narration", "text": "=== input 테스트 (이름 재입력) ==="},
+		{"cmd": "input", "prompt": "별명을 입력하세요", "warning": "별명을 입력해주세요!", "default": "현우"},
+		{"cmd": "narration", "text": "입력한 이름: {{player.name}}"},
+
+		{"cmd": "narration", "text": "=== end 명령 테스트 ==="},
+		{"cmd": "narration", "text": "이 다음에 end가 호출되어 타이틀로 돌아갑니다."},
+		{"cmd": "choice", "dialog": "어떻게 할까?", "choices": [
+			{"text": "타이틀로 돌아가기 (end 테스트)", "key": "end", "target": "Test_End"},
+			{"text": "메뉴로 돌아가기", "key": "menu", "target": "TestMenu"}
+		]}
+	],
+
+	"Test_End": [
+		{"cmd": "centered", "text": "— 테스트 종료 —"},
+		{"cmd": "narration", "text": "모든 테스트가 완료되었습니다. end 명령을 실행합니다."},
+		{"cmd": "end"}
 	],
 
 	"Opening": [
@@ -319,189 +634,7 @@
 		{"cmd": "narration", "text": "그때의 나는 정말로 그 정도밖에 생각하지 않았다."},
 
 		{"cmd": "stop_music", "fade": 2.0},
-		{"cmd": "centered", "text": "테스트 종료"},
-		{"cmd": "end"}
-	],
-
-	"SeatAssignment": [
-		{"cmd": "fade_scene", "id": "classroom_day", "duration": 1.0},
-		{"cmd": "play_music", "id": "daily-life"},
-		{"cmd": "play_sound", "id": "classroom-noise"},
-		{"cmd": "centered", "text": "자리 배정 이벤트"},
-		{"cmd": "narration", "text": "며칠 후. 교실 — 선생님이 새 자리를 칠판에 적고 있다."},
-		{"cmd": "show_character", "id": "friend", "sprite": "normal", "position": "center", "transition": "fadeIn"},
-		{"cmd": "dialogue", "character": "friend", "text": "야, 나 앞자리 됐다. 이거 최악이다."},
-		{"cmd": "dialogue", "character": "p", "text": "어디 됐는데?"},
-		{"cmd": "dialogue", "character": "friend", "text": "맨 앞 가운데. 선생님 눈에 바로 띄는 자리잖아."},
-		{"cmd": "dialogue", "character": "p", "text": "수업 잘 들으면 되잖아."},
-		{"cmd": "dialogue", "character": "friend", "text": "야, 진심으로 말하는 거야?"},
-		{"cmd": "hide_character", "id": "friend", "transition": "fadeOut"},
-		{"cmd": "stop_sound"},
-		{"cmd": "narration", "text": "나는 오늘, 수아를…"},
-		{"cmd": "choice", "dialog": "", "choices": [
-			{"text": "취미를 묻는다", "key": "hobby", "target": "SeatAssignment_Hobby"},
-			{"text": "반갑게 인사한다", "key": "greet", "target": "SeatAssignment_Greet"},
-			{"text": "친구와 대화한다", "key": "friend_talk", "target": "SeatAssignment_FriendTalk"},
-			{"text": "보지 않았다", "key": "ignore", "target": "SeatAssignment_Ignore"}
-		]}
-	],
-
-	"SeatAssignment_Hobby": [
-		{"cmd": "set_var", "path": "distance", "value": 15, "op": "sub"},
-		{"cmd": "affinity_hint", "character": "closer"},
-		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
-		{"cmd": "narration", "text": "수아가 자리를 정리하다 가방 안에 뭔가를 슬쩍 밀어 넣는다."},
-		{"cmd": "narration", "text": "(뭔가 넣었는데.)"},
-		{"cmd": "dialogue", "character": "p", "text": "야, 방금 가방에 뭔가 넣지 않았어?"},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "surprised"},
-		{"cmd": "narration", "text": "수아의 동작이 멈춘다. 잠깐 사이, 다시 아무렇지 않은 척 가방 지퍼를 닫는다."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "normal"},
-		{"cmd": "dialogue", "character": "sua", "text": "…안 넣었어."},
-		{"cmd": "dialogue", "character": "p", "text": "진짜?"},
-		{"cmd": "dialogue", "character": "sua", "text": "…진짜."},
-		{"cmd": "dialogue", "character": "p", "text": "나 봤는데."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "worried"},
-		{"cmd": "narration", "text": "수아는 말이 없다. 현우를 보지 않는다."},
-		{"cmd": "dialogue", "character": "p", "text": "뭐야, 숨길 거 아니면 그냥 말해도 되잖아."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "shy"},
-		{"cmd": "dialogue", "character": "sua", "text": "……책이야. 그냥."},
-		{"cmd": "dialogue", "character": "p", "text": "무슨 책?"},
-		{"cmd": "dialogue", "character": "sua", "text": "…그냥 소설."},
-		{"cmd": "dialogue", "character": "p", "text": "어떤 소설?"},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "normal"},
-		{"cmd": "dialogue", "character": "sua", "text": "……보여줄게."},
-		{"cmd": "narration", "text": "수아가 망설이다 가방에서 책을 꺼낸다. 표지가 눈에 띄게 화려한 로맨스 소설. 손으로 표지 아래쪽을 반쯤 가리고 현우 쪽으로 내민다."},
-		{"cmd": "dialogue", "character": "p", "text": "…《달빛 아래 우산》?"},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "shy"},
-		{"cmd": "dialogue", "character": "sua", "text": "…유명한 거야."},
-		{"cmd": "dialogue", "character": "p", "text": "들어본 것 같기도 하고. 아닌 것 같기도 하고.\n재밌어?"},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "normal"},
-		{"cmd": "dialogue", "character": "sua", "text": "…재밌어."},
-		{"cmd": "narration", "text": "(숨기려던 거 맞는데, 물어보니까 다 대답하네. 조심스러운 거지, 싫은 건 아닌가.)"},
-		{"cmd": "dialogue", "character": "p", "text": "어떤 내용이야?"},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "surprised"},
-		{"cmd": "dialogue", "character": "sua", "text": "……두 사람이 계속 엇갈리는 얘기."},
-		{"cmd": "dialogue", "character": "p", "text": "엇갈려? 왜?"},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "normal"},
-		{"cmd": "dialogue", "character": "sua", "text": "……읽어보면 알아."},
-		{"cmd": "narration", "text": "(권유하는 건가, 거절하는 건가.)"},
-		{"cmd": "dialogue", "character": "p", "text": "나한테 빌려줄 수 있어?"},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "surprised"},
-		{"cmd": "dialogue", "character": "sua", "text": "……다 읽으면."},
-		{"cmd": "dialogue", "character": "p", "text": "얼마나 남았어?"},
-		{"cmd": "dialogue", "character": "sua", "text": "……반쯤."},
-		{"cmd": "dialogue", "character": "p", "text": "빨리 읽어."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "shy"},
-		{"cmd": "narration", "text": "수아가 말없이 책을 가방에 다시 넣는다. 하지만 표정이 조금 전보다 묘하게 부드러워져 있다."},
-		{"cmd": "narration", "text": "(책 빌리려던 건 아닌데. 그냥 말이 이어졌다.)"},
-		{"cmd": "jump", "target": "SeatAssignment_SecondChoice"}
-	],
-
-	"SeatAssignment_Greet": [
-		{"cmd": "set_var", "path": "distance", "value": 5, "op": "sub"},
-		{"cmd": "affinity_hint", "character": "closer"},
-		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
-		{"cmd": "dialogue", "character": "p", "text": "야, 수아. 새 자리 어디야?"},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "surprised"},
-		{"cmd": "dialogue", "character": "sua", "text": "…창가 뒤에서 두 번째."},
-		{"cmd": "dialogue", "character": "p", "text": "오, 괜찮은 자리네."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "normal"},
-		{"cmd": "dialogue", "character": "sua", "text": "…그런가."},
-		{"cmd": "narration", "text": "그게 끝이었다. 짧은 인사. 하지만 수아는 고개를 끄덕여 줬다."},
-		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
-		{"cmd": "fade_jump", "target": "SeatAssignment_SecondChoice", "duration": 1.0}
-	],
-
-	"SeatAssignment_FriendTalk": [
-		{"cmd": "set_var", "path": "distance", "value": 10, "op": "add"},
-		{"cmd": "affinity_hint", "character": "farther"},
-		{"cmd": "show_character", "id": "friend", "sprite": "normal", "position": "center", "transition": "fadeIn"},
-		{"cmd": "dialogue", "character": "p", "text": "야, 너 자리 어디야?"},
-		{"cmd": "dialogue", "character": "friend", "text": "맨 앞이라니까! 듣고 있었어?"},
-		{"cmd": "dialogue", "character": "p", "text": "아 맞다, 미안."},
-		{"cmd": "narration", "text": "수아 쪽을 보지 않았다. 아니, 보려다 말았다."},
-		{"cmd": "hide_character", "id": "friend", "transition": "fadeOut"},
-		{"cmd": "fade_jump", "target": "SeatAssignment_SecondChoice", "duration": 1.0}
-	],
-
-	"SeatAssignment_Ignore": [
-		{"cmd": "set_var", "path": "distance", "value": 10, "op": "add"},
-		{"cmd": "affinity_hint", "character": "farther"},
-		{"cmd": "narration", "text": "수아를 보지 않았다. 의식적으로."},
-		{"cmd": "narration", "text": "(괜히 신경 쓰면 피곤해지니까.)"},
-		{"cmd": "narration", "text": "하지만 시선은 자꾸만 그쪽으로 흘러갔다."},
-		{"cmd": "fade_jump", "target": "SeatAssignment_SecondChoice", "duration": 1.0}
-	],
-
-	"SeatAssignment_SecondChoice": [
-		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
-		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
-		{"cmd": "choice", "dialog": "", "choices": [
-			{"text": "게임 좋아해?", "key": "game", "target": "SecondChoice_Game"},
-			{"text": "과자 먹을래?", "key": "snack", "target": "SecondChoice_Snack"},
-			{"text": "가위바위보!", "key": "rps", "target": "SecondChoice_RPS"}
-		]}
-	],
-
-	"SecondChoice_Game": [
-		{"cmd": "dialogue", "character": "p", "text": "근데, 게임은 해?"},
-		{"cmd": "dialogue", "character": "sua", "text": "…해."},
-		{"cmd": "dialogue", "character": "p", "text": "오, 진짜? 뭐 해?"},
-		{"cmd": "dialogue", "character": "sua", "text": "……핸드폰으로."},
-		{"cmd": "dialogue", "character": "p", "text": "핸드폰? 어떤 거?"},
-		{"cmd": "dialogue", "character": "sua", "text": "……퍼즐이라든가. 미니게임 같은 거."},
-		{"cmd": "narration", "text": "(PC 게임 얘기를 기대했는데. 뭐, 게임이 게임이지.)"},
-		{"cmd": "dialogue", "character": "p", "text": "나는 PC 위주로 하는데. 데이드림 트레인 알아?"},
-		{"cmd": "dialogue", "character": "sua", "text": "……이름은 들어본 것 같아."},
-		{"cmd": "dialogue", "character": "p", "text": "요즘 그거 엄청 하거든. 어제도 두 시간 더 했어."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "surprised"},
-		{"cmd": "dialogue", "character": "sua", "text": "……두 시간을 더?"},
-		{"cmd": "narration", "text": "(어? 얘가 먼저 물어봤다.)"},
-		{"cmd": "dialogue", "character": "p", "text": "끝내려고 했는데 판이 자꾸 이어지는 거야."},
-		{"cmd": "dialogue", "character": "sua", "text": "……그래서 이겼어?"},
-		{"cmd": "dialogue", "character": "p", "text": "아니, 졌어."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "normal"},
-		{"cmd": "dialogue", "character": "sua", "text": "……그럼 두 시간 더 한 이유가."},
-		{"cmd": "dialogue", "character": "p", "text": "…이기고 끝내야지."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "shy"},
-		{"cmd": "narration", "text": "(…웃은 것 같기도 하고. 또 아닌 것 같기도 하고.)"},
-		{"cmd": "narration", "text": "(근데 이번엔 확실히 좀 웃은 것 같은데.)"},
-		{"cmd": "jump", "target": "Opening_Epilogue"}
-	],
-
-	"SecondChoice_Snack": [
-		{"cmd": "dialogue", "character": "p", "text": "과자 먹을래? 나 하나 있는데."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "surprised"},
-		{"cmd": "dialogue", "character": "sua", "text": "…뭔데?"},
-		{"cmd": "dialogue", "character": "p", "text": "초코파이."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "normal"},
-		{"cmd": "dialogue", "character": "sua", "text": "……좋아."},
-		{"cmd": "narration", "text": "수아가 초코파이를 받아 조용히 먹었다. 별 대화는 없었지만, 분위기가 나쁘진 않았다."},
-		{"cmd": "jump", "target": "Opening_Epilogue"}
-	],
-
-	"SecondChoice_RPS": [
-		{"cmd": "dialogue", "character": "p", "text": "심심한데, 가위바위보 할래?"},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "surprised"},
-		{"cmd": "dialogue", "character": "sua", "text": "…갑자기?"},
-		{"cmd": "dialogue", "character": "p", "text": "갑자기가 재밌잖아."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "normal"},
-		{"cmd": "dialogue", "character": "sua", "text": "……좋아."},
-		{"cmd": "narration", "text": "가위바위보를 세 판 했다. 수아가 두 번 이겼다."},
-		{"cmd": "change_sprite", "id": "sua", "sprite": "shy"},
-		{"cmd": "narration", "text": "수아의 입꼬리가 아주 살짝 올라갔다."},
-		{"cmd": "jump", "target": "Opening_Epilogue"}
-	],
-
-	"Opening_Epilogue": [
-		{"cmd": "stop_music", "fade": 2.0},
-		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
-		{"cmd": "show_scene", "id": "classroom_afternoon", "transition": "fadeIn"},
-		{"cmd": "narration", "text": "말이 없는 게 싫어서가 아니라,"},
-		{"cmd": "narration", "text": "어떻게 해야 하는지 모르는 사람이구나, 라고"},
-		{"cmd": "narration", "text": "그때쯤 어렴풋이 생각했다."},
-		{"cmd": "set_var", "path": "april_events", "value": 1, "op": "add"},
-		{"cmd": "centered", "text": "— 첫 만남 끝 —"},
+		{"cmd": "centered", "text": "— 통합 테스트 종료 —"},
 		{"cmd": "end"}
 	]
 }
