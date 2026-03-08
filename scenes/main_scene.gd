@@ -393,13 +393,11 @@ func _on_scene_change(id: String, transition: String) -> void:
 	if id.begins_with("#"):
 		# 색상 배경
 		var color := Color(id)
-		bg2.texture = null
-		bg2.modulate = Color(color.r, color.g, color.b, 0.0)
-		# 단색 배경은 TransitionRect로 처리
 		bg1.texture = null
-		bg1.modulate = Color(1, 1, 1, 0)
-		bg2.modulate = Color(1, 1, 1, 0)
-		transition_rect.color = Color(color.r, color.g, color.b, 1.0)
+		bg1.modulate = color
+		bg2.texture = null
+		bg2.modulate = Color(1,1,1,0)
+		transition_rect.color = Color(0, 0, 0, 0)
 		return
 
 	var path := StoryManager.get_scene_path(id)
