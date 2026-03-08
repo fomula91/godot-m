@@ -13,7 +13,7 @@ signal character_hide_requested(id: String, transition: String)
 signal character_sprite_changed(id: String, sprite: String)
 signal fade_requested(fade_type: String, duration: float, color: Color)
 signal wait_requested(duration: float)
-signal input_requested(prompt: String, warning: String)
+signal input_requested(prompt: String, warning: String, default: String)
 signal affinity_hint_requested(character: String)
 signal gallery_unlock_requested(id: String)
 signal distraction_free_toggled()
@@ -315,8 +315,9 @@ func _dispatch_command(cmd: Dictionary) -> void:
 		"input":
 			var prompt: String = cmd.get("prompt", "")
 			var warning: String = cmd.get("warning", "")
+			var default: String = cmd.get("default", "")
 			_waiting = true
-			input_requested.emit(prompt, warning)
+			input_requested.emit(prompt, warning, default)
 
 		"gallery_unlock":
 			var id: String = cmd.get("id", "")

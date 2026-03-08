@@ -32,6 +32,7 @@ var _distraction_free := false
 var _current_bg_id: String = ""
 var _dialogue_log: Array[Dictionary] = []
 var _bg_tween: Tween
+var _default_name: String = ""
 
 # 거리감 알림 설정
 var _affinity_config: Dictionary = {
@@ -454,10 +455,11 @@ func _on_wait(_duration: float) -> void:
 
 # === Input Dialog ===
 
-func _on_input_request(prompt: String, warning: String) -> void:
+func _on_input_request(prompt: String, warning: String, default_name: String) -> void:
 	DebugOverlay.log_message("Input requested")
 	input_prompt.text = prompt
 	input_field.text = ""
+	input_field.placeholder_text = default_name if default_name != "" else "이름을 입력하세요."
 	input_warning.text = warning
 	input_warning.visible = false
 	input_dialog.visible = true
@@ -467,8 +469,10 @@ func _on_input_request(prompt: String, warning: String) -> void:
 func _on_input_confirm() -> void:
 	var text := input_field.text.strip_edges()
 	if text.is_empty():
-		input_warning.visible = true
-		return
+		if _default_name.is_empty():
+			input_warning.visible = true
+			return
+		text = _default_name
 	input_dialog.visible = false
 	StoryManager.on_input_completed(text)
 

@@ -1,6 +1,6 @@
 {
 	"Start": [
-		{"cmd": "input", "prompt": "당신의 이름을 입력하세요", "warning": "이름을 입력해주세요!"},
+		{"cmd": "input", "prompt": "당신의 이름을 입력하세요", "warning": "이름을 입력해주세요!", "default": "강현우"},
 		{"cmd": "jump", "target": "Opening"}
 	],
 
