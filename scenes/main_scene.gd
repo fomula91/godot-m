@@ -294,22 +294,50 @@ func _on_end() -> void:
 
 func _toggle_auto(enabled: bool) -> void:
 	_auto_mode = enabled
+	var auto_btn: Button = $UILayer/QuickMenu/AutoBtn
+	var skip_btn: Button = $UILayer/QuickMenu/SkipBtn
 	if enabled:
 		_skip_mode = false
-		$UILayer/QuickMenu/SkipBtn.button_pressed = false
+		skip_btn.button_pressed = false
+		_update_toggle_style(skip_btn, false, "Skip")
+		_update_toggle_style(auto_btn, true, "Auto", Color(0.1, 0.5, 0.2, 0.85))
 		if not dialogue_layer.is_typing() and not choice_panel.visible:
 			auto_timer.start()
 	else:
 		auto_timer.stop()
+		_update_toggle_style(auto_btn, false, "Auto")
 
 
 func _toggle_skip(enabled: bool) -> void:
 	_skip_mode = enabled
+	var auto_btn: Button = $UILayer/QuickMenu/AutoBtn
+	var skip_btn: Button = $UILayer/QuickMenu/SkipBtn
 	if enabled:
 		_auto_mode = false
-		$UILayer/QuickMenu/AutoBtn.button_pressed = false
+		auto_btn.button_pressed = false
+		_update_toggle_style(auto_btn, false, "Auto")
+		_update_toggle_style(skip_btn, true, "Skip", Color(0.6, 0.2, 0.1, 0.85))
 		if not dialogue_layer.is_typing() and not choice_panel.visible:
 			StoryManager.advance()
+	else:
+		_update_toggle_style(skip_btn, false, "Skip")
+
+
+func _update_toggle_style(btn: Button, active: bool, label: String, bg_color: Color = Color.BLACK) -> void:
+	if active:
+		btn.text = label + " ●"
+		var style := StyleBoxFlat.new()
+		style.bg_color = bg_color
+		style.set_corner_radius_all(4)
+		style.set_content_margin_all(4)
+		btn.add_theme_stylebox_override("normal", style)
+		btn.add_theme_stylebox_override("hover", style)
+		btn.add_theme_stylebox_override("pressed", style)
+	else:
+		btn.text = label
+		btn.remove_theme_stylebox_override("normal")
+		btn.remove_theme_stylebox_override("hover")
+		btn.remove_theme_stylebox_override("pressed")
 
 
 # === Quick Save/Load ===
