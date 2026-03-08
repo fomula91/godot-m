@@ -139,7 +139,7 @@ func _on_hide(id: String, transition: String) -> void:
 		"fadeOutLeft":
 			tw = create_tween().set_parallel(true)
 			tw.tween_property(slot, "modulate:a", 0.0, 0.5)
-			tw.tween_property(slot, "position:x", slot.position.x - 100, 0.5)
+			tw.tween_property(slot, "position:x", slot.position.x - 200, 0.5).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
 			tw.finished.connect(func():
 				_reset_slot_offsets(position, slot)
 				slot.texture = null
@@ -147,7 +147,7 @@ func _on_hide(id: String, transition: String) -> void:
 		"fadeOutRight":
 			tw = create_tween().set_parallel(true)
 			tw.tween_property(slot, "modulate:a", 0.0, 0.5)
-			tw.tween_property(slot, "position:x", slot.position.x + 100, 0.5)
+			tw.tween_property(slot, "position:x", slot.position.x + 200, 0.5).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
 			tw.finished.connect(func():
 				_reset_slot_offsets(position, slot)
 				slot.texture = null

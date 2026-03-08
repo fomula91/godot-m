@@ -218,9 +218,16 @@ func _dispatch_command(cmd: Dictionary) -> void:
 		"hide_character":
 			var id: String = cmd.get("id", "")
 			var transition: String = cmd.get("transition", "fadeOut")
+			var wait: bool = cmd.get("wait", transition != "instant")
 			_active_sprites.erase(id)
 			character_hide_requested.emit(id, transition)
-			_auto_advance_after(0.05)
+			if wait:
+				_waiting = true
+				await get_tree().create_timer(0.5).timeout
+				_waiting = false
+				advance()
+			else:
+				_auto_advance_after(0.05)
 
 		"change_sprite":
 			var id: String = cmd.get("id", "")
