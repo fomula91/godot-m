@@ -6,6 +6,7 @@ extends Control
 @onready var grid: GridContainer = $VBoxContainer/ScrollContainer/Grid
 
 var _is_load_mode := false
+var _overlay_mode := false
 var _return_scene: String = "res://scenes/title_screen.tscn"
 
 
@@ -19,6 +20,10 @@ func set_mode(load_mode: bool) -> void:
 	_is_load_mode = load_mode
 	mode_toggle.button_pressed = load_mode
 	_update_title()
+
+
+func set_overlay_mode() -> void:
+	_overlay_mode = true
 
 
 func set_return_scene(scene_path: String) -> void:
@@ -89,20 +94,31 @@ func _on_slot_pressed(slot: int) -> void:
 		var data := GameManager.load_game(slot)
 		if data.is_empty():
 			return
-		var scene: Node = load("res://scenes/main_scene.tscn").instantiate()
-		get_tree().root.add_child(scene)
-		scene._restore_state(data)
-		queue_free()
+		if _overlay_mode:
+			var main_scene := get_tree().root.get_node_or_null("MainScene")
+			if main_scene:
+				main_scene._restore_state(data)
+			queue_free()
+		else:
+			var scene: Node = load("res://scenes/main_scene.tscn").instantiate()
+			get_tree().root.add_child(scene)
+			scene._restore_state(data)
+			queue_free()
 	else:
 		# 세이브 - main_scene에서 데이터 가져오기
 		var main_scene := get_tree().root.get_node_or_null("MainScene")
 		if main_scene:
 			var extra := StoryManager.get_save_data()
+			extra["background"] = main_scene.get_node("BackgroundLayer").get_current_bg_id()
 			extra["bgm"] = AudioManager.get_current_bgm()
+			extra["characters"] = main_scene.get_node("CharacterLayer").get_state()
 			GameManager.save_game(slot, extra)
 		_build_slots()
 
 
 func _on_back() -> void:
 	AudioManager.play_ui_click()
-	get_tree().change_scene_to_file(_return_scene)
+	if _overlay_mode:
+		queue_free()
+	else:
+		get_tree().change_scene_to_file(_return_scene)

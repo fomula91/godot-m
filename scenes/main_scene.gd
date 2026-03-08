@@ -15,6 +15,12 @@ var _skip_mode := false
 var _distraction_free := false
 var _advance_timer: SceneTreeTimer = null
 
+# 모달 상태
+enum ModalType { NONE, SETTINGS, SAVE_LOAD }
+var _active_modal: ModalType = ModalType.NONE
+var _auto_before_modal := false
+var _skip_before_modal := false
+
 # Supabase 설정
 var _supabase_url: String = ""
 var _stats_http: HTTPRequest
@@ -48,8 +54,14 @@ func _connect_ui_signals() -> void:
 
 
 func _open_settings() -> void:
+	if _active_modal != ModalType.NONE:
+		return
+	_active_modal = ModalType.SETTINGS
+	_pause_auto_skip()
+	_set_quick_menu_disabled(true)
 	var settings = load("res://scenes/settings_screen.tscn").instantiate()
 	settings.set_overlay_mode()
+	settings.tree_exiting.connect(_on_modal_closed)
 	get_tree().root.add_child(settings)
 
 
@@ -83,6 +95,8 @@ func _set_mouse_ignore_recursive(node: Node) -> void:
 # === Input ===
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _active_modal != ModalType.NONE:
+		return
 	if $OverlayLayer.is_input_active():
 		return
 	if event.is_action_pressed("vn_advance"):
@@ -129,6 +143,8 @@ func _on_typing_finished() -> void:
 
 
 func _on_auto_timeout() -> void:
+	if _active_modal != ModalType.NONE:
+		return
 	if _auto_mode and not dialogue_layer.is_typing() and not choice_panel.visible:
 		StoryManager.advance()
 
@@ -137,7 +153,7 @@ func _auto_advance_delayed(delay: float) -> void:
 	_advance_timer = get_tree().create_timer(delay)
 	var current := _advance_timer
 	await current.timeout
-	if current == _advance_timer and is_inside_tree() and not choice_panel.visible:
+	if current == _advance_timer and is_inside_tree() and _active_modal == ModalType.NONE and not choice_panel.visible:
 		StoryManager.advance()
 
 
@@ -352,18 +368,52 @@ func _update_toggle_style(btn: Button, active: bool, label: String, bg_color: Co
 # === Quick Save/Load ===
 
 func _quick_save() -> void:
-	var extra := StoryManager.get_save_data()
-	extra["background"] = $BackgroundLayer.get_current_bg_id()
-	extra["bgm"] = AudioManager.get_current_bgm()
-	extra["characters"] = $CharacterLayer.get_state()
-	GameManager.save_game(0, extra)  # slot 0 = auto/quick
+	_open_save_load(false)
 
 
 func _quick_load() -> void:
-	var data := GameManager.load_game(0)
-	if data.is_empty():
+	_open_save_load(true)
+
+
+func _open_save_load(load_mode: bool) -> void:
+	if _active_modal != ModalType.NONE:
 		return
-	_restore_state(data)
+	_active_modal = ModalType.SAVE_LOAD
+	_pause_auto_skip()
+	_set_quick_menu_disabled(true)
+	var screen = load("res://scenes/save_load_screen.tscn").instantiate()
+	screen.set_overlay_mode()
+	screen.set_mode(load_mode)
+	screen.tree_exiting.connect(_on_modal_closed)
+	get_tree().root.add_child(screen)
+
+
+# === Modal Helpers ===
+
+func _on_modal_closed() -> void:
+	_active_modal = ModalType.NONE
+	_set_quick_menu_disabled(false)
+	_resume_auto_skip()
+
+
+func _pause_auto_skip() -> void:
+	_auto_before_modal = _auto_mode
+	_skip_before_modal = _skip_mode
+	auto_timer.stop()
+	_advance_timer = null
+
+
+func _resume_auto_skip() -> void:
+	if _auto_before_modal and _auto_mode and not dialogue_layer.is_typing() and not choice_panel.visible:
+		auto_timer.start()
+	if _skip_before_modal and _skip_mode and not dialogue_layer.is_typing() and not choice_panel.visible:
+		_auto_advance_delayed(0.05)
+
+
+func _set_quick_menu_disabled(disabled: bool) -> void:
+	$UILayer/QuickMenu/SaveBtn.disabled = disabled
+	$UILayer/QuickMenu/LoadBtn.disabled = disabled
+	$UILayer/QuickMenu/SettingsBtn.disabled = disabled
 
 
 func _restore_state(data: Dictionary) -> void:
