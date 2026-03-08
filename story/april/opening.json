@@ -1,11 +1,12 @@
 {
 	"Start": [
+		{"cmd": "show_scene", "id": "school_front_morning", "transition": "instant"},
 		{"cmd": "input", "prompt": "당신의 이름을 입력하세요", "warning": "이름을 입력해주세요!", "default": "강현우"},
 		{"cmd": "jump", "target": "Opening"}
 	],
 
 	"Opening": [
-		{"cmd": "show_scene", "id": "#000000", "transition": "instant"},
+		{"cmd": "show_scene", "id": "school_front_morning", "transition": "instant"},
 		{"cmd": "play_music", "id": "piano-calm"},
 		{"cmd": "narration", "text": "어떤 사람이 갑자기 눈에 밟히기 시작하는 건,"},
 		{"cmd": "narration", "text": "대단한 이유가 있어서가 아닌 경우가 대부분이다."},

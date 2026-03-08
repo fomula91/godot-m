@@ -39,12 +39,12 @@ var characters: Dictionary = {
 # 씬(배경) 매핑
 var scene_map: Dictionary = {
 	# 학교 외부
-	"school_front_morning": "backgrounds/school_front_morning.webp",
+	"school_front_morning": "backgrounds/afternoon01.webp",
 	"school_front_day": "backgrounds/school_front_day.webp",
 	"school_front_evening": "backgrounds/school_front_evening.webp",
 	# 교실
 	"classroom_morning": "backgrounds/classroom_morning.webp",
-	"classroom_day": "backgrounds/classroom_day.webp",
+	"classroom_day": "backgrounds/classroom_01_day.webp",
 	"classroom_afternoon": "backgrounds/classroom_afternoon.webp",
 	"classroom_evening": "backgrounds/classroom_evening.webp",
 	# 급식실 / 점심
