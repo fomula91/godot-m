@@ -243,11 +243,20 @@ func _dispatch_command(cmd: Dictionary) -> void:
 			var target: String = cmd.get("target", "")
 			var duration: float = cmd.get("duration", 1.5)
 			var color: Color = Color(cmd.get("color", "#000000"))
+			if target not in _labels:
+				push_error("StoryManager: Label not found: " + target)
+				return
 			_waiting = true
 			fade_requested.emit("to_black", duration, color)
 			await get_tree().create_timer(duration + cmd.get("wait", 0.2)).timeout
+			DebugOverlay.log_message("Jump: %s" % target)
+			current_label = target
+			line_index = 0
+			_choice_pending = false
+			fade_requested.emit("from_black", duration, color)
+			await get_tree().create_timer(duration).timeout
 			_waiting = false
-			jump(target)
+			advance()
 
 		"fade_scene":
 			var id: String = cmd.get("id", "")
