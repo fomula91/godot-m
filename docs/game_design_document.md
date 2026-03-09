@@ -390,11 +390,12 @@ CrackIntro (5월 — 시내 나들이)
 
 ### 8.1 세이브/로드
 
-- **슬롯 수**: 10개 (슬롯 0은 퀵세이브/오토세이브 전용)
+- **슬롯 수**: 10개 (슬롯 1~10, 슬롯 0은 사용하지 않음)
 - **저장 형식**: JSON 파일 (`user://saves/slot_N.json`)
 - **저장 데이터**: 게임 상태, 갤러리 해금, 현재 라벨/라인, 배경, 캐릭터 위치, BGM, 타임스탬프
-- **퀵세이브**: 퀵 메뉴의 Save 버튼으로 슬롯 0에 저장
-- **이어하기**: 타이틀 화면에서 슬롯 0 데이터 로드
+- **오버레이 모달**: 퀵 메뉴의 Save/Load 버튼 클릭 시 `save_load_screen.tscn`이 CanvasLayer(25)에 모달로 표시
+- **데이터 수집**: `save_load_screen.gd`에서 main_scene 노드를 직접 참조하여 배경/캐릭터/BGM/스토리 데이터 수집
+- **이어하기**: 타이틀 화면에서 세이브/로드 화면 진입 후 슬롯 선택
 
 ### 8.2 설정
 
@@ -403,9 +404,11 @@ CrackIntro (5월 — 시내 나들이)
 | 음악 볼륨 | 1.0 | 0.0 ~ 1.0 |
 | 효과음 볼륨 | 1.0 | 0.0 ~ 1.0 |
 | 텍스트 속도 | 20ms/글자 | 슬라이더 |
-| 오토 속도 | 5초 | 슬라이더 |
+| 오토 속도 | 5초 | 슬라이더 (반전 로직: `10.5 - value`) |
+| 화면 모드 | 창모드 | 창모드 / 전체화면(창모드) / 전체화면 |
+| 해상도 | 1920x1080 | 3840x2160, 2560x1440, 1920x1080, 1600x900, 1280x720, 960x540 (6단계) |
 
-설정은 `user://settings.json`에 자동 저장된다.
+설정은 `user://settings.json`에 자동 저장된다. 화면 모드와 해상도 변경은 `GameManager.apply_display_settings()`를 통해 즉시 적용된다.
 
 ### 8.3 갤러리
 
@@ -415,7 +418,20 @@ CrackIntro (5월 — 시내 나들이)
 - **잠금 상태**: "?" 표시의 어두운 패널
 - **데이터 저장**: `user://gallery.json`에 영구 저장
 
-### 8.4 오디오 시스템
+### 8.4 모달 시스템
+
+설정 화면과 세이브/로드 화면은 VN 플레이 중 오버레이 모달로 동작한다.
+
+| 항목 | 내용 |
+|------|------|
+| CanvasLayer | layer=25 (OverlayLayer(20) 위) |
+| 열기 | 퀵메뉴 Settings/Save/Load 버튼 |
+| Auto/Skip 동작 | 모달 열기 시 일시정지, 닫을 때 이전 상태 복원 |
+| 퀵메뉴 | 모달 열린 동안 Save/Load/Settings 버튼 비활성화 |
+| 입력 차단 | `_unhandled_input`에서 `_active_modal != NONE` 시 무시 |
+| 닫기 | 모달 내 "뒤로" 버튼 → `queue_free()` → `tree_exiting` 시그널 → `_on_modal_closed()` |
+
+### 8.5 오디오 시스템
 
 - **오디오 버스**: Music, SFX (런타임에 자동 생성)
 - **크로스페이드**: BGM 전환 시 1초간 크로스페이드 적용
@@ -462,11 +478,11 @@ CrackIntro (5월 — 시내 나들이)
 | GameManager | game_manager.gd | 상태 관리, 세이브/로드, 설정, 갤러리, 템플릿 치환 |
 | AudioManager | audio_manager.gd | BGM/SFX 재생, 크로스페이드, 볼륨 관리 |
 | StoryManager | story_manager.gd | JSON 스토리 로드, 명령 디스패치, 라벨 점프, 조건 분기 |
-| DebugOverlay | debug_overlay.gd | 디버그 로그 출력 |
+| DebugOverlay | debug_overlay.gd | 디버그 오버레이 (F3 토글, FPS/플랫폼 표시, Auto 모드 상태, 이벤트 로그, 파일 로깅) |
 
 ### 10.2 스토리 데이터 구조
 
-스토리는 JSON 파일로 작성되며, `res://story/` 하위 폴더에 저장된다. (현재 미생성, 추후 `docs/script_full.md` 기반으로 변환 예정)
+스토리는 JSON 파일로 작성되며, `res://story/` 하위 폴더에 저장된다. `story/` 디렉토리 구조 생성 완료. `april/opening.json` 작성됨. 나머지 파트(`may/`, `crack/`, `july/`)는 미생성.
 
 ```
 story/
@@ -505,19 +521,35 @@ story/
 
 ### 10.3 시그널 흐름
 
+컨트롤러별 분산 구독 구조로 리팩토링 완료. 각 레이어 스크립트가 StoryManager 시그널을 직접 구독한다.
+
 ```
 StoryManager (JSON 파싱/디스패치)
     │
-    ├── dialogue_requested ──→ MainScene._on_dialogue()
-    ├── narration_requested ─→ MainScene._on_narration()
+    │  DialogueController (dialogue_controller.gd)
+    ├── dialogue_requested ──→ DialogueController._on_dialogue()
+    ├── narration_requested ─→ DialogueController._on_narration()
+    ├── centered_requested ──→ DialogueController._on_centered()
+    │
+    │  BackgroundController (background_controller.gd)
+    ├── scene_change_requested → BackgroundController._on_scene_change()
+    │
+    │  CharacterController (character_controller.gd)
+    ├── character_show_requested → CharacterController._on_show()
+    ├── character_hide_requested → CharacterController._on_hide()
+    ├── character_sprite_changed → CharacterController._on_sprite_change()
+    │
+    │  OverlayController (overlay_controller.gd)
+    ├── fade_requested ─────→ OverlayController._on_fade()
+    ├── wait_requested ─────→ OverlayController._on_wait()
+    ├── input_requested ────→ OverlayController._on_input_request()
+    ├── affinity_hint_requested → OverlayController._on_affinity_hint()
+    │
+    │  MainScene (main_scene.gd — 조율자)
     ├── choice_requested ───→ MainScene._on_choice()
-    ├── scene_change_requested → MainScene._on_scene_change()
-    ├── character_show_requested → MainScene._on_character_show()
-    ├── fade_requested ─────→ MainScene._on_fade()
-    ├── input_requested ────→ MainScene._on_input_request()
-    ├── affinity_hint_requested → MainScene._on_affinity_hint()
-    ├── gallery_unlock_requested → GameManager.unlock_gallery()
-    └── end_requested ──────→ 타이틀 화면으로 복귀
+    ├── gallery_unlock_requested → MainScene._on_gallery_unlock()
+    ├── distraction_free_toggled → MainScene._on_distraction_free()
+    └── end_requested ──────→ MainScene._on_end()
 
 GameManager (상태 변화)
     ├── state_changed ──────→ (미사용, 확장 가능)
@@ -586,9 +618,14 @@ godot-porject-m/
 ├── scenes/                    # 씬 및 UI 스크립트
 │   ├── main_scene.tscn/gd    # VN 메인 플레이 화면
 │   ├── title_screen.tscn/gd  # 타이틀 화면
-│   ├── settings_screen.tscn/gd # 설정 화면
-│   ├── save_load_screen.tscn/gd # 세이브/로드
+│   ├── settings_screen.tscn/gd # 설정 화면 (오버레이 모달 지원)
+│   ├── save_load_screen.tscn/gd # 세이브/로드 (오버레이 모달 지원)
 │   ├── gallery_screen.tscn/gd # 갤러리
+│   ├── controller/            # 레이어별 컨트롤러
+│   │   ├── dialogue_controller.gd   # 대화창/타이핑
+│   │   ├── character_controller.gd  # 캐릭터 표시/애니메이션
+│   │   ├── background_controller.gd # 배경 전환
+│   │   └── overlay_controller.gd    # 페이드/입력/거리감 알림
 │   └── components/            # 재사용 컴포넌트
 │       ├── MenuButton.tscn/gd
 │       └── TitleHeader.tscn/gd
@@ -599,11 +636,11 @@ godot-porject-m/
 │   ├── audio_manager.gd      # 오디오 관리
 │   └── debug_overlay.gd      # 디버그
 │
-├── story/                     # 스토리 JSON 데이터 (미생성)
-│   ├── april/                 # 4월 이벤트
-│   ├── may/                   # 5월 (균열 도입)
-│   ├── crack/                 # 균열 상세
-│   └─ july/                  # 7월 + 엔딩
+├── story/                     # 스토리 JSON 데이터
+│   ├── april/                 # 4월 이벤트 (opening.json 작성 완료)
+│   ├── may/                   # 5월 (균열 도입, 미생성)
+│   ├── crack/                 # 균열 상세 (미생성)
+│   └─ july/                  # 7월 + 엔딩 (미생성)
 │
 ├── assets/                    # ⚠ 현재 임시 에셋 (전부 교체 예정)
 │   ├── backgrounds/           # 배경 이미지 (.webp)

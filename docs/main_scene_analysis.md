@@ -78,7 +78,7 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 
 ## 3. 핵심 상태 변수
 
-### main_scene.gd (386줄, 조율자)
+### main_scene.gd (455줄, 조율자)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
@@ -90,6 +90,16 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `_stats_http` | HTTPRequest | 통계 조회용 HTTP |
 | `_vote_http` | HTTPRequest | 투표 기록용 HTTP |
 | `_pending_choice_data` | Dictionary | 비동기 투표 중 임시 선택 데이터 |
+
+#### 모달 상태 변수
+
+| 변수 | 타입 | 용도 |
+|------|------|------|
+| `ModalType` | enum | `NONE`, `SETTINGS`, `SAVE_LOAD` — 현재 열린 모달 유형 |
+| `_active_modal` | ModalType | 현재 활성 모달 (NONE이면 모달 없음) |
+| `_auto_before_modal` | bool | 모달 열기 전 auto 모드 상태 (복원용) |
+| `_skip_before_modal` | bool | 모달 열기 전 skip 모드 상태 (복원용) |
+| `_modal_layer` | CanvasLayer | 모달 UI를 담는 CanvasLayer (layer=25) |
 
 | @onready 참조 | 타입 | 용도 |
 |----------------|------|------|
@@ -103,7 +113,7 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `start_story(label)` | void | 새 게임 시작 (기본 라벨: "Start") |
 | `get_dialogue_log()` | Array[Dictionary] | 대화 이력 반환 (dialogue_layer 위임) |
 
-### dialogue_controller.gd (131줄)
+### dialogue_controller.gd (130줄)
 
 | 시그널 | 용도 |
 |--------|------|
@@ -122,7 +132,7 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `text_label` | RichTextLabel | 대사 텍스트 |
 | `centered_text` | Label | 중앙 텍스트 |
 
-### character_controller.gd (200줄)
+### character_controller.gd (199줄)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
@@ -142,14 +152,14 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `restore_state(state)` | void | 세이브 데이터로부터 캐릭터 위치 복원 |
 | `clear_all()` | void | 모든 캐릭터 제거 및 슬롯 초기화 |
 
-### background_controller.gd (70줄)
+### background_controller.gd (69줄)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
 | `_current_bg_id` | String | 현재 배경 ID (세이브용) |
 | `_bg_tween` | Tween | 배경 크로스페이드 트윈 추적 (충돌 방지용) |
 
-### overlay_controller.gd (99줄)
+### overlay_controller.gd (98줄)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
@@ -174,6 +184,7 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 
 ```
 vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
+  +-- _active_modal != ModalType.NONE -> 무시 (모달 열린 상태)
   +-- $OverlayLayer.is_input_active() -> 무시
   +-- play_ui_click() (항상 재생)
   +-- distraction_free 모드 -> UI 복원, return
@@ -290,14 +301,18 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 `MOUSE_FILTER_IGNORE`로 설정하여 클릭이 `_unhandled_input`까지 도달하도록 함.
 화면 아무 곳이나 클릭해서 텍스트 진행 가능.
 
-### 6.6 세이브/로드 (main_scene.gd)
+### 6.6 세이브/로드 (main_scene.gd + save_load_screen.gd)
 
-- 퀵세이브 (slot 0): 현재 배경, BGM, 캐릭터 슬롯, 스토리 위치 저장
-  - 배경 상태: `$BackgroundLayer.get_current_bg_id()`로 조회
-  - 캐릭터 상태: `$CharacterLayer.get_state()`로 조회
-- 퀵로드 (slot 0): 상태 복원 후 `StoryManager.advance()` 호출
-  - 배경 복원: `$BackgroundLayer.restore_background(id)`
-  - 캐릭터 복원: `$CharacterLayer.restore_state()`
+- **모달 오버레이 방식**: 퀵메뉴 Save/Load 버튼 클릭 시 `save_load_screen.tscn`을 CanvasLayer(25)에 모달로 표시
+- **슬롯**: 1~10번 사용 (0번 퀵세이브 전용은 제거됨)
+- **세이브 데이터 수집**: `save_load_screen.gd`에서 main_scene 노드를 직접 참조하여 수집
+  - 배경 상태: `main_scene.get_node("BackgroundLayer").get_current_bg_id()`
+  - 캐릭터 상태: `main_scene.get_node("CharacterLayer").get_state()`
+  - BGM: `AudioManager.get_current_bgm()`
+  - 스토리 위치: `StoryManager.get_save_data()`
+- **로드 (오버레이 모드)**: `main_scene._restore_state(data)` 호출
+- **로드 (타이틀에서)**: `main_scene.tscn` 인스턴스화 후 `_restore_state()` 호출
+- `_restore_state()`: 배경/BGM/캐릭터 복원 후 `StoryManager.advance()` 호출
 
 ### 6.7 오버레이 기능 (overlay_controller.gd)
 
@@ -331,7 +346,7 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 ### 7.2 발견된 문제점
 
-#### ~~[높음] God Object~~ 개선 중 (670줄 → 573줄 → 440줄 → 351줄 → 386줄)
+#### ~~[높음] God Object~~ 개선 중 (670줄 → 573줄 → 440줄 → 351줄 → 455줄 (모달 시스템 추가로 증가))
 
 **위치**: main_scene.gd 전체
 
@@ -355,7 +370,7 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 #### [중간] Supabase 코드가 뷰에 존재 (SRP 위반)
 
-**위치**: main_scene.gd line 290~361 (약 70줄)
+**위치**: main_scene.gd line 232~303 (약 70줄)
 
 HTTP 통신, JSON 파싱, 통계 표시 로직이 뷰 컨트롤러에 직접 존재.
 `choice_controller.gd` 분리 시 함께 이동 예정.
@@ -378,16 +393,9 @@ HTTP 통신, JSON 파싱, 통계 표시 로직이 뷰 컨트롤러에 직접 존
 `AudioManager.play_ui_click()`이 choice_panel 가시성 체크 전에 호출됨.
 선택지 표시 중 빈 공간 클릭 시 불필요한 클릭음이 재생됨.
 
-#### [낮음] 불필요한 람다 래핑
+#### ~~[낮음] 불필요한 람다 래핑~~ ✅ 수정 완료
 
-**위치**: main_scene.gd `_connect_ui_signals()`
-
-```gdscript
-# 현재
-$UILayer/QuickMenu/SaveBtn.pressed.connect(func(): _quick_save())
-# 개선 가능
-$UILayer/QuickMenu/SaveBtn.pressed.connect(_quick_save)
-```
+직접 메서드 참조로 교체됨 (`_quick_save`, `_quick_load`, `_open_settings` 등).
 
 #### [낮음] 레거시 match 패턴 dead code
 
@@ -406,17 +414,9 @@ $UILayer/QuickMenu/SaveBtn.pressed.connect(_quick_save)
 같은 position에 새 캐릭터가 배치되면 이전 캐릭터의 `_character_slots` 항목을
 자동으로 삭제하도록 수정됨. `_active_tweens` 딕셔너리로 트윈 충돌도 방지.
 
-#### [낮음] `queue_free` vs `free`
+#### ~~[낮음] `queue_free` vs `free`~~ ✅ 수정 완료
 
-**위치**: main_scene.gd `_on_choice()`
-
-```gdscript
-for child in choice_panel.get_children():
-    child.queue_free()
-```
-
-`queue_free`는 프레임 끝에 해제되므로 한 프레임 동안 기존+신규 버튼이 공존.
-`child.free()`가 더 정확함.
+`child.free()` 사용으로 수정됨. 즉시 해제되어 한 프레임 동안 기존+신규 버튼이 공존하는 문제 해결.
 
 ---
 
@@ -481,12 +481,23 @@ AutoTimer가 시작되지 않음. 자동재생 모드에서도 수동 클릭 필
 `_on_typing_done()`에서 시작하는 AutoTimer와 별개로 동작함.
 두 타이머가 동시에 진행되면 `advance()`가 이중 호출될 수 있음.
 
-### ~~8.4 `_auto_advance_after` 구조적 문제~~ ✅ 수정 완료
+### 8.4 자동재생/스킵 모달 가드
+
+`_on_auto_timeout()`과 `_auto_advance_delayed()`에 `_active_modal != ModalType.NONE` 체크가 추가됨.
+모달이 열린 상태에서는 자동 진행이 발생하지 않도록 방어.
+
+모달 열기/닫기 시:
+- `_pause_auto_skip()`: auto_timer 정지, `_advance_timer` 무효화, 이전 auto/skip 상태 저장
+- `_resume_auto_skip()`: 모달 닫힐 때 이전 auto/skip 상태 복원
+
+관련 함수: `_open_settings()`, `_open_save_load()`, `_on_modal_closed()`, `_pause_auto_skip()`, `_resume_auto_skip()`, `_set_quick_menu_disabled()`
+
+### ~~8.5 `_auto_advance_after` 구조적 문제~~ ✅ 수정 완료
 
 `_advance_timer` 인스턴스 변수를 추가하여 취소 가능한 타이머 패턴으로 교체.
 `current == _advance_timer` 비교로 이전 코루틴 무효화, `is_inside_tree()` 체크로 orphan 방지.
 
-### 8.5 개선 방향 요약
+### 8.6 개선 방향 요약
 
 | 우선순위 | 항목 | 예상 작업량 |
 |----------|------|-------------|
@@ -503,11 +514,11 @@ AutoTimer가 시작되지 않음. 자동재생 모드에서도 수동 클릭 필
 ### 현재 구조
 
 ```
-main_scene.gd              (386줄, 조율자 + 선택지/세이브)
-dialogue_controller.gd     (131줄, DialogueLayer 스크립트)    ✅ 분리 완료
-character_controller.gd    (200줄, CharacterLayer 스크립트)   ✅ 분리 완료
-background_controller.gd   (70줄, BackgroundLayer 스크립트)   ✅ 분리 완료
-overlay_controller.gd      (99줄, OverlayLayer 스크립트)      ✅ 분리 완료
+main_scene.gd              (455줄, 조율자 + 선택지/세이브/모달)
+dialogue_controller.gd     (130줄, DialogueLayer 스크립트)    ✅ 분리 완료
+character_controller.gd    (199줄, CharacterLayer 스크립트)   ✅ 분리 완료
+background_controller.gd   (69줄, BackgroundLayer 스크립트)   ✅ 분리 완료
+overlay_controller.gd      (98줄, OverlayLayer 스크립트)      ✅ 분리 완료
 ```
 
 ### 권장 분리 구조 (남은 작업)
