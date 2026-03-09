@@ -1,6 +1,9 @@
 extends CanvasLayer
 ## OverlayLayer 컨트롤러 - 페이드 전환, 입력 다이얼로그, 거리감 알림
 
+signal input_dialog_shown
+signal input_dialog_hidden
+
 # 노드 참조
 @onready var transition_rect: ColorRect = $TransitionRect
 @onready var affinity_hint: PanelContainer = $AffinityHint
@@ -69,6 +72,7 @@ func _on_input_request(prompt: String, warning: String, default_name: String) ->
 	input_warning.visible = false
 	input_dialog.visible = true
 	input_field.grab_focus()
+	input_dialog_shown.emit()
 
 func _on_input_confirm() -> void:
 	var text := input_field.text.strip_edges()
@@ -78,6 +82,7 @@ func _on_input_confirm() -> void:
 			return
 		text = _default_name
 	input_dialog.visible = false
+	input_dialog_hidden.emit()
 	StoryManager.on_input_completed(text)
 
 # === Affinity Hint ===

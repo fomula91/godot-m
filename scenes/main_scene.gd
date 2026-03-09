@@ -46,6 +46,11 @@ func _connect_ui_signals() -> void:
 	auto_timer.timeout.connect(_on_auto_timeout)
 	dialogue_layer.typing_finished.connect(_on_typing_finished)
 
+	# QuickMenu 숨김/복원 (InputDialog, CenteredText)
+	$OverlayLayer.input_dialog_shown.connect(func(): quick_menu.visible = false)
+	$OverlayLayer.input_dialog_hidden.connect(func(): if not _distraction_free: quick_menu.visible = true)
+	StoryManager.centered_requested.connect(func(_t): quick_menu.visible = false)
+
 	# Quick menu
 	$UILayer/QuickMenu/SaveBtn.pressed.connect(_quick_save)
 	$UILayer/QuickMenu/LoadBtn.pressed.connect(_quick_load)
@@ -120,6 +125,8 @@ func _handle_advance_input() -> void:
 	if dialogue_layer.is_centered_visible():
 		AudioManager.play_ui_click()
 		dialogue_layer.hide_centered()
+		if not _distraction_free:
+			quick_menu.visible = true
 		StoryManager.advance()
 		return
 
