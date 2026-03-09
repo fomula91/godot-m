@@ -30,8 +30,10 @@ Observer 패턴 기반으로 StoryManager의 시그널을 구독하는 Mediator 
         |       fade/wait/input/affinity_hint_requested
         +---> [dialogue_controller.gd (DialogueLayer)]     ✅ 분리 완료
         |       dialogue/narration/centered
+        +---> [choice_controller.gd (ChoicePanel)]         ✅ 분리 완료
+        |       choice_requested + Supabase 통계
         +---> [main_scene.gd (Coordinator)]
-                choice/gallery/distraction_free/end
+                gallery/distraction_free/end
 ```
 
 ---
@@ -55,7 +57,7 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 |   |   |           +-- NameLabel (Label, 24px)
 |   |   |           +-- TextLabel (RichTextLabel, 22px, bbcode)
 |   |   +-- CenteredText (Label, 32px)  -- 화면 중앙, 숨김 상태
-|   +-- ChoicePanel (VBoxContainer) -- 화면 중앙, 숨김 상태
+|   +-- ChoicePanel (VBoxContainer, script=choice_controller.gd) ✅ -- 화면 중앙, 숨김 상태
 |   +-- QuickMenu (HBoxContainer)   -- 우상단
 |       +-- SaveBtn / LoadBtn / AutoBtn(toggle) / SkipBtn(toggle) / LogBtn / SettingsBtn
 +-- OverlayLayer (CanvasLayer, layer=20, script=overlay_controller.gd) ✅
@@ -78,7 +80,7 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 
 ## 3. 핵심 상태 변수
 
-### main_scene.gd (455줄, 조율자)
+### main_scene.gd (~310줄, 조율자)
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
@@ -86,10 +88,6 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `_skip_mode` | bool | 스킵 모드 |
 | `_distraction_free` | bool | UI 숨김 모드 |
 | `_advance_timer` | SceneTreeTimer | 취소 가능한 자동 진행 타이머 참조 |
-| `_supabase_url` | String | Supabase 통계 URL (빈 문자열이면 비활성) |
-| `_stats_http` | HTTPRequest | 통계 조회용 HTTP |
-| `_vote_http` | HTTPRequest | 투표 기록용 HTTP |
-| `_pending_choice_data` | Dictionary | 비동기 투표 중 임시 선택 데이터 |
 
 #### 모달 상태 변수
 
@@ -177,7 +175,12 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 | `_current_bg_id` | String | 현재 배경 ID (세이브용) |
 | `_bg_tween` | Tween | 배경 크로스페이드 트윈 추적 (충돌 방지용) |
 
-### overlay_controller.gd (98줄)
+### overlay_controller.gd (103줄)
+
+| 시그널 | 용도 |
+|--------|------|
+| `input_dialog_shown` | 입력 다이얼로그 표시 시 발신 (QuickMenu 숨김용) |
+| `input_dialog_hidden` | 입력 다이얼로그 닫힐 시 발신 (QuickMenu 복원용) |
 
 | 변수 | 타입 | 용도 |
 |------|------|------|
@@ -206,7 +209,7 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
   +-- $OverlayLayer.is_input_active() -> 무시
   +-- play_ui_click() (항상 재생)
   +-- distraction_free 모드 -> UI 복원, return
-  +-- CenteredText 표시 중 -> 숨기고 advance(), return  [dialogue_layer 위임]
+  +-- CenteredText 표시 중 -> 숨기고 QuickMenu 복원, advance(), return  [dialogue_layer 위임]
   +-- 타이핑 중 -> 즉시 완료 (dialogue_layer.complete_typing), return
   +-- 선택지 표시 중 -> 무시, return
   +-- 그 외 -> StoryManager.advance()
@@ -220,7 +223,6 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 | StoryManager 시그널 | 핸들러 | 동작 |
 |---------------------|--------|------|
-| `choice_requested` | `_on_choice` | 선택지 버튼 동적 생성 |
 | `gallery_unlock_requested` | `_on_gallery_unlock` | 갤러리 해금 |
 | `distraction_free_toggled` | `_on_distraction_free` | UI 토글 |
 | `end_requested` | `_on_end` | 타이틀 화면으로 복귀 |
@@ -229,6 +231,27 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 |-------------|--------|------|
 | `dialogue_layer.typing_finished` | `_on_typing_finished` | auto/skip 모드 자동 진행 |
 | `auto_timer.timeout` | `_on_auto_timeout` | auto 모드 대기 후 advance |
+| `$OverlayLayer.input_dialog_shown` | lambda | QuickMenu 숨김 |
+| `$OverlayLayer.input_dialog_hidden` | lambda | QuickMenu 복원 (distraction_free 아닐 때) |
+
+| StoryManager 시그널 (QuickMenu 제어용) | 핸들러 | 동작 |
+|----------------------------------------|--------|------|
+| `centered_requested` | lambda | QuickMenu 숨김 |
+| `dialogue_requested` | lambda | QuickMenu 복원 (distraction_free 아닐 때) |
+| `narration_requested` | lambda | QuickMenu 복원 (distraction_free 아닐 때) |
+
+### choice_controller.gd (ChoicePanel에서 직접 구독)
+
+| StoryManager 시그널 | 핸들러 | 동작 |
+|---------------------|--------|------|
+| `choice_requested` | `_on_choice` | 선택지 버튼 동적 생성 + Supabase 통계 |
+
+| 변수 | 타입 | 용도 |
+|------|------|------|
+| `_supabase_url` | String | Supabase 통계 URL (빈 문자열이면 비활성) |
+| `_stats_http` | HTTPRequest | 통계 조회용 HTTP |
+| `_vote_http` | HTTPRequest | 투표 기록용 HTTP |
+| `_pending_choice_data` | Dictionary | 비동기 투표 중 임시 선택 데이터 |
 
 ### dialogue_controller.gd (DialogueLayer에서 직접 구독)
 
@@ -306,7 +329,7 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 | `fadeOutLeft` | 왼쪽으로 100px + 페이드아웃 |
 | `fadeOutRight` | 오른쪽으로 100px + 페이드아웃 |
 
-### 6.4 선택지 시스템 (main_scene.gd — choice_controller로 분리 예정)
+### 6.4 선택지 시스템 (choice_controller.gd)
 
 - `dialog` 문자열 파싱: `"캐릭터ID 대사텍스트"` 형태 (공백 split)
 - 버튼 동적 생성 + 인라인 스타일 적용
@@ -341,6 +364,8 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 - **페이드 전환**: `_on_fade()` — to_black / from_black 트윈 애니메이션
 - **입력 다이얼로그**: `_on_input_request()` / `_on_input_confirm()` — 이름 입력 UI
+  - 표시 시 `input_dialog_shown` 시그널 → main_scene에서 QuickMenu 숨김
+  - 확인 시 `input_dialog_hidden` 시그널 → main_scene에서 QuickMenu 복원
 - **거리감 알림**: `_on_affinity_hint()` — 1.4초 표시 + 0.4초 페이드아웃
 - Public API: `is_input_active()`, `clear_transition()`
 
@@ -369,16 +394,16 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 ### 7.2 발견된 문제점
 
-#### ~~[높음] God Object~~ 개선 중 (670줄 → 573줄 → 440줄 → 351줄 → 455줄 (모달 시스템 추가로 증가))
+#### ~~[높음] God Object~~ ✅ 개선 완료 (670줄 → 573줄 → 440줄 → 351줄 → 455줄 → ~310줄)
 
 **위치**: main_scene.gd 전체
 
-컨트롤러 분리로 지속적으로 개선 중:
+컨트롤러 분리로 개선 완료:
 - ~~캐릭터 관리~~ → `character_controller.gd` ✅ 분리 완료
 - ~~배경 전환~~ → `background_controller.gd` ✅ 분리 완료
 - ~~페이드/입력/거리감~~ → `overlay_controller.gd` ✅ 분리 완료
 - ~~대화창/타이핑~~ → `dialogue_controller.gd` ✅ 분리 완료
-- 선택지 + Supabase → `choice_controller.gd` 분리 예정
+- ~~선택지 + Supabase~~ → `choice_controller.gd` ✅ 분리 완료
 
 #### ~~[높음] 캐릭터 상태 로드 미복원 (버그)~~ ✅ 수정 완료
 
@@ -391,16 +416,13 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 새 전환 시작 시 이전 트윈이 실행 중이면 `kill()` 후 즉시 swap 처리하여 충돌 방지.
 (현재 `background_controller.gd`에서 관리)
 
-#### [중간] Supabase 코드가 뷰에 존재 (SRP 위반)
+#### ~~[중간] Supabase 코드가 뷰에 존재 (SRP 위반)~~ ✅ 수정 완료
 
-**위치**: main_scene.gd line 232~303 (약 70줄)
-
-HTTP 통신, JSON 파싱, 통계 표시 로직이 뷰 컨트롤러에 직접 존재.
-`choice_controller.gd` 분리 시 함께 이동 예정.
+`choice_controller.gd`로 분리 완료. HTTP 통신, JSON 파싱, 통계 표시 로직이 선택지 컨트롤러에서 관리됨.
 
 #### [중간] `_display_stats_preview` 미구현
 
-**위치**: main_scene.gd `_display_stats_preview()`
+**위치**: choice_controller.gd `_display_stats_preview()`
 
 빈 for 루프. 통계 프리뷰 표시 기능이 구현되지 않은 상태.
 
@@ -539,20 +561,14 @@ AutoTimer가 시작되지 않음. 자동재생 모드에서도 수동 클릭 필
 ### 현재 구조
 
 ```
-main_scene.gd              (455줄, 조율자 + 선택지/세이브/모달)
+main_scene.gd              (~310줄, 조율자 + 세이브/모달)
+choice_controller.gd       (162줄, ChoicePanel 스크립트)     ✅ 분리 완료
 dialogue_controller.gd     (130줄, DialogueLayer 스크립트)    ✅ 분리 완료
 character_controller.gd    (199줄, CharacterLayer 스크립트)   ✅ 분리 완료
 background_controller.gd   (69줄, BackgroundLayer 스크립트)   ✅ 분리 완료
 overlay_controller.gd      (98줄, OverlayLayer 스크립트)      ✅ 분리 완료
 ```
 
-### 권장 분리 구조 (남은 작업)
-
-```
-choice_controller.gd       -- 선택지 UI, Supabase 통계 연동
-```
-
-분리 완료 시 main_scene.gd는 ~200줄 (초기화, 입력, auto/skip, 세이브/로드 조율만) 예상.
 모든 컨트롤러는 `scenes/controller/` 디렉토리에 위치.
 
 ---
@@ -566,7 +582,7 @@ choice_controller.gd       -- 선택지 UI, Supabase 통계 연동
 | ~~3~~ | ~~캐릭터 컨트롤러 분리~~ | ✅ 완료 |
 | ~~4~~ | ~~배경 컨트롤러 분리~~ | ✅ 완료 |
 | ~~5~~ | ~~오버레이 컨트롤러 분리~~ | ✅ 완료 |
-| 6 | 선택지 컨트롤러 분리 (choice_controller.gd) | 중 |
+| ~~6~~ | ~~선택지 컨트롤러 분리 (choice_controller.gd)~~ | ✅ 완료 |
 | ~~7~~ | ~~대화 컨트롤러 분리 (dialogue_controller.gd)~~ | ✅ 완료 |
 | ~~8~~ | ~~`_auto_advance_after` 취소 가능 타이머로 교체~~ | ✅ 완료 |
 | ~~9~~ | ~~await 후 is_inside_tree() 체크 추가~~ | ✅ 완료 |

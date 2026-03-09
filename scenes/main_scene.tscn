@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://dmekhq3lkkko8" path="res://scenes/controller/background_controller.gd" id="2_pu3yx"]
 [ext_resource type="Script" path="res://scenes/controller/character_controller.gd" id="2_pw63i"]
 [ext_resource type="Script" uid="uid://ccv84dg863lq3" path="res://scenes/controller/dialogue_controller.gd" id="4_gubc5"]
+[ext_resource type="Script" path="res://scenes/controller/choice_controller.gd" id="5_choice"]
 
 [node name="MainScene" type="Control" unique_id=1070397152]
 layout_mode = 3
@@ -154,6 +155,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ChoicePanel" type="VBoxContainer" parent="UILayer" unique_id=590421080]
+script = ExtResource("5_choice")
 visible = false
 anchors_preset = 8
 anchor_left = 0.5

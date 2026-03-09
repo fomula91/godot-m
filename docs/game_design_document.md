@@ -553,7 +553,14 @@ StoryManager (JSON 파싱/디스패치)
     ├── choice_requested ───→ MainScene._on_choice()
     ├── gallery_unlock_requested → MainScene._on_gallery_unlock()
     ├── distraction_free_toggled → MainScene._on_distraction_free()
+    ├── centered_requested ─→ lambda: QuickMenu 숨김
+    ├── dialogue_requested ─→ lambda: QuickMenu 복원
+    ├── narration_requested ─→ lambda: QuickMenu 복원
     └── end_requested ──────→ MainScene._on_end()
+
+OverlayController → MainScene (시그널)
+    ├── input_dialog_shown ──→ lambda: QuickMenu 숨김
+    └── input_dialog_hidden ─→ lambda: QuickMenu 복원
 
 GameManager (상태 변화)
     ├── state_changed ──────→ (미사용, 확장 가능)
