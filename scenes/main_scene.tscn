@@ -169,14 +169,17 @@ grow_vertical = 2
 theme_override_constants/separation = 16
 
 [node name="QuickMenu" type="HBoxContainer" parent="UILayer" unique_id=1827022812]
-anchors_preset = 1
+anchors_preset = -1
 anchor_left = 1.0
+anchor_top = 0.7
 anchor_right = 1.0
+anchor_bottom = 0.7
 offset_left = -400.0
-offset_top = 10.0
-offset_right = -10.0
-offset_bottom = 50.0
+offset_top = -45.0
+offset_right = -40.0
+offset_bottom = -5.0
 grow_horizontal = 0
+grow_vertical = 0
 theme_override_constants/separation = 8
 
 [node name="SaveBtn" type="Button" parent="UILayer/QuickMenu" unique_id=809325681]

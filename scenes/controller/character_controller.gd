@@ -134,7 +134,12 @@ func _on_hide(id: String, transition: String) -> void:
 		return
 	var position: String = _character_slots[id]
 	var slot := _get_slot(position)
-	_prepare_slot(position, slot)
+	# 기존 트윈만 kill (오프셋/스케일은 리셋하지 않음 - 현재 상태에서 자연스럽게 전환)
+	if position in _active_tweens:
+		var old_tw = _active_tweens[position]
+		if old_tw and old_tw.is_valid():
+			old_tw.kill()
+		_active_tweens.erase(position)
 
 	var tw: Tween
 	match transition:

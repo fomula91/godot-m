@@ -119,6 +119,24 @@ MainScene (Control, script=main_scene.gd) -- 루트, 전체 화면
 |--------|------|
 | `typing_finished` | 타이핑 완료 시 발신 (auto/skip 모드 연동용) |
 
+### save_load_screen.gd (확인 다이얼로그 추가)
+
+| 변수 | 타입 | 용도 |
+|------|------|------|
+| `_confirm_panel` | PanelContainer | 확인 다이얼로그 UI 패널 |
+| `_confirm_label` | Label | 확인 메시지 텍스트 |
+| `_pending_slot` | int | 확인 대기 중인 슬롯 번호 (-1이면 미사용) |
+
+| 함수 | 용도 |
+|------|------|
+| `_execute_load(slot)` | 실제 로드 실행 (확인 후) |
+| `_execute_save(slot)` | 실제 세이브 실행 (확인 후 또는 빈 슬롯) |
+| `_show_confirm(message, slot)` | 확인 패널 표시 |
+| `_on_confirm_yes()` | 확인 → 로드/세이브 실행 |
+| `_on_confirm_no()` | 취소 → 패널 숨김 |
+
+### dialogue_controller.gd (130줄)
+
 | 변수 | 타입 | 용도 |
 |------|------|------|
 | `_typing` | bool | 타이핑 애니메이션 진행 중 여부 |
@@ -305,13 +323,18 @@ vn_advance 액션 입력 (_unhandled_input) [main_scene.gd]
 
 - **모달 오버레이 방식**: 퀵메뉴 Save/Load 버튼 클릭 시 `save_load_screen.tscn`을 CanvasLayer(25)에 모달로 표시
 - **슬롯**: 1~10번 사용 (0번 퀵세이브 전용은 제거됨)
+- **확인 다이얼로그**: 슬롯 클릭 시 커스텀 확인 패널(PanelContainer) 표시
+  - 로드 시: "슬롯 N을(를) 로드하시겠습니까? 현재 진행이 초기화됩니다."
+  - 세이브 덮어쓰기 시: "슬롯 N에 덮어쓰시겠습니까?"
+  - 빈 슬롯 세이브: 확인 없이 즉시 저장
 - **세이브 데이터 수집**: `save_load_screen.gd`에서 main_scene 노드를 직접 참조하여 수집
   - 배경 상태: `main_scene.get_node("BackgroundLayer").get_current_bg_id()`
   - 캐릭터 상태: `main_scene.get_node("CharacterLayer").get_state()`
   - BGM: `AudioManager.get_current_bgm()`
   - 스토리 위치: `StoryManager.get_save_data()`
-- **로드 (오버레이 모드)**: `main_scene._restore_state(data)` 호출
+- **로드 (오버레이 모드)**: 시그널 연결 해제 → `_on_modal_closed()` 호출 → `_restore_state(data)` → `queue_free()`
 - **로드 (타이틀에서)**: `main_scene.tscn` 인스턴스화 후 `_restore_state()` 호출
+- **로드 시 상태 리셋**: `StoryManager.restore_from_save()`에서 `_advance_id += 1`, `_waiting = false`, `_choice_pending = false`로 기존 auto-advance 타이머 무효화
 - `_restore_state()`: 배경/BGM/캐릭터 복원 후 `StoryManager.advance()` 호출
 
 ### 6.7 오버레이 기능 (overlay_controller.gd)
@@ -491,6 +514,8 @@ AutoTimer가 시작되지 않음. 자동재생 모드에서도 수동 클릭 필
 - `_resume_auto_skip()`: 모달 닫힐 때 이전 auto/skip 상태 복원
 
 관련 함수: `_open_settings()`, `_open_save_load()`, `_on_modal_closed()`, `_pause_auto_skip()`, `_resume_auto_skip()`, `_set_quick_menu_disabled()`
+
+`_on_modal_closed()`에 `_active_modal == ModalType.NONE` 가드가 추가되어, 오버레이 로드 시 수동 호출과 `tree_exiting` 시그널에 의한 중복 호출을 방지.
 
 ### ~~8.5 `_auto_advance_after` 구조적 문제~~ ✅ 수정 완료
 

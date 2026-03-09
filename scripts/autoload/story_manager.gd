@@ -44,16 +44,16 @@ var scene_map: Dictionary = {
 	"school_front_day": "backgrounds/school_front_day.webp",
 	"school_front_evening": "backgrounds/school_front_evening.webp",
 	# 교실
-	"classroom_morning": "backgrounds/classroom_morning.webp",
+	"classroom_morning": "backgrounds/classroom_02_morning.webp",
 	"classroom_day": "backgrounds/classroom_01_day.webp",
-	"classroom_afternoon": "backgrounds/classroom_afternoon.webp",
-	"classroom_evening": "backgrounds/classroom_evening.webp",
+	"classroom_afternoon": "backgrounds/classroom_01_afternoon.webp",
+	"classroom_evening": "backgrounds/classroom_02_evening.webp",
 	# 급식실 / 점심
 	"cafeteria_day": "backgrounds/cafeteria_day.webp",
 	"lunch_spot": "backgrounds/lunch_spot.webp",
 	# 복도
-	"hallway_day": "backgrounds/hallway_day.webp",
-	"hallway_evening": "backgrounds/hallway_evening.webp",
+	"hallway_day": "backgrounds/another_school_building_day.webp",
+	"hallway_evening": "backgrounds/classroom_02_evening.webp",
 	# 운동장
 	"school_grounds_day": "backgrounds/school_grounds_day.webp",
 	"school_grounds_evening": "backgrounds/school_grounds_evening.webp",
@@ -102,6 +102,7 @@ var line_index: int = 0
 var _waiting: bool = false
 var _choice_pending: bool = false
 var _active_sprites: Dictionary = {} # cahr_id -> sprite_name
+var _advance_id: int = 0  # auto-advance 취소용 ID
 
 
 func _ready() -> void:
@@ -147,6 +148,7 @@ func jump(label: String) -> void:
 		push_error("StoryManager: Label not found: " + label)
 		return
 	DebugOverlay.log_message("Jump: %s" % label)
+	_advance_id += 1  # 기존 auto-advance 타이머 무효화
 	current_label = label
 	line_index = 0
 	_waiting = false
@@ -165,6 +167,7 @@ func advance() -> void:
 		push_warning("StoryManager: Reached end of label " + current_label)
 		return
 
+	_advance_id += 1  # 실제 명령 처리 시에만 대기 중인 auto-advance 무효화
 	var cmd = lines[line_index]
 	line_index += 1
 
@@ -223,7 +226,10 @@ func _dispatch_command(cmd: Dictionary) -> void:
 			character_hide_requested.emit(id, transition)
 			if wait:
 				_waiting = true
+				var wait_id := _advance_id
 				await get_tree().create_timer(0.5).timeout
+				if wait_id != _advance_id:
+					return  # 이미 다른 advance가 발생함
 				_waiting = false
 				advance()
 			else:
@@ -254,14 +260,19 @@ func _dispatch_command(cmd: Dictionary) -> void:
 				push_error("StoryManager: Label not found: " + target)
 				return
 			_waiting = true
+			var fj_id := _advance_id
 			fade_requested.emit("to_black", duration, color)
 			await get_tree().create_timer(duration + cmd.get("wait", 0.2)).timeout
+			if fj_id != _advance_id:
+				return
 			DebugOverlay.log_message("Jump: %s" % target)
 			current_label = target
 			line_index = 0
 			_choice_pending = false
 			fade_requested.emit("from_black", duration, color)
 			await get_tree().create_timer(duration).timeout
+			if fj_id != _advance_id:
+				return
 			_waiting = false
 			advance()
 
@@ -270,11 +281,16 @@ func _dispatch_command(cmd: Dictionary) -> void:
 			var duration: float = cmd.get("duration", 1.5)
 			var color: Color = Color(cmd.get("color", "#000000"))
 			_waiting = true
+			var fs_id := _advance_id
 			fade_requested.emit("to_black", duration, color)
 			await get_tree().create_timer(duration + 0.2).timeout
+			if fs_id != _advance_id:
+				return
 			scene_change_requested.emit(id, "instant")
 			fade_requested.emit("from_black", duration, color)
 			await get_tree().create_timer(duration).timeout
+			if fs_id != _advance_id:
+				return
 			_waiting = false
 			advance()
 
@@ -301,8 +317,11 @@ func _dispatch_command(cmd: Dictionary) -> void:
 		"wait":
 			var duration: float = cmd.get("duration", 1.0) / 1000.0  # ms to seconds
 			_waiting = true
+			var w_id := _advance_id
 			wait_requested.emit(duration)
 			await get_tree().create_timer(duration).timeout
+			if w_id != _advance_id:
+				return
 			_waiting = false
 			advance()
 
@@ -359,8 +378,10 @@ func _dispatch_command(cmd: Dictionary) -> void:
 
 
 func _auto_advance_after(delay: float) -> void:
+	var id := _advance_id
 	await get_tree().create_timer(delay).timeout
-	advance()
+	if id == _advance_id:  # 수동 advance가 없었을 때만 진행
+		advance()
 
 
 func on_choice_selected(choice_key: String, target_label: String) -> void:
@@ -408,6 +429,9 @@ func get_save_data() -> Dictionary:
 
 
 func restore_from_save(data: Dictionary) -> void:
+	_advance_id += 1  # 기존 auto-advance 타이머 무효화
+	_waiting = false
+	_choice_pending = false
 	current_label = data.get("current_label", "")
 	line_index = data.get("line_index", 0)
 	_active_sprites.clear()

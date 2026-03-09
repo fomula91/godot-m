@@ -394,7 +394,10 @@ CrackIntro (5월 — 시내 나들이)
 - **저장 형식**: JSON 파일 (`user://saves/slot_N.json`)
 - **저장 데이터**: 게임 상태, 갤러리 해금, 현재 라벨/라인, 배경, 캐릭터 위치, BGM, 타임스탬프
 - **오버레이 모달**: 퀵 메뉴의 Save/Load 버튼 클릭 시 `save_load_screen.tscn`이 CanvasLayer(25)에 모달로 표시
+- **확인 다이얼로그**: 슬롯 클릭 시 커스텀 확인 패널 표시 (로드: "로드하시겠습니까?", 세이브 덮어쓰기: "덮어쓰시겠습니까?"). 빈 슬롯 세이브는 확인 없이 즉시 저장
 - **데이터 수집**: `save_load_screen.gd`에서 main_scene 노드를 직접 참조하여 배경/캐릭터/BGM/스토리 데이터 수집
+- **로드 시 상태 리셋**: `StoryManager.restore_from_save()`에서 `_advance_id` 증가, `_waiting`/`_choice_pending` 리셋으로 기존 타이머 무효화 및 상태 충돌 방지
+- **오버레이 로드 순서**: 시그널 연결 해제 → `_on_modal_closed()` 호출(모달 상태 정리) → `_restore_state()` → `queue_free()` 순서로 실행
 - **이어하기**: 타이틀 화면에서 세이브/로드 화면 진입 후 슬롯 선택
 
 ### 8.2 설정
@@ -430,6 +433,7 @@ CrackIntro (5월 — 시내 나들이)
 | 퀵메뉴 | 모달 열린 동안 Save/Load/Settings 버튼 비활성화 |
 | 입력 차단 | `_unhandled_input`에서 `_active_modal != NONE` 시 무시 |
 | 닫기 | 모달 내 "뒤로" 버튼 → `queue_free()` → `tree_exiting` 시그널 → `_on_modal_closed()` |
+| 중복 호출 방지 | `_on_modal_closed()`에서 `_active_modal == NONE` 가드로 이미 정리된 상태 재처리 방지 |
 
 ### 8.5 오디오 시스템
 

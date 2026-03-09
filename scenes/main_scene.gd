@@ -401,6 +401,8 @@ func _open_save_load(load_mode: bool) -> void:
 # === Modal Helpers ===
 
 func _on_modal_closed() -> void:
+	if _active_modal == ModalType.NONE:
+		return  # 이미 정리됨
 	_active_modal = ModalType.NONE
 	_set_quick_menu_disabled(false)
 	_resume_auto_skip()

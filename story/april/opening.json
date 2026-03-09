@@ -157,11 +157,11 @@
 		{"cmd": "centered", "text": "— 오디오 테스트 —"},
 
 		{"cmd": "narration", "text": "BGM 재생 테스트 (loop: true, 기본값)"},
-		{"cmd": "play_music", "id": "piano-calm"},
+		{"cmd": "play_music", "id": "acoustic-chill"},
 		{"cmd": "narration", "text": "piano-calm 재생 중..."},
 
 		{"cmd": "narration", "text": "효과음 재생 테스트"},
-		{"cmd": "play_sound", "id": "classroom-noise"},
+		{"cmd": "play_sound", "id": "Footsteps"},
 		{"cmd": "narration", "text": "classroom-noise 효과음 재생"},
 		{"cmd": "wait", "duration": 2000},
 
@@ -170,9 +170,9 @@
 		{"cmd": "narration", "text": "효과음 정지됨"},
 
 		{"cmd": "narration", "text": "다른 효과음 테스트"},
-		{"cmd": "play_sound", "id": "chair-drag"},
+		{"cmd": "play_sound", "id": "Select"},
 		{"cmd": "wait", "duration": 1000},
-		{"cmd": "play_sound", "id": "school-bell"},
+		{"cmd": "play_sound", "id": "Japanese_School_Bell"},
 		{"cmd": "wait", "duration": 1500},
 		{"cmd": "stop_sound"},
 
@@ -181,13 +181,13 @@
 		{"cmd": "wait", "duration": 2500},
 
 		{"cmd": "narration", "text": "BGM 변경 테스트 (daily-life)"},
-		{"cmd": "play_music", "id": "daily-life"},
+		{"cmd": "play_music", "id": "sunny-day"},
 		{"cmd": "narration", "text": "daily-life 재생 중..."},
 
 		{"cmd": "narration", "text": "loop: false 테스트 (한 번만 재생)"},
 		{"cmd": "stop_music", "fade": 1.0},
 		{"cmd": "wait", "duration": 1500},
-		{"cmd": "play_music", "id": "warm-afternoon", "loop": false},
+		{"cmd": "play_music", "id": "acoustic-chill", "loop": false},
 		{"cmd": "narration", "text": "warm-afternoon (loop: false) 재생 중..."},
 
 		{"cmd": "stop_music", "fade": 1.0},
@@ -325,7 +325,7 @@
 
 		{"cmd": "narration", "text": "=== gallery_unlock 테스트 ==="},
 		{"cmd": "narration", "text": "first_lunch 갤러리 아이템 언락"},
-		{"cmd": "gallery_unlock", "id": "first_lunch"},
+		{"cmd": "gallery_unlock", "id": "yuu-first-meet"},
 		{"cmd": "narration", "text": "갤러리 언락 완료"},
 
 		{"cmd": "narration", "text": "=== distraction_free 테스트 ==="},
@@ -411,7 +411,7 @@
 
 	"Opening": [
 		{"cmd": "show_scene", "id": "school_front_morning", "transition": "instant"},
-		{"cmd": "play_music", "id": "piano-calm"},
+		{"cmd": "play_music", "id": "acoustic-chill"},
 		{"cmd": "narration", "text": "어떤 사람이 갑자기 눈에 밟히기 시작하는 건,"},
 		{"cmd": "narration", "text": "대단한 이유가 있어서가 아닌 경우가 대부분이다."},
 		{"cmd": "fade_scene", "id": "classroom_morning", "duration": 1.5},
@@ -420,7 +420,7 @@
 		{"cmd": "narration", "text": "그냥, 시선이 갔다."},
 		{"cmd": "narration", "text": "그게 전부였다."},
 		{"cmd": "fade_scene", "id": "classroom_day", "duration": 1.0},
-		{"cmd": "play_sound", "id": "classroom-noise"},
+		{"cmd": "play_sound", "id": "Footsteps"},
 		{"cmd": "jump", "target": "Prologue_Gaze"}
 	],
 
@@ -470,7 +470,7 @@
 		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
 
 		{"cmd": "fade_scene", "id": "classroom_day", "duration": 0.8},
-		{"cmd": "play_sound", "id": "rain"},
+		{"cmd": "play_sound", "id": "Footsteps"},
 		{"cmd": "narration", "text": "또 다른 날. 비가 오는 점심시간."},
 		{"cmd": "narration", "text": "교실이 평소보다 어둡다. 창문에 빗방울이 흘러내린다."},
 		{"cmd": "show_character", "id": "sua", "sprite": "sad", "position": "center", "transition": "fadeIn"},
@@ -483,7 +483,7 @@
 
 	"Prologue_Awareness": [
 		{"cmd": "fade_scene", "id": "classroom_day", "duration": 0.8},
-		{"cmd": "play_music", "id": "piano-calm"},
+		{"cmd": "play_music", "id": "acoustic-chill"},
 		{"cmd": "narration", "text": "그쯤 되니까 인정해야 했다."},
 		{"cmd": "narration", "text": "나는 이 애를 보고 있다."},
 		{"cmd": "narration", "text": "(점심시간이 시작되면 무의식적으로 창가 쪽을 한 번 보게 됐다. 확인하듯이.)"},
@@ -534,7 +534,7 @@
 		{"cmd": "narration", "text": "(가만히 앉아 있으면 평소처럼 지나간다. 오늘도, 내일도.)"},
 		{"cmd": "narration", "text": "(근데 — 오늘은 왠지 그게 마음에 안 들었다.)"},
 
-		{"cmd": "play_sound", "id": "chair-drag"},
+		{"cmd": "play_sound", "id": "Select"},
 		{"cmd": "hide_character", "id": "sua", "transition": "fadeOut"},
 		{"cmd": "stop_music", "fade": 2.0},
 		{"cmd": "fade_jump", "target": "Chapter1_Approach", "duration": 1.5}
@@ -542,8 +542,8 @@
 
 	"Chapter1_Approach": [
 		{"cmd": "show_scene", "id": "classroom_day", "transition": "instant"},
-		{"cmd": "play_music", "id": "daily-life"},
-		{"cmd": "play_sound", "id": "classroom-noise"},
+		{"cmd": "play_music", "id": "sunny-day"},
+		{"cmd": "play_sound", "id": "Footsteps"},
 		{"cmd": "narration", "text": "다음 날 점심시간."},
 		{"cmd": "show_character", "id": "sua", "sprite": "normal", "position": "center", "transition": "fadeIn"},
 		{"cmd": "narration", "text": "(평소처럼 친구랑 급식실에 갈 생각이었다.)"},
@@ -571,7 +571,7 @@
 		{"cmd": "dialogue", "character": "sua", "text": "…나?"},
 		{"cmd": "dialogue", "character": "p", "text": "어."},
 
-		{"cmd": "play_sound", "id": "chair-drag"},
+		{"cmd": "play_sound", "id": "Select"},
 		{"cmd": "narration", "text": "한 박자. 뭐라고 할까 잠깐 고민하다가 — 고민하는 게 귀찮아져서, 그냥 맞은편 의자를 끌고 앉는다."},
 
 		{"cmd": "change_sprite", "id": "sua", "sprite": "surprised"},
@@ -603,7 +603,7 @@
 	],
 
 	"Chapter1_Lunch": [
-		{"cmd": "play_music", "id": "warm-afternoon"},
+		{"cmd": "play_music", "id": "acoustic-chill"},
 		{"cmd": "narration", "text": "수아의 도시락통 — 하얀색. 계란말이, 김치, 작게 썬 소시지. 밥 위에 김가루가 살짝 뿌려져 있다."},
 		{"cmd": "narration", "text": "계란말이가 한쪽이 좀 타 있고, 소시지 크기가 제각각이다."},
 		{"cmd": "narration", "text": "(사 먹는 도시락 같지는 않다. 직접 만든 건가.)"},
@@ -624,7 +624,7 @@
 		{"cmd": "narration", "text": "(진짜 돌아올 줄은 몰랐다는 표정이었다.)"},
 		{"cmd": "narration", "text": "(그 반응이 묘하게 남았다.)"},
 		{"cmd": "change_sprite", "id": "sua", "sprite": "normal"},
-		{"cmd": "play_sound", "id": "unwrap"},
+		{"cmd": "play_sound", "id": "Select"},
 
 		{"cmd": "narration", "text": "아무 말이 없었다."},
 		{"cmd": "narration", "text": "진짜로, 아무 말도."},
@@ -663,7 +663,7 @@
 		{"cmd": "narration", "text": "(확신은 없다.)"},
 		{"cmd": "narration", "text": "(이 애의 변화는 전부 '것 같기도 하고 아닌 것 같기도 하고'의 영역에 있다.)"},
 
-		{"cmd": "play_sound", "id": "school-bell"},
+		{"cmd": "play_sound", "id": "Japanese_School_Bell"},
 		{"cmd": "narration", "text": "수아가 먼저 움직인다."},
 		{"cmd": "narration", "text": "도시락 뚜껑을 덮고, 고무줄로 감고, 수저집을 가지런히 옆에 놓는다."},
 		{"cmd": "narration", "text": "동작이 정돈되어 있다. 매일 이 루틴을 반복한 사람의 손놀림."},
