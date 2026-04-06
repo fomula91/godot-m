@@ -86,6 +86,12 @@ func _set_mouse_ignore_recursive(node: Node) -> void:
 		_set_mouse_ignore_recursive(child)
 
 
+func _apply_dialogue_box_style() -> void:
+	var style := StyleBoxTexture.new()
+	style.texture = preload("res://assets/system/dialog-background.png")
+	style.set_content_margin_all(20)
+	dialogue_box.add_theme_stylebox_override("panel", style)
+
 
 # === Input ===
 
