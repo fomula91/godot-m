@@ -122,10 +122,7 @@ func _on_typing_done() -> void:
     typing_finished.emit()
 
 func _apply_dialogue_box_style() -> void:
-    var style := StyleBoxFlat.new()
-    style.bg_color = Color(0.078, 0.039, 0.118, 0.82)
-    style.border_color = Color(0.957, 0.561, 0.694, 0.2)
-    style.set_border_width_all(2)
-    style.set_corner_radius_all(16)
+    var style := StyleBoxTexture.new()
+    style.texture = preload("res://assets/system/dialog-background.png")
     style.set_content_margin_all(20)
     dialogue_box.add_theme_stylebox_override("panel", style)

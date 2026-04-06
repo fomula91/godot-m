@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://01p5yxdxs2o3" path="res://scenes/main_scene.gd" id="1"]
 [ext_resource type="Script" uid="uid://bwxjae0kfy0oh" path="res://scenes/controller/overlay_controller.gd" id="1_pw63i"]
 [ext_resource type="Script" uid="uid://dmekhq3lkkko8" path="res://scenes/controller/background_controller.gd" id="2_pu3yx"]
-[ext_resource type="Script" path="res://scenes/controller/character_controller.gd" id="2_pw63i"]
+[ext_resource type="Script" uid="uid://sfrsyiubybsf" path="res://scenes/controller/character_controller.gd" id="2_pw63i"]
 [ext_resource type="Script" uid="uid://ccv84dg863lq3" path="res://scenes/controller/dialogue_controller.gd" id="4_gubc5"]
-[ext_resource type="Script" path="res://scenes/controller/choice_controller.gd" id="5_choice"]
+[ext_resource type="Script" uid="uid://cw5tysbhv72uh" path="res://scenes/controller/choice_controller.gd" id="5_choice"]
 
 [node name="MainScene" type="Control" unique_id=1070397152]
 layout_mode = 3
@@ -110,7 +110,6 @@ anchors_preset = -1
 anchor_top = 0.7
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -153,7 +152,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ChoicePanel" type="VBoxContainer" parent="UILayer" unique_id=590421080]
-script = ExtResource("5_choice")
 visible = false
 anchors_preset = 8
 anchor_left = 0.5
@@ -167,6 +165,7 @@ offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 16
+script = ExtResource("5_choice")
 
 [node name="QuickMenu" type="HBoxContainer" parent="UILayer" unique_id=1827022812]
 anchors_preset = -1
