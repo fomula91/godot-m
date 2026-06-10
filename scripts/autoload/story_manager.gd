@@ -19,6 +19,7 @@ signal gallery_unlock_requested(id: String)
 signal distraction_free_toggled()
 signal end_requested()
 signal command_completed()
+signal day_intro_requested(day_num: int, title_path: String, duration: float)
 
 # 캐릭터 정의
 # 임시 에셋을 사용한다. 변경 예정중
@@ -321,6 +322,20 @@ func _dispatch_command(cmd: Dictionary) -> void:
 			wait_requested.emit(duration)
 			await get_tree().create_timer(duration).timeout
 			if w_id != _advance_id:
+				return
+			_waiting = false
+			advance()
+
+		"day_intro":
+			var day_num: int = cmd.get("day", 1)
+			var title_image: String = cmd.get("title_image", "title_sakura_morning")
+			var duration: float = cmd.get("duration", 4.0)
+			var title_path := "res://assets/ui/day_intro/" + title_image + ".png"
+			_waiting = true
+			var d_id := _advance_id
+			day_intro_requested.emit(day_num, title_path, duration)
+			await get_tree().create_timer(duration).timeout
+			if d_id != _advance_id:
 				return
 			_waiting = false
 			advance()

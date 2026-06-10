@@ -1,6 +1,8 @@
 extends VBoxContainer
 ## 선택지 표시, 버튼 생성, Supabase 통계 처리
 
+const CHOICE_BG := preload("res://assets/ui/choice_button.png")
+
 @onready var dialogue_layer: Control = $"../DialogueLayer"
 
 # Supabase 설정
@@ -43,24 +45,25 @@ func _on_choice(dialog: String, choices: Array) -> void:
 	for choice in choices:
 		var btn := Button.new()
 		btn.text = choice.get("text", "")
-		btn.custom_minimum_size = Vector2(500, 60)
+		btn.custom_minimum_size = Vector2(500, 80)
 		var choice_key: String = choice.get("key", "")
 		var target: String = choice.get("target", "")
 
-		# 스타일
-		var style := StyleBoxFlat.new()
-		style.bg_color = Color(0.078, 0.039, 0.118, 0.85)
-		style.border_color = Color(0.957, 0.561, 0.694, 0.4)
-		style.set_border_width_all(1)
-		style.set_corner_radius_all(12)
+		var style := StyleBoxTexture.new()
+		style.texture = CHOICE_BG
 		style.set_content_margin_all(16)
 		btn.add_theme_stylebox_override("normal", style)
 
-		var hover_style := style.duplicate()
-		hover_style.bg_color = Color(0.157, 0.078, 0.235, 0.95)
-		hover_style.border_color = Color(0.957, 0.561, 0.694, 0.8)
+		var hover_style: StyleBoxTexture = style.duplicate()
+		hover_style.modulate_color = Color(1.2, 1.2, 1.35, 1.0)
 		btn.add_theme_stylebox_override("hover", hover_style)
 
+		var pressed_style: StyleBoxTexture = style.duplicate()
+		pressed_style.modulate_color = Color(0.85, 0.85, 0.95, 1.0)
+		btn.add_theme_stylebox_override("pressed", pressed_style)
+
+		btn.add_theme_color_override("font_color", Color.WHITE)
+		btn.add_theme_color_override("font_hover_color", Color.WHITE)
 		btn.add_theme_font_size_override("font_size", 20)
 
 		btn.pressed.connect(_on_choice_button_pressed.bind(choice_key, target, btn))

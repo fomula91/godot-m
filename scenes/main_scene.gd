@@ -16,7 +16,7 @@ var _distraction_free := false
 var _advance_timer: SceneTreeTimer = null
 
 # 모달 상태
-enum ModalType { NONE, SETTINGS, SAVE_LOAD }
+enum ModalType { NONE, SETTINGS, SAVE_LOAD, BACKLOG }
 var _active_modal: ModalType = ModalType.NONE
 var _auto_before_modal := false
 var _skip_before_modal := false
@@ -51,6 +51,7 @@ func _connect_ui_signals() -> void:
 	$UILayer/QuickMenu/AutoBtn.toggled.connect(_toggle_auto)
 	$UILayer/QuickMenu/SkipBtn.toggled.connect(_toggle_skip)
 	$UILayer/QuickMenu/SettingsBtn.pressed.connect(_open_settings)
+	$UILayer/QuickMenu/LogBtn.pressed.connect(_open_backlog)
 
 
 func _open_settings() -> void:
@@ -67,6 +68,19 @@ func _open_settings() -> void:
 	layer.add_child(settings)
 	_modal_layer = layer
 	get_tree().root.add_child(layer)
+
+
+func _open_backlog() -> void:
+	if _active_modal != ModalType.NONE:
+		return
+	_active_modal = ModalType.BACKLOG
+	_pause_auto_skip()
+	_set_quick_menu_disabled(true)
+	var backlog: CanvasLayer = load("res://scenes/backlog_screen.tscn").instantiate()
+	backlog.tree_exiting.connect(_on_modal_closed)
+	_modal_layer = backlog
+	get_tree().root.add_child(backlog)
+	backlog.show_log(dialogue_layer.get_dialogue_log())
 
 
 func _setup_mouse_passthrough() -> void:
@@ -287,6 +301,7 @@ func _resume_auto_skip() -> void:
 func _set_quick_menu_disabled(disabled: bool) -> void:
 	$UILayer/QuickMenu/SaveBtn.disabled = disabled
 	$UILayer/QuickMenu/LoadBtn.disabled = disabled
+	$UILayer/QuickMenu/LogBtn.disabled = disabled
 	$UILayer/QuickMenu/SettingsBtn.disabled = disabled
 
 

@@ -1,5 +1,8 @@
 extends Control
 
+const CLOSE_ICON := preload("res://assets/ui/gallery/close.png")
+const CG_FRAME := preload("res://assets/ui/gallery/cg_frame.png")
+
 const GALLERY_IDS: Array[String] = [
 	"first-lunch", "seat-assignment", "group-project", "math-class",
 	"jeju-together", "jeju-delivery", "sports-festival", "birthday-gift",
@@ -24,7 +27,7 @@ const GALLERY_FILES: Dictionary = {
 
 @onready var grid: GridContainer = $VBoxContainer/ScrollContainer/Grid
 @onready var back_btn: Button = $VBoxContainer/TopBar/BackBtn
-@onready var fullscreen_bg: ColorRect = $FullscreenBG
+@onready var fullscreen_bg: TextureRect = $FullscreenBG
 @onready var fullscreen_viewer: TextureRect = $FullscreenViewer
 
 var close_btn: Button
@@ -42,6 +45,10 @@ func _build_gallery() -> void:
 		var panel := Panel.new()
 		panel.custom_minimum_size = Vector2(320, 180)
 		panel.clip_contents = true
+
+		var frame_style := StyleBoxTexture.new()
+		frame_style.texture = CG_FRAME
+		panel.add_theme_stylebox_override("panel", frame_style)
 
 		var unlocked := id in GameManager.gallery_unlocked
 		var file_name: String = GALLERY_FILES.get(id, "")
@@ -63,11 +70,12 @@ func _build_gallery() -> void:
 			btn.pressed.connect(_view_image.bind(id))
 			panel.add_child(btn)
 		else:
-			# 잠긴 CG
-			var style := StyleBoxFlat.new()
-			style.bg_color = Color(0.1, 0.05, 0.15, 1.0)
-			style.set_corner_radius_all(8)
-			panel.add_theme_stylebox_override("panel", style)
+			# 잠긴 CG: cg_frame 위에 어두운 오버레이
+			var lock_overlay := ColorRect.new()
+			lock_overlay.color = Color(0.1, 0.05, 0.15, 0.85)
+			lock_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+			lock_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			panel.add_child(lock_overlay)
 
 			var lock_label := Label.new()
 			lock_label.text = "?"
@@ -98,31 +106,19 @@ func _style_back_btn() -> void:
 
 func _create_close_btn() -> void:
 	close_btn = Button.new()
-	close_btn.text = "✕ 닫기"
+	close_btn.icon = CLOSE_ICON
+	close_btn.expand_icon = true
 	close_btn.visible = false
 	close_btn.z_index = 10
 	close_btn.anchor_left = 1.0
 	close_btn.anchor_top = 0.0
 	close_btn.anchor_right = 1.0
 	close_btn.anchor_bottom = 0.0
-	close_btn.offset_left = -120
+	close_btn.offset_left = -60
 	close_btn.offset_top = 20
 	close_btn.offset_right = -20
 	close_btn.offset_bottom = 60
-	close_btn.add_theme_font_size_override("font_size", 20)
-
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.078, 0.039, 0.118, 0.7)
-	style.border_color = Color(0.957, 0.561, 0.694, 0.3)
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(12)
-	style.set_content_margin_all(8)
-	close_btn.add_theme_stylebox_override("normal", style)
-
-	var hover := style.duplicate()
-	hover.bg_color = Color(0.157, 0.078, 0.235, 0.9)
-	hover.border_color = Color(0.957, 0.561, 0.694, 0.6)
-	close_btn.add_theme_stylebox_override("hover", hover)
+	close_btn.flat = true
 
 	close_btn.pressed.connect(_close_fullscreen)
 	add_child(close_btn)
