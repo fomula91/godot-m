@@ -17,7 +17,7 @@
 **완료 기준** — 게임에서 선택지 선택 → 에디터 로그에서 HTTP 200 응답 확인, 재진입 시 통계 미리보기 표시. 오프라인 시 3초 타임아웃 후 정상 진행.
 
 ### 3. opening.json의 Test_* 노드 분리
-**무엇** — `story/april/opening.json` 31노드 중 25개가 Test_* 테스트 노드. 별도 파일(예: `story/test/`)로 분리하거나 삭제하고, Start가 실제 Opening으로 이어지게 정리.
+**무엇** — `story/april/opening.json` 31노드 중 24개가 Test_* 테스트 노드. 남길 실 시나리오는 7개(`Start`, `Opening`, `Prologue_Gaze`, `Prologue_Observation`, `Prologue_Awareness`, `Chapter1_Approach`, `Chapter1_Lunch`). Test_* 24개를 별도 파일(예: `story/test/`)로 분리하거나 삭제하고, Start가 실제 Opening으로 이어지게 정리.
 **왜 ** — 실제 시나리오와 테스트가 한 파일에 섞여 있어 과제 1 진행 시 사고 위험.
 **완료 기준** — opening.json에 실제 시나리오 노드만 남고, 게임 시작 시 프롤로그로 직행. 테스트 노드는 별도 진입 경로로 보존 여부 결정 후 처리.
 
