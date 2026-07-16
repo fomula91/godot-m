@@ -45,7 +45,8 @@ func _on_choice(dialog: String, choices: Array) -> void:
 	for choice in choices:
 		var btn := Button.new()
 		btn.text = choice.get("text", "")
-		btn.custom_minimum_size = Vector2(500, 80)
+		btn.custom_minimum_size = Vector2(500, 120)
+		btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		var choice_key: String = choice.get("key", "")
 		var target: String = choice.get("target", "")
 
