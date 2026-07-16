@@ -11,9 +11,12 @@
 - (없음 — 주제별 요약이 생기면 `Summaries/`에 추가하고 여기 링크)
 
 ## Decisions (ADR)
-- (없음 — 첫 결정 시 `Decisions/0001-<slug>.md` 추가하고 여기 링크)
+- [[Decisions/0001-story-json-node-graph]] — 스토리를 JSON 노드 그래프로 구동
+- [[Decisions/0002-overlay-modal-unification]] — 설정·세이브/로드는 오버레이 모달로 통일
+- [[Decisions/0003-main-scene-controller-split]] — main_scene을 도메인 컨트롤러로 분리
 
 ## 상세 (Reference 정본)
-- (없음 — 출처 있는 상세 정본이 생기면 `Reference/`에 추가하고 여기 링크)
+- (위키 밖 정본) `docs/01-plan/features/game-full-plan.plan.md` — 종합 기획·로드맵·Phase 체크리스트
+- (위키 밖 정본) `docs/script_full.md` — 전체 시나리오 스크립트 (JSON 변환 원본)
 
 최근 변화: [[log]]
