@@ -43,6 +43,12 @@ func _on_choice(dialog: String, choices: Array) -> void:
 		child.free()
 
 	for choice in choices:
+		# condition이 있으면 평가해서 거짓인 선택지는 표시하지 않는다.
+		# 이미 관람한 허브 이벤트를 숨기는 데 사용한다. (docs/07.hub-implementation.md 6절)
+		var cond: String = choice.get("condition", "")
+		if not cond.is_empty() and not GameManager.evaluate_condition(cond):
+			continue
+
 		var btn := Button.new()
 		btn.text = choice.get("text", "")
 		btn.custom_minimum_size = Vector2(500, 120)

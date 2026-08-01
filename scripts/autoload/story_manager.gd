@@ -30,12 +30,21 @@ var characters: Dictionary = {
 	}},
 	"sua": {"name": "이수아", "color": "#e87ba1", "directory": "sora", "sprites": {
 		"normal": "sora_A100.webp", "happy": "sora_A101.webp",
-		"shy": "sora_A101.webp", "sad": "sora_A101.webp",
+		"shy": "sora_A190.webp", "sad": "sora_A102.webp",
 		"surprised": "sora_A104.webp", "worried": "sora_A103.webp"
 	}},
-	"friend": {"name": "친구", "color": "#8bc34a", "directory": "unknown", "sprites": {
-		"normal": "unknown_B290_A100.webp"
+	"friend": {"name": "동현", "color": "#8bc34a", "directory": "unknown", "sprites": {
+		"normal": "unknown_B290_A100.webp", "happy": "unknown_B290_A101.webp",
+		"surprised": "unknown_B290_A102.webp", "worried": "unknown_B290_A103.webp",
+		"smug": "unknown_B290_A104.webp"
 	}},
+	# 엑스트라: 스프라이트 없이 이름표만 사용한다 (dialogue 전용)
+	"teacher_math": {"name": "수학 선생님", "color": "#90a4ae"},
+	"teacher_home": {"name": "담임 선생님", "color": "#90a4ae"},
+	"student1": {"name": "학생 1", "color": "#b0bec5"},
+	"student2": {"name": "학생 2", "color": "#b0bec5"},
+	"student3": {"name": "학생 3", "color": "#b0bec5"},
+	"girl": {"name": "여자아이", "color": "#b0bec5"},
 }
 
 # 씬(배경) 매핑
@@ -111,7 +120,7 @@ func _ready() -> void:
 
 
 func load_all_stories() -> void:
-	var dirs: Array[String] = ["april", "may", "crack", "july"]
+	var dirs: Array[String] = ["april", "may", "crack", "july", "test"]
 	for dir_name in dirs:
 		var dir_path: String = "res://story/" + dir_name
 		var dir := DirAccess.open(dir_path)
