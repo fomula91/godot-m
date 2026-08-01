@@ -10,9 +10,12 @@ user_invocable: true
 
 ## 대상 문서
 
-1. **`docs/game_design_document.md`** — 게임 기획 문서 (시스템 기능, 모달, UI 등)
-2. **`docs/main_scene_analysis.md`** — 메인 씬 분석 리포트 (변수, 함수, 시그널, 구조)
+1. **`docs/03.game-design.md`** — 게임 기획 문서 (시스템 기능, 모달, UI 등)
+2. **`docs/90.main_scene_analysis.md`** — 메인 씬 분석 리포트 (변수, 함수, 시그널, 구조)
 3. **`docs/01-plan/features/game-full-plan.plan.md`** — 개발 로드맵 (완료/미완료 체크리스트)
+
+> 문서 지도는 `docs/00.INDEX.md`. 원고·설정 변경은 이 스킬의 범위가 아니다 —
+> 원고는 `docs/01.new_story.md`, 설정 충돌은 `docs/05.continuity.md`에서 관리한다.
 
 ## 실행 절차
 
@@ -20,12 +23,12 @@ user_invocable: true
 2. 변경된 코드와 관련된 문서 섹션을 찾아 읽기
 3. 각 문서에 대해 아래 기준으로 업데이트:
 
-### game_design_document.md
+### 03.game-design.md
 - 새로운 시스템 기능이 추가되었으면 해당 섹션(8.x)에 반영
 - UI/UX 변경이 있으면 5.x 섹션 업데이트
 - 기술 아키텍처 변경이 있으면 10.x 섹션 업데이트
 
-### main_scene_analysis.md
+### 90.main_scene_analysis.md
 - 새로운 변수/함수가 추가되었으면 해당 컨트롤러 섹션의 표에 추가
 - 시그널 연결이 변경되었으면 5번 섹션 업데이트
 - 버그 수정이면 7.2 문제점 섹션에 완료 표시 또는 항목 추가

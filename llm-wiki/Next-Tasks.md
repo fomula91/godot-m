@@ -6,10 +6,21 @@
 
 ## 열린 과제
 
-### 1. 스토리 JSON 변환 — script_full.md를 story/ JSON 19개 파일로
-**무엇** — `docs/script_full.md`(2139줄)의 시나리오를 `story/` JSON으로 변환. 대상 목록은 plan 문서 Phase 2 체크리스트(`docs/01-plan/features/game-full-plan.plan.md` 끝부분): april 허브·이벤트 6종, crack 파트 5종, july 엔딩 분기 등 19개 파일. `opening.json` 실제 노드(Opening~Chapter1_Lunch)는 이미 시작됨.
+### 1. 스토리 JSON 변환 — 새 원고를 story/ JSON으로
+**무엇** — `docs/01.new_story.md`(신 원고 정본, 프롤로그~3화)를 `story/` JSON으로 변환. 대상 목록은 plan 문서 Phase 2 체크리스트(`docs/01-plan/features/game-full-plan.plan.md` 끝부분): april 허브·이벤트 6종, crack 파트 5종, july 엔딩 분기 등 19개 파일. `opening.json` 실제 노드(Opening~Chapter1_Lunch)는 이미 시작됨.
 **왜 ** — 현재 게임은 테스트 노드 중심이라 실제 플레이 불가. 프로젝트의 최대 병목.
 **완료 기준** — 각 JSON이 `python3 -m json.tool` 파싱 통과 + 게임 실행으로 해당 장 진입·진행 확인. 에셋(CG/표정) 제작은 이번 범위 아님.
+**선행** — 과제 5(새 원고 반영). 구 `docs/04.script-engine.md`를 그대로 변환하면 폐기된 원고가 들어간다.
+
+### 5. 새 원고를 04.script-engine.md에 반영 (2026-08-02 신설)
+**무엇** — `docs/01.new_story.md`의 프롤로그~3화를 엔진 명령어 표기로 옮겨 `docs/04.script-engine.md`의 해당 구간을 재작성. 동현(신규 조연) 등장, 자리배정·수학시간의 본편 편입, 대사 전면 교체 반영. 미해결 충돌·미결 항목은 `docs/05.continuity.md` 참조.
+**왜 ** — 04는 구원고 기준이라 지금 JSON으로 변환하면 폐기된 텍스트가 게임에 들어간다. 과제 1의 선행 조건.
+**완료 기준** — 04의 프롤로그~3화 구간이 새 원고와 일치하고, 05의 충돌 표에서 C-4·C-5·C-6·C-8이 해소로 바뀐다. 4~6화는 원고 자체가 없으므로 이번 범위 아님.
+
+### 6. choice 조건부 표시 엔진 확장 (2026-08-02 신설)
+**무엇** — `scenes/controller/choice_controller.gd:45`의 버튼 생성 루프에 조건 검사 3줄을 추가해, `choice` 항목의 `condition` 필드가 거짓이면 버튼을 만들지 않게 한다. `GameManager.evaluate_condition`을 그대로 재사용하며 `condition`이 없는 기존 선택지는 영향 없음(하위 호환).
+**왜 ** — [[Decisions/0004-april-hub-balance]]의 H-1(이벤트 중복 선택 방지)이 이 확장 없이는 불가능하다. 허브 JSON 작성의 선행 조건이며, 균열 파트·엔딩 분기에서도 계속 쓰인다.
+**완료 기준** — `condition`이 거짓인 선택지가 화면에 나타나지 않고, `condition` 없는 선택지는 종전대로 표시된다. godot-mcp로 게임 실행 후 확인. 구현 상세는 `docs/07.hub-implementation.md` 6절.
 
 ### 2. Supabase 선택지 통계 연동 완성 — URL 주입부터 실동작까지
 **무엇** — `scenes/controller/choice_controller.gd:9`의 `_supabase_url`이 빈 문자열이라 통계 기능 전체가 조용히 비활성 상태. URL/키 주입 방식 결정(설정 파일? 환경별 분리?) 후 `/api/stats`, `/api/vote` 실동작 확인.
