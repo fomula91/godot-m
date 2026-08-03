@@ -7,3 +7,8 @@
 # LLM 도구 로컬 파일 (커밋 제외)
 .codex/
 AGENTS.md
+
+# 고해상도 원본 일러스트 (약 90MB) — 커밋하지 않는다.
+# 게임이 쓰는 것은 assets/characters/{hyunwoo,sua}/ 의 1200px WebP 리사이즈본이며
+# 이쪽만 커밋한다. 원본은 별도 백업이 필요하다 (docs/02.characters.md 참조).
+/assets/characters/hyunwoo_sua_standing_expressions/

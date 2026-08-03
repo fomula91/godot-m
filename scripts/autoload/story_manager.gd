@@ -22,16 +22,29 @@ signal command_completed()
 signal day_intro_requested(day_num: int, title_path: String, duration: float)
 
 # 캐릭터 정의
-# 임시 에셋을 사용한다. 변경 예정중
+# 현우·수아는 실제 에셋(assets/characters/{hyunwoo,sua}/, 원본 1200px 리사이즈본).
+# 동현(friend)은 아직 임시 에셋(unknown)을 쓴다.
+# 표정 대응표는 docs/02.characters.md 참조.
 var characters: Dictionary = {
-	"p": {"name": "{{player.name}}", "color": "#ffa726", "directory": "haru", "sprites": {
-		"normal": "haru_A100.webp", "happy": "haru_A101.webp",
-		"surprised": "haru_A102.webp", "worried": "haru_A103.webp"
+	"p": {"name": "{{player.name}}", "color": "#ffa726", "directory": "hyunwoo", "sprites": {
+		"normal": "hyunwoo_default.webp", "happy": "hyunwoo_smile.webp",
+		"surprised": "hyunwoo_serious.webp", "worried": "hyunwoo_troubled.webp",
+		"serious": "hyunwoo_angry.webp", "sullen": "hyunwoo_sullen.webp"
 	}},
-	"sua": {"name": "이수아", "color": "#e87ba1", "directory": "sora", "sprites": {
-		"normal": "sora_A100.webp", "happy": "sora_A101.webp",
-		"shy": "sora_A190.webp", "sad": "sora_A102.webp",
-		"surprised": "sora_A104.webp", "worried": "sora_A103.webp"
+	"sua": {"name": "이수아", "color": "#e87ba1", "directory": "sua", "sprites": {
+		# 필수 6종
+		"normal": "sua_f.webp",                    # 무표정 — 수아의 기본
+		"happy": "sua_a_caret2_D.webp",            # ^^ 활짝 웃음
+		"shy": "sua_a_caret2_rparen.webp",         # ^^ 옅은 미소 — "입꼬리가 살짝 올라간다"
+		"sad": "sua_a_lparen.webp",                # 시무룩
+		"surprised": "sua_a_O_O.webp",             # 입 크게 벌림
+		"worried": "sua_C_X.webp",                 # 땀 + 난처
+		# 추가 표정
+		"smile": "sua_a_rparen.webp",              # 눈 뜨고 옅은 미소
+		"laugh": "sua_a_D.webp",                   # 눈 뜨고 입 벌린 웃음
+		"awkward": "sua_a_caret2_lparen.webp",     # ^^ + 시무룩 = 난처한 웃음
+		"flustered": "sua_a_O_O_semi.webp",        # 입 벌림 + 땀 = 당황
+		"blank": "sua_a_O.webp"                    # 작은 O 입 = 멍함
 	}},
 	"friend": {"name": "동현", "color": "#8bc34a", "directory": "unknown", "sprites": {
 		"normal": "unknown_B290_A100.webp", "happy": "unknown_B290_A101.webp",
